@@ -9,6 +9,7 @@ export default defineConfig({
 
   projectId: 'vuzl9arg',
   dataset: 'production',
+  
 
   plugins: [structureTool(), visionTool()],
 

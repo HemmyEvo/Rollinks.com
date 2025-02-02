@@ -2,12 +2,13 @@
 import { Heart, LucideAlignRight, MenuIcon, Search, Settings, ShoppingCart, User, X } from 'lucide-react'
 import Link from 'next/link'
 import React from 'react'
+import { useShoppingCart } from 'use-shopping-cart'
 const Header = () => {
   React.useEffect(() => {
     if(window.document.fonts.status !== 'loaded') return 
   }, []);
   const [isToggle, setisToggle] = React.useState(false)
-  console.log(isToggle)
+  const {cartCount, handleCartClick} = useShoppingCart()
   return (
     <div className="h-[56px] bg-[#b63333] relative">
       <div className='flex fixed inset-x-0 items-center py-2 z-50 bg-[#e09d22dc] justify-between px-8'>
@@ -28,12 +29,13 @@ const Header = () => {
           <Search className='w-5 text-[#ffecd7] ' />
         </div>
         </section>
-        <div className="icon space-x-2  flex">
-          <div className="cart relative">
-            <ShoppingCart />
+        <div className="icon space-x-5 items-center flex">
+          <div onClick={() => handleCartClick()} className="cart  cursor-pointer relative">
+            <ShoppingCart className='w-8 h-8'/>
+            <span className='text-sm absolute -right-2 -top-2 px-1  bg-black text-white flex items-center justify-center  rounded-full'>
+              {cartCount && (cartCount < 100 ? cartCount : "99+")}
+            </span>
           </div>
-          <Heart />
-          <User />
           <div className="menu max-[874px]:flex hidden">
             {!isToggle ?  <LucideAlignRight onClick={() => setisToggle(prev => !prev)} className='cursor-pointer'/> : <X onClick={() => setisToggle(prev => !prev)} className='cursor-pointer'/>}
           </div>

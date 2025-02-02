@@ -2,7 +2,7 @@ export default {
     name:'product',
     type:'document',
     title:'Product',
-    field: [
+    fields: [
         {
             name:'name',
             type: 'string',
@@ -22,12 +22,21 @@ export default {
         {
             name: 'slug',
             type:'slug',
-            title:'Product slug'
+            title:'Product slug',
+            options:{
+                source:'name',
+            }
         },
         {
             name: 'price',
             type:'number',
             title:'Price'
+        },
+        {
+            name: 'category',
+            type:'reference',
+            title:'Category',
+            to:[{type:'category'}]
         }
     ]
 }

@@ -3,7 +3,7 @@ import React from 'react'
 
 const error = () => {
   return (
-    <div>error</div>
+    <div className='min-h-[100vh]'>error</div>
   )
 }
 
