@@ -78,7 +78,7 @@ export default function NewArrival() {
                       initial="closed"
                       whileInView="open"
                   >
-                      <div className="drop-shadow-xl justify-center items-center flex flex-col pb-4 bg-[#fd9e4554] rounded-xl overflow-hidden h-full max-w-[212px]">
+                      <div className="drop-shadow-xl mx-auto justify-center items-center flex flex-col pb-4 bg-[#fd9e4554] rounded-xl overflow-hidden h-full max-w-[212px]">
                       <div className="bg-gray-300 h-64 w-full mb-4"></div>
                       <div className="bg-gray-300 rounded-full h-6 w-3/4 mb-2"></div>
                       <div className="bg-gray-300 rounded-full h-6 w-1/2"></div>
