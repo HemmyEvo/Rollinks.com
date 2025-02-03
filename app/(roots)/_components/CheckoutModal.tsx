@@ -97,14 +97,38 @@ const CheckoutModal = ({ isOpen, onClose }: CheckoutModalProps) => {
       amount: totalPrice ? totalPrice * 100 : 0,
       currency: 'NGN',
       metadata: {
-        full_name: `${firstName} ${lastName}`,
-        phone: phone,
-        address: {
-          street: address,
-          city: city,
-          state: selectedState?.label || '',
-          country: selectedCountry?.label || '',
-        },
+        custom_fields: [
+          {
+            display_name: 'Full Name',
+            variable_name: 'full_name',
+            value: `${firstName} ${lastName}`,
+          },
+          {
+            display_name: 'Phone Number',
+            variable_name: 'phone',
+            value: phone,
+          },
+          {
+            display_name: 'Address',
+            variable_name: 'address',
+            value: address,
+          },
+          {
+            display_name: 'City',
+            variable_name: 'city',
+            value: city,
+          },
+          {
+            display_name: 'State',
+            variable_name: 'state',
+            value: selectedState?.label || '',
+          },
+          {
+            display_name: 'Country',
+            variable_name: 'country',
+            value: selectedCountry?.label || '',
+          },
+        ],
       },
       onSuccess: async (response: any) => {
         const orderData = {
@@ -189,16 +213,14 @@ const CheckoutModal = ({ isOpen, onClose }: CheckoutModalProps) => {
             <input
               type="text"
               placeholder="First name"
-              value={firstName}
-              onChange={(e) => setFirstName(e.target.value)}
               className="p-2 border border-gray-300 rounded-md"
+              onChange={(e) => setFirstName(e.target.value)}
             />
             <input
               type="text"
               placeholder="Last name"
-              value={lastName}
-              onChange={(e) => setLastName(e.target.value)}
               className="p-2 border border-gray-300 rounded-md"
+              onChange={(e) => setLastName(e.target.value)}
             />
           </div>
 
@@ -210,18 +232,21 @@ const CheckoutModal = ({ isOpen, onClose }: CheckoutModalProps) => {
           <input
             type="text"
             placeholder="Address"
-            value={address}
+            className="w-full p-2 border border-gray-300 rounded-md mt-2"
             onChange={(e) => setAddress(e.target.value)}
+          />
+          <input
+            type="text"
+            placeholder="Apartment, suite, etc. (optional)"
             className="w-full p-2 border border-gray-300 rounded-md mt-2"
           />
 
-          <div className="grid grid-cols-2 gap-2 mt-2">
+          <div className="grid grid-cols-3 gap-2 mt-2">
             <input
               type="text"
               placeholder="City"
-              value={city}
-              onChange={(e) => setCity(e.target.value)}
               className="p-2 border border-gray-300 rounded-md"
+              onChange={(e) => setCity(e.target.value)}
             />
             <Select
               options={stateOptions}
@@ -230,14 +255,13 @@ const CheckoutModal = ({ isOpen, onClose }: CheckoutModalProps) => {
               isDisabled={!selectedCountry}
               placeholder="Select a state"
             />
+            <input
+              type="text"
+              placeholder="Phone"
+              className="p-2 border border-gray-300 rounded-md"
+              onChange={(e) => setPhone(e.target.value)}
+            />
           </div>
-          <input
-            type="text"
-            placeholder="Phone"
-            value={phone}
-            onChange={(e) => setPhone(e.target.value)}
-            className="w-full p-2 border border-gray-300 rounded-md mt-2"
-          />
         </div>
 
         {/* Shipping Method */}
@@ -253,7 +277,7 @@ const CheckoutModal = ({ isOpen, onClose }: CheckoutModalProps) => {
         <div className="mb-6">
           <label className="block font-medium mb-1">Payment</label>
           <div className="p-4 border border-gray-300 rounded-md bg-gray-50">
-            <Image src={"/paystack.png"} width={200} height={70} alt="Paystack" />
+            <Image src={"/paystack.png"} width={200} height={70} alt='Paystack'/>
             <p className="text-sm text-gray-600">
               After clicking "Pay now", you will be redirected to Paystack to complete your
               purchase securely.
