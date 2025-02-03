@@ -38,7 +38,7 @@ const CheckoutModal = ({ isOpen, onClose }: CheckoutModalProps) => {
   const [selectedCountry, setSelectedCountry] = useState<Option | null>(null);
   const [selectedState, setSelectedState] = useState<Option | null>(null);
   const [stateOptions, setStateOptions] = useState<Option[]>([]);
-
+  const [email, setEmail] = useState('')
   // Build the countries list from the imported data
   const countries = useMemo(() => {
     return data.map((country:any) => ({
@@ -87,7 +87,7 @@ const CheckoutModal = ({ isOpen, onClose }: CheckoutModalProps) => {
 
     paystack.newTransaction({
       key: process.env.NEXT_PUBLIC_PAYSTACK_PUBLIC_KEY || '',
-      email: 'atilolaemmanuel@gmail.com',
+      email: email,
       amount: totalPrice ? totalPrice * 100 : 0,
       currency: 'NGN',
       onSuccess: async (response: any) => {
@@ -139,6 +139,7 @@ const CheckoutModal = ({ isOpen, onClose }: CheckoutModalProps) => {
           <label className="block font-medium mb-1">Contact</label>
           <input
             type="email"
+            onChange={(e) => setEmail(e.target.value)}
             placeholder="Email"
             className="w-full p-2 border border-gray-300 rounded-md"
           />
