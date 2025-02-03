@@ -47,8 +47,12 @@ const CheckoutModal = ({ isOpen, onClose }: CheckoutModalProps) => {
   const [phone, setPhone] = useState('');
   const [address, setAddress] = useState('');
   const [city, setCity] = useState('');
+<<<<<<< HEAD
   const {isSignedIn} = useAuth()
   const me = useQuery(api.user.getMe)
+=======
+
+>>>>>>> 9a73bb58bffb822997f129393b2ee224f80f47e4
   // Build the countries list from the imported data
   const countries = useMemo(() => {
     return data.map((country: any) => ({
