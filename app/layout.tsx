@@ -5,7 +5,8 @@ import Header from "./(roots)/_components/Header";
 import Footer from "./(roots)/_components/Footer";
 import CartProvider from "./(roots)/_components/Provider";
 import ShoppingCartModal from "./(roots)/_components/ShoppingCartModal";
-import Script from "next/script";
+import {Toaster} from "react-hot-toast"
+import { ConvexClientProvider } from "@/provider/ConvexProvider";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -41,15 +42,19 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${geistSans} ${lover}  ${gerald} ${geistMono} antialiased`}
+        className={`${geistSans} ${lover}   ${gerald} ${geistMono} antialiased`}
       >
-        
+        <ConvexClientProvider> 
+          
         <CartProvider>
         <Header />
         <ShoppingCartModal />
         {children}
         <Footer/>
         </CartProvider>
+       
+          <Toaster />
+        </ConvexClientProvider>
       </body>
     </html>
   );

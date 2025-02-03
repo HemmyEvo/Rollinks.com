@@ -1,4 +1,6 @@
 "use client"
+import { Button } from '@/components/ui/button'
+import { SignedIn, SignedOut, SignInButton, UserButton } from '@clerk/nextjs'
 import { Heart, LucideAlignRight, MenuIcon, Search, Settings, ShoppingCart, User, X } from 'lucide-react'
 import Link from 'next/link'
 import React from 'react'
@@ -36,6 +38,14 @@ const Header = () => {
               {cartCount && (cartCount < 100 ? cartCount : "99+")}
             </span>
           </div>
+          <SignedIn>
+          <UserButton />
+          </SignedIn>
+          <SignedOut>
+          <SignInButton>
+            <Button>Sign In</Button>
+          </SignInButton>
+          </SignedOut>
           <div className="menu max-[874px]:flex hidden">
             {!isToggle ?  <LucideAlignRight onClick={() => setisToggle(prev => !prev)} className='cursor-pointer'/> : <X onClick={() => setisToggle(prev => !prev)} className='cursor-pointer'/>}
           </div>

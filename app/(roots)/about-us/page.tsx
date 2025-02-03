@@ -11,7 +11,7 @@ const AboutUsPage = (props: Props) => {
         Welcome to Rollinks Skincare, your number one source for all things skincare. We're dedicated to giving you the very best of skincare products, with a focus on quality, customer service, and uniqueness. Our journey began with a simple yet profound mission: to provide eco-friendly and high-quality skincare products that cater to the diverse needs of our customers. We believe that everyone deserves to feel confident and beautiful in their own skin, and our products are designed to help you achieve just that.
       </p>
       <p className="text-lg leading-relaxed text-gray-700">
-        Founded in 2023 by Temitayo, Rollinks Skincare has come a long way from its humble beginnings. When Temitayo first started out, her passion for eco-friendly and high-quality skincare products drove her to do intense research. She spent countless hours studying the best ingredients and formulations that would not only be effective but also gentle on the skin and the environment. This dedication and hard work gave her the impetus to turn her vision into a reality, and thus, Rollinks Skincare was born.
+        Founded in 2025 by Rolake, Rollinks Skincare has come a long way from its humble beginnings. When Rolake first started out, her passion for eco-friendly and high-quality skincare products drove her to do intense research. She spent countless hours studying the best ingredients and formulations that would not only be effective but also gentle on the skin and the environment. This dedication and hard work gave her the impetus to turn her vision into a reality, and thus, Rollinks Skincare was born.
       </p>
       <p className="text-lg leading-relaxed text-gray-700">
         Our commitment to quality is unwavering. We source our ingredients from trusted suppliers who share our values of sustainability and ethical practices. Each product is meticulously crafted to ensure it meets our high standards of excellence. From cleansers and moisturizers to serums and masks, every item in our collection is designed to deliver visible results while being kind to your skin and the planet.
@@ -30,7 +30,7 @@ const AboutUsPage = (props: Props) => {
       </p>
       <p className="text-lg leading-relaxed text-gray-700">
         Sincerely,<br />
-        <span className="font-bold">Temitayo, Founder</span>
+        <span className="font-bold">Rolake, Founder</span>
       </p>
       </div>
     </div>

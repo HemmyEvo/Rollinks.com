@@ -5,6 +5,11 @@ const nextConfig: NextConfig = {
 
   images: {
     domains: ['cdn.sanity.io'],
+    remotePatterns: [
+      {
+          hostname: "fantastic-eel-761.convex.cloud",
+      },
+  ],
   },
   
 };

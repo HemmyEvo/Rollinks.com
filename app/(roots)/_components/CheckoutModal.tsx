@@ -1,10 +1,13 @@
 import { useShoppingCart } from 'use-shopping-cart';
 import PaystackInline from '@paystack/inline-js';
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { client } from '../../../lib/sanity';
 import Select from 'react-select';
 import data from '../../api/countries+states.json';
 import Image from 'next/image';
+import { useAuth } from '@clerk/nextjs';
+import { api } from '@/convex/_generated/api';
+import { useQuery } from 'convex/react';
 
 interface CheckoutModalProps {
   isOpen: boolean;
@@ -38,10 +41,17 @@ const CheckoutModal = ({ isOpen, onClose }: CheckoutModalProps) => {
   const [selectedCountry, setSelectedCountry] = useState<Option | null>(null);
   const [selectedState, setSelectedState] = useState<Option | null>(null);
   const [stateOptions, setStateOptions] = useState<Option[]>([]);
-  const [email, setEmail] = useState('')
+  const [email, setEmail] = useState('');
+  const [firstName, setFirstName] = useState('');
+  const [lastName, setLastName] = useState('');
+  const [phone, setPhone] = useState('');
+  const [address, setAddress] = useState('');
+  const [city, setCity] = useState('');
+  const {isSignedIn} = useAuth()
+  const me = useQuery(api.user.getMe)
   // Build the countries list from the imported data
   const countries = useMemo(() => {
-    return data.map((country:any) => ({
+    return data.map((country: any) => ({
       value: country.iso2,
       label: country.name,
     }));
@@ -55,11 +65,11 @@ const CheckoutModal = ({ isOpen, onClose }: CheckoutModalProps) => {
     if (selectedOption) {
       // Find the country by ISO code
       const country = data.find(
-        (country:any) => country.iso2 === selectedOption.value
+        (country: any) => country.iso2 === selectedOption.value
       );
       if (country && country.states) {
         // Map the country's states into Option format for react-select
-        const mappedStates = country.states.map((state:any) => ({
+        const mappedStates = country.states.map((state: any) => ({
           value: state.state_code,
           label: state.name,
         }));
@@ -71,6 +81,14 @@ const CheckoutModal = ({ isOpen, onClose }: CheckoutModalProps) => {
       setStateOptions([]);
     }
   };
+
+    useEffect(() => {
+      if (isSignedIn && me) {
+        setFirstName(me.firstname);
+        setLastName(me.lastname);
+        setEmail(me.email);
+      }
+    }, [isSignedIn, me]);
 
   // Handler for selecting a state (optional)
   const handleStateChange = (selectedOption: Option | null) => {
@@ -90,6 +108,40 @@ const CheckoutModal = ({ isOpen, onClose }: CheckoutModalProps) => {
       email: email,
       amount: totalPrice ? totalPrice * 100 : 0,
       currency: 'NGN',
+      metadata: {
+        custom_fields: [
+          {
+            display_name: 'Full Name',
+            variable_name: 'full_name',
+            value: `${firstName} ${lastName}`,
+          },
+          {
+            display_name: 'Phone Number',
+            variable_name: 'phone',
+            value: phone,
+          },
+          {
+            display_name: 'Address',
+            variable_name: 'address',
+            value: address,
+          },
+          {
+            display_name: 'City',
+            variable_name: 'city',
+            value: city,
+          },
+          {
+            display_name: 'State',
+            variable_name: 'state',
+            value: selectedState?.label || '',
+          },
+          {
+            display_name: 'Country',
+            variable_name: 'country',
+            value: selectedCountry?.label || '',
+          },
+        ],
+      },
       onSuccess: async (response: any) => {
         const orderData = {
           _type: 'order',
@@ -98,6 +150,17 @@ const CheckoutModal = ({ isOpen, onClose }: CheckoutModalProps) => {
           paymentDetails: {
             method: response.message,
             status: response.status,
+          },
+          customerDetails: {
+            fullName: `${firstName} ${lastName}`,
+            email: email,
+            phone: phone,
+            address: {
+              street: address,
+              city: city,
+              state: selectedState?.label || '',
+              country: selectedCountry?.label || '',
+            },
           },
           cart: {
             items: cartDetails || [],
@@ -112,7 +175,6 @@ const CheckoutModal = ({ isOpen, onClose }: CheckoutModalProps) => {
           onClose();
         } catch (error) {
           console.error('Error saving order to Sanity:', error);
-          // Optionally, display an error message to the user.
         }
       },
       onCancel: () => {
@@ -124,7 +186,7 @@ const CheckoutModal = ({ isOpen, onClose }: CheckoutModalProps) => {
   };
 
   return (
-    <div className="fixed inset-0 flex  items-center justify-center bg-black bg-opacity-50">
+    <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
       <div className="w-full max-w-3xl overflow-y-scroll h-screen bg-white p-6 rounded-lg shadow-lg">
         {/* Order Summary */}
         <div className="flex justify-between mt-6 text-lg font-semibold mb-4">
@@ -139,6 +201,7 @@ const CheckoutModal = ({ isOpen, onClose }: CheckoutModalProps) => {
           <label className="block font-medium mb-1">Contact</label>
           <input
             type="email"
+            value={email}
             onChange={(e) => setEmail(e.target.value)}
             placeholder="Email"
             className="w-full p-2 border border-gray-300 rounded-md"
@@ -162,13 +225,17 @@ const CheckoutModal = ({ isOpen, onClose }: CheckoutModalProps) => {
           <div className="grid grid-cols-2 gap-2 mt-2">
             <input
               type="text"
+              value={firstName}
               placeholder="First name"
               className="p-2 border border-gray-300 rounded-md"
+              onChange={(e) => setFirstName(e.target.value)}
             />
             <input
               type="text"
+              value={lastName}
               placeholder="Last name"
               className="p-2 border border-gray-300 rounded-md"
+              onChange={(e) => setLastName(e.target.value)}
             />
           </div>
 
@@ -181,6 +248,7 @@ const CheckoutModal = ({ isOpen, onClose }: CheckoutModalProps) => {
             type="text"
             placeholder="Address"
             className="w-full p-2 border border-gray-300 rounded-md mt-2"
+            onChange={(e) => setAddress(e.target.value)}
           />
           <input
             type="text"
@@ -193,6 +261,7 @@ const CheckoutModal = ({ isOpen, onClose }: CheckoutModalProps) => {
               type="text"
               placeholder="City"
               className="p-2 border border-gray-300 rounded-md"
+              onChange={(e) => setCity(e.target.value)}
             />
             <Select
               options={stateOptions}
@@ -203,15 +272,11 @@ const CheckoutModal = ({ isOpen, onClose }: CheckoutModalProps) => {
             />
             <input
               type="text"
-              placeholder="Postal code (optional)"
+              placeholder="Phone"
               className="p-2 border border-gray-300 rounded-md"
+              onChange={(e) => setPhone(e.target.value)}
             />
           </div>
-          <input
-            type="text"
-            placeholder="Phone"
-            className="w-full p-2 border border-gray-300 rounded-md mt-2"
-          />
         </div>
 
         {/* Shipping Method */}
