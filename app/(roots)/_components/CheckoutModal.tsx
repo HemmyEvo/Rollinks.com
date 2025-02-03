@@ -124,10 +124,10 @@ const CheckoutModal = ({ isOpen, onClose }: CheckoutModalProps) => {
   };
 
   return (
-    <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+    <div className="fixed inset-0 flex  items-center justify-center bg-black bg-opacity-50">
       <div className="w-full max-w-3xl overflow-y-scroll h-screen bg-white p-6 rounded-lg shadow-lg">
         {/* Order Summary */}
-        <div className="flex justify-between text-lg font-semibold mb-4">
+        <div className="flex justify-between mt-6 text-lg font-semibold mb-4">
           <span>Total Amount</span>
           <span className="text-black">
             ₦{totalPrice ? totalPrice.toLocaleString() : '0'}

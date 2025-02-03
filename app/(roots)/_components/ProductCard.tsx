@@ -64,7 +64,7 @@ const ProductCard = ({ id, title, price, description, slug, image, discount }: P
             className='cursor-pointer object-cover object-center'
             src={image}
           />
-          <div className="absolute top-0 bottom-0 right-0 left-0 [@media(hover:hover)]:bg-[#0000007a] bg-[#0000007a]/80 [@media(hover:hover)]:opacity-0 opacity-100 group-hover:opacity-100 transition-opacity">
+          <div className="absolute top-0 bottom-0 right-0 left-0 [@media(hover:hover)]:bg-[#0000007a] bg-[#0000007a]/20 [@media(hover:hover)]:opacity-0 opacity-100 group-hover:opacity-100 transition-opacity">
             <div className="w-full relative h-full">
               <div className="heart-preview drop-shadow-4xl flex flex-col absolute right-2 space-y-4 top-4">
                 
