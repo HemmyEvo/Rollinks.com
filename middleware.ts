@@ -1,12 +1,11 @@
-import { withAuth } from "@clerk/nextjs";
+import {authMiddleware}  from "@clerk/nextjs/server";
 
-export default withAuth({
-    publicRoutes: ["/", "/about-us", "/contact", "/product", "/forgot-password", "/verify-code"]
+export default authMiddleware({
+    publicRoutes: ["/","/about-us","/contact","/product","/forgot-password", "/verify-code"]
 });
-
 export const config = {
     matcher: [
-        "/((?!.+\\.[\\w]+$|_next).*)",
+         "/((?!.+\\.[\\w]+$|_next).*)",
         "/",
         "/(api|trpc)(.*)"
     ]

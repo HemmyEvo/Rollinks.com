@@ -1,6 +1,7 @@
-import type { NextConfig } from "next";
+import { NextConfig } from 'next';
 
-const nextConfig: NextConfig = {
+/** @type {NextConfig} */
+const nextConfig: NextConfig ={
   /* config options here */
 
   images: {
