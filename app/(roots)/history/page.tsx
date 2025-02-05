@@ -6,6 +6,7 @@ import Loading from '@/components/ui/Loading';
 import { useAuth } from '@clerk/nextjs';
 import { useConvexAuth, useQuery } from 'convex/react';
 import { api } from '@/convex/_generated/api';
+import { formatDate } from '@/lib/utils';
 
 export default function Transactions() {
   const [orders, setOrders] = useState<any[]>([]);
@@ -32,7 +33,7 @@ export default function Transactions() {
         }`;
         const ordersData = await client.fetch(query);
         
-        const filteredOrders = ordersData.filter((order: any) => order.customerDetails?.email !== me.email);
+        const filteredOrders = ordersData.filter((order: any) => order.customerDetails?.email === me.email);
         setOrders(filteredOrders);
       } catch (err) {
         console.error('Failed to fetch orders:', err);
@@ -59,6 +60,7 @@ export default function Transactions() {
             <thead className="bg-gray-200">
               <tr>
                 <th className="px-4 py-2 text-left text-sm font-medium text-gray-700">Reference</th>
+                <th className="px-4 py-2 text-left text-sm font-medium text-gray-700">Phone</th>
                 <th className="px-4 py-2 text-left text-sm font-medium text-gray-700">Message</th>
                 <th className="px-4 py-2 text-left text-sm font-medium text-gray-700">Status</th>
                 <th className="px-4 py-2 text-left text-sm font-medium text-gray-700">Amount (₦)</th>
@@ -68,7 +70,7 @@ export default function Transactions() {
             <tbody className="divide-y divide-gray-100">
               {orders.map(order => {
                 const amountNaira = (order.amount / 100).toFixed(2);
-                const paidAt = new Date(order.createdAt).toLocaleString();
+                const paidAt = formatDate(order.createdAt);
                 const paymentDetails = order.paymentDetails || {};
                 const status = paymentDetails.status || 'N/A';
                 const method = paymentDetails.method || 'N/A';
@@ -76,6 +78,7 @@ export default function Transactions() {
                 return (
                   <tr key={order._id}>
                     <td className="px-4 py-2 text-sm text-gray-800">{order.reference}</td>
+                    <td className="px-4 py-2 text-sm text-gray-800">{order.customerDetails.phone}</td>
                     <td className="px-4 capitalize py-2 text-sm text-gray-800">{method}</td>
                     <td className="px-4 py-2 capitalize text-sm text-gray-800">{status}</td>
                     <td className="px-4 py-2 text-sm text-gray-800">₦{amountNaira}</td>

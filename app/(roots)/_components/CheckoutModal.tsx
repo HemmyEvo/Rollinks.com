@@ -169,7 +169,7 @@ const CheckoutModal = ({ isOpen, onClose }: CheckoutModalProps) => {
             items: cartDetails || [],
             total: totalPrice || 0,
           },
-          createdAt: new Date().toISOString(),
+          createdAt: new Date(),
         };
 
         try {
