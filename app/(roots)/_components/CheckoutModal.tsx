@@ -169,7 +169,7 @@ const CheckoutModal = ({ isOpen, onClose }: CheckoutModalProps) => {
             items: cartDetails || [],
             total: totalPrice || 0,
           },
-          createdAt: new Date(),
+          createdAt: new Date().toISOString(),
         };
 
         try {
@@ -205,6 +205,7 @@ const CheckoutModal = ({ isOpen, onClose }: CheckoutModalProps) => {
           <input
             type="email"
             value={email}
+            required
             onChange={(e) => setEmail(e.target.value)}
             placeholder="Email"
             className="w-full p-2 border border-gray-300 rounded-md"
@@ -223,6 +224,7 @@ const CheckoutModal = ({ isOpen, onClose }: CheckoutModalProps) => {
             value={selectedCountry}
             onChange={handleCountryChange}
             placeholder="Select a country"
+            required
           />
 
           <div className="grid grid-cols-2 gap-2 mt-2">
@@ -232,6 +234,7 @@ const CheckoutModal = ({ isOpen, onClose }: CheckoutModalProps) => {
               placeholder="First name"
               className="p-2 border border-gray-300 rounded-md"
               onChange={(e) => setFirstName(e.target.value)}
+              required
             />
             <input
               type="text"
@@ -239,6 +242,7 @@ const CheckoutModal = ({ isOpen, onClose }: CheckoutModalProps) => {
               placeholder="Last name"
               className="p-2 border border-gray-300 rounded-md"
               onChange={(e) => setLastName(e.target.value)}
+              required
             />
           </div>
 
@@ -246,11 +250,13 @@ const CheckoutModal = ({ isOpen, onClose }: CheckoutModalProps) => {
             type="text"
             placeholder="Company (optional)"
             className="w-full p-2 border border-gray-300 rounded-md mt-2"
+            required
           />
           <input
             type="text"
             placeholder="Address"
             className="w-full p-2 border border-gray-300 rounded-md mt-2"
+            required
             onChange={(e) => setAddress(e.target.value)}
           />
           <input
@@ -262,6 +268,7 @@ const CheckoutModal = ({ isOpen, onClose }: CheckoutModalProps) => {
           <div className="grid grid-cols-3 gap-2 mt-2">
             <input
               type="text"
+              required
               placeholder="City"
               className="p-2 border border-gray-300 rounded-md"
               onChange={(e) => setCity(e.target.value)}
@@ -272,12 +279,14 @@ const CheckoutModal = ({ isOpen, onClose }: CheckoutModalProps) => {
               onChange={handleStateChange}
               isDisabled={!selectedCountry}
               placeholder="Select a state"
+              required
             />
             <input
               type="text"
               placeholder="Phone"
               className="p-2 border border-gray-300 rounded-md"
               onChange={(e) => setPhone(e.target.value)}
+              required
             />
           </div>
         </div>

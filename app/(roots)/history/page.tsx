@@ -70,7 +70,7 @@ export default function Transactions() {
             <tbody className="divide-y divide-gray-100">
               {orders.map(order => {
                 const amountNaira = (order.amount / 100).toFixed(2);
-                const paidAt = formatDate(order.createdAt);
+                const paidAt = new Date(order.createdAt).toLocaleString();
                 const paymentDetails = order.paymentDetails || {};
                 const status = paymentDetails.status || 'N/A';
                 const method = paymentDetails.method || 'N/A';

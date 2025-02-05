@@ -49,8 +49,7 @@ const Page = () => {
       fetchData();
     }, []);
 
-  if(data.length === 0) 
-    return <Loading />
+
   const filteredProducts = data.filter(product => {
     return (
       (!selectedCategory || product.categoryName === selectedCategory) &&
