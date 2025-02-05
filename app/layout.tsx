@@ -7,6 +7,8 @@ import CartProvider from "./(roots)/_components/Provider";
 import ShoppingCartModal from "./(roots)/_components/ShoppingCartModal";
 import {Toaster} from "react-hot-toast"
 import { ConvexClientProvider } from "@/provider/ConvexProvider";
+import { ClerkLoading } from "@clerk/nextjs";
+import Loading from "@/components/ui/Loading";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -45,7 +47,9 @@ export default function RootLayout({
         className={`${geistSans} ${lover}   ${gerald} ${geistMono} antialiased`}
       >
         <ConvexClientProvider> 
-          
+          <ClerkLoading>
+          <Loading />  
+          </ClerkLoading>  
         <CartProvider>
         <Header />
         <ShoppingCartModal />

@@ -7,12 +7,26 @@ import { useState } from 'react'
 const page = () => {
 
   const [isSending, setIsSending] = useState(false)
+  const [name, setName] = useState('')
+  const [email, setEmail] = useState('')
+  const [message, setMessage] = useState('')
 
   const handleSendClick = () => {
     setIsSending(true)
+    try {
+      const text = `Name: ${name}%0AEmail: ${email}%0AMessage: ${message}`
+      const whatsappUrl = `https://wa.me/${'2347010331943'}?text=${text}`
+      window.open(whatsappUrl, 'WhatsAppWindow', 'width=800,height=600')
+    } catch (error) {
+      console.log(error)
+    }
+    finally{
+      setIsSending(false)
+    }
+    
     // Simulate sending process
     setTimeout(() => {
-      setIsSending(false)
+      
     }, 2000)
   }
   return (
@@ -31,6 +45,8 @@ const page = () => {
           <input
             className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
             id="name"
+            onChange={(e) => setName(e.target.value)}
+            value={name}
             type="text"
             placeholder="Your name"
           />
@@ -43,6 +59,8 @@ const page = () => {
             className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
             id="email"
             type="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
             placeholder="Your email"
           />
         </div>
@@ -53,6 +71,8 @@ const page = () => {
           <textarea
             className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
             id="message"
+            value={message}
+            onChange={(e) => setMessage(e.target.value)}
             placeholder="Your message"
             rows={4}
           />

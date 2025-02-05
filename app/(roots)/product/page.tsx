@@ -4,6 +4,7 @@ import React, { useEffect, useState } from 'react';
 import ProductCard from '../_components/ProductCard';
 import { client } from '@/lib/sanity';
 import { fullProduct, simplifiedProduct } from '@/app/interface';
+import Loading from '@/components/ui/Loading';
 
 
 
@@ -47,7 +48,9 @@ const Page = () => {
       }
       fetchData();
     }, []);
-      
+
+  if(data.length === 0) 
+    return <Loading />
   const filteredProducts = data.filter(product => {
     return (
       (!selectedCategory || product.categoryName === selectedCategory) &&
