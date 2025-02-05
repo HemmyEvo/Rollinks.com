@@ -5,9 +5,9 @@ import { client } from '../../../lib/sanity';
 import Select from 'react-select';
 import data from '../../api/countries+states.json';
 import Image from 'next/image';
-import { useConvexAuth,useAuth } from '@clerk/nextjs';
+import { useAuth } from '@clerk/nextjs';
 import { api } from '@/convex/_generated/api';
-import { useQuery } from 'convex/react';
+import { useConvexAuth, useQuery } from "convex/react"
 
 interface CheckoutModalProps {
   isOpen: boolean;
