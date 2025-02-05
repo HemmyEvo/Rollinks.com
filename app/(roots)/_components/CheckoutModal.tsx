@@ -5,7 +5,7 @@ import { client } from '../../../lib/sanity';
 import Select from 'react-select';
 import data from '../../api/countries+states.json';
 import Image from 'next/image';
-import { useAuth } from '@clerk/nextjs';
+import { useConvexAuth,useAuth } from '@clerk/nextjs';
 import { api } from '@/convex/_generated/api';
 import { useQuery } from 'convex/react';
 
@@ -49,8 +49,9 @@ const CheckoutModal = ({ isOpen, onClose }: CheckoutModalProps) => {
   const [city, setCity] = useState('');
 
   const {isSignedIn} = useAuth()
-  const me = useQuery(api.user.getMe)
-
+  const { isAuthenticated } = useConvexAuth();
+  const me = useQuery(api.user.getMe, isAuthenticated ? undefined : "skip");
+  
   // Build the countries list from the imported data
   const countries = useMemo(() => {
     return data.map((country: any) => ({
