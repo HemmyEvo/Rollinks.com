@@ -10,6 +10,11 @@ export default {
         type: 'string',
       },
       {
+        name: 'email',
+        title:"Email",
+        type:'string'
+      },
+      {
         name: 'amount',
         title: 'Amount',
         type: 'number',
@@ -30,6 +35,17 @@ export default {
             type: 'string',
           },
         ],
+      },
+      {
+        name:'customerDetails',
+        title:'Customer Details',
+        type:'object',
+        fields:[
+          {name: 'fullName', title:'Full Name', type:'string'},
+          {name: 'email', title:'Email', type:'string'},
+          {name: 'phone', title:'Phone', type:'string'},
+      ,
+        ]
       },
       {
         name: 'cart',
