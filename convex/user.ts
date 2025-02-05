@@ -28,6 +28,7 @@ export const getMe = query({
                  if (!identity) {
 			throw new ConvexError("Unauthorized");
 		}
+		console.log(identity.tokenIdentifier)
 		const user = await ctx.db
 			.query("users")
 			.withIndex("by_tokenIdentifier", (q) => q.eq("tokenIdentifier", identity.tokenIdentifier))
