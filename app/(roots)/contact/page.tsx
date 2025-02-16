@@ -3,32 +3,36 @@ import { Button } from '@/components/ui/button'
 import { motion } from 'framer-motion'
 import 'tailwindcss/tailwind.css'
 import { useState } from 'react'
+import emailjs from 'emailjs-com' // Import emailjs
 
 const page = () => {
-
   const [isSending, setIsSending] = useState(false)
   const [name, setName] = useState('')
   const [email, setEmail] = useState('')
   const [message, setMessage] = useState('')
+  const [contactMessage, setContactMessage] = useState('') // State for success/error message
 
-  const handleSendClick = () => {
+  const sendEmail = (e: React.FormEvent) => {
+    e.preventDefault()
     setIsSending(true)
-    try {
-      const text = `Name: ${name}%0AEmail: ${email}%0AMessage: ${message}`
-      const whatsappUrl = `https://wa.me/${'2347010331943'}?text=${text}`
-      window.open(whatsappUrl, 'WhatsAppWindow', 'width=800,height=600')
-    } catch (error) {
-      console.log(error)
-    }
-    finally{
-      setIsSending(false)
-    }
-    
-    // Simulate sending process
-    setTimeout(() => {
-      
-    }, 2000)
+
+    emailjs.sendForm('service_2gxwh09', 'template_aez9vka', e.target as HTMLFormElement, '683gBDmEpVhIeg7ET')
+      .then(() => {
+        setContactMessage('Message sent successfully ✅')
+        setTimeout(() => {
+          setContactMessage('')
+        }, 5000)
+        setName('')
+        setEmail('')
+        setMessage('')
+      }, () => {
+        setContactMessage('Message not sent (service error) ❌')
+      })
+      .finally(() => {
+        setIsSending(false)
+      })
   }
+
   return (
     <motion.div 
       className="flex flex-col items-center justify-center min-h-screen bg-gray-100 p-4"
@@ -37,7 +41,7 @@ const page = () => {
       transition={{ duration: 0.5 }}
     >
       <h1 className="text-4xl font-bold mb-4 text-gray-800">Contact Us</h1>
-      <form className="w-full max-w-lg bg-white p-8 rounded-lg shadow-md">
+      <form className="w-full max-w-lg bg-white p-8 rounded-lg shadow-md" onSubmit={sendEmail}>
         <div className="mb-4">
           <label className="block text-gray-700 text-sm font-semibold mb-2" htmlFor="name">
             Name
@@ -45,10 +49,12 @@ const page = () => {
           <input
             className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
             id="name"
+            name="name"
             onChange={(e) => setName(e.target.value)}
             value={name}
             type="text"
             placeholder="Your name"
+            required
           />
         </div>
         <div className="mb-4">
@@ -58,10 +64,12 @@ const page = () => {
           <input
             className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
             id="email"
+            name="email"
             type="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             placeholder="Your email"
+            required
           />
         </div>
         <div className="mb-4">
@@ -71,59 +79,37 @@ const page = () => {
           <textarea
             className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
             id="message"
+            name="message"
             value={message}
             onChange={(e) => setMessage(e.target.value)}
             placeholder="Your message"
             rows={4}
+            required
           />
         </div>
         <div className="flex items-center justify-between">
-            <motion.div
+          <motion.div
             initial={{ scale: 1 }}
             whileHover={{ scale: 1.1 }}
             whileTap={{ scale: 0.9 }}
             transition={{ type: "spring", stiffness: 300 }}
-            >
-            {!isSending ? (
-              <Button
-              onClick={handleSendClick}
+          >
+            <Button
               className="bg-[#e09d22dc] hover:bg-[#d08c1fdc] text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-              type="button"
-              >
-              Send
-              </Button>
-            ) : (
-              <Button
-              className="bg-black text-green-600 font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-              type="button"
-             
-              >
-              Sent
-              <motion.div
-              initial={{ scale: 0 }}
-              animate={{ scale: 1 }}
-              transition={{ type: "spring", stiffness: 300 }}
-              className="ml-2"
-              >
-              <svg
-              xmlns="http://www.w3.org/2000/svg"
-              className="h-6 w-6 text-green-500"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-              >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M5 13l4 4L19 7"
-              />
-              </svg>
-              </motion.div>
-              </Button>
-            )}
-            </motion.div>
+              type="submit"
+              disabled={isSending}
+            >
+              {isSending ? 'Sending...' : 'Send'}
+            </Button>
+          </motion.div>
         </div>
+        {contactMessage && (
+          <div className="mt-4 text-center">
+            <p className={contactMessage.includes('✅') ? 'text-green-600' : 'text-red-600'}>
+              {contactMessage}
+            </p>
+          </div>
+        )}
       </form>
     </motion.div>
   )
