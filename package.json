@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@chakra-ui/react": "^3.0.0",
+    "emailjs-com": "^3.2.0",
     "@clerk/clerk-sdk-node": "^5.1.6",
     "@clerk/elements": "^0.14.6",
     "@clerk/nextjs": "^5.4.1",
