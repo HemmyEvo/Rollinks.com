@@ -149,8 +149,31 @@ const CheckoutModal = ({ isOpen, onClose }: CheckoutModalProps) => {
       currency: 'NGN',
       metadata: {
         custom_fields: [
-          { display_name: 'Full Name', value: `${firstName} ${lastName}` },
-          { display_name: 'Email', value: email },
+          {
+            display_name: 'Full Name',
+            variable_name: 'full_name',
+            value: `${firstName} ${lastName}`,
+          },
+          {
+            display_name: 'Address',
+            variable_name: 'address',
+            value: address,
+          },
+          {
+            display_name: 'City',
+            variable_name: 'city',
+            value: city,
+          },
+          {
+            display_name: 'State',
+            variable_name: 'state',
+            value: selectedState?.label || '',
+          },
+          {
+            display_name: 'Country',
+            variable_name: 'country',
+            value: selectedCountry?.label || '',
+          },
         ],
       },
       onSuccess: async (response: any) => {
@@ -183,25 +206,38 @@ const CheckoutModal = ({ isOpen, onClose }: CheckoutModalProps) => {
 
   if (!isOpen) return null;
 
+  
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
       <div className="w-full max-w-3xl bg-white p-6 rounded-lg shadow-lg">
-        <h2 className="text-xl font-semibold mb-2">Checkout</h2>
+        
+        {/* Order Summary */}
+        <div className="border-b pb-4 mb-4">
+          <h2 className="text-xl font-semibold mb-2">Order Summary</h2>
+          <div className="flex justify-between"><span>Subtotal</span><span>₦{(totalPrice || 0).toLocaleString()}</span></div>
+          <div className="flex justify-between"><span>Shipping</span><span>₦{shippingFee.toLocaleString()}</span></div>
+          <div className="flex justify-between font-bold"><span>Total</span><span>₦{totalAmount.toLocaleString()}</span></div>
+        </div>
 
-        {/* Name and Email Inputs */}
-        <input type="text" placeholder="First Name" value={firstName} onChange={(e) => setFirstName(e.target.value)} className="p-2 border rounded w-full mt-2" />
-        <input type="text" placeholder="Last Name" value={lastName} onChange={(e) => setLastName(e.target.value)} className="p-2 border rounded w-full mt-2" />
-        <input type="email" placeholder="Email Address" value={email} onChange={(e) => setEmail(e.target.value)} className="p-2 border rounded w-full mt-2" />
-        {emailWarning && <p className="text-red-500 text-sm">Enter a valid email for transaction history</p>}
+        {/* User Information */}
+        <div className="mb-4">
+          <h2 className="text-xl font-semibold mb-2">Your Information</h2>
+          <input type="text" value={firstName} onChange={(e) => setFirstName(e.target.value)} placeholder="First Name" className="mt-2 p-2 border rounded w-full" />
+          <input type="text" value={lastName} onChange={(e) => setLastName(e.target.value)} placeholder="Last Name" className="mt-2 p-2 border rounded w-full" />
+          <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="Email" className="mt-2 p-2 border rounded w-full" />
+          {emailWarning && <p className="text-red-500 text-sm mt-1">Please enter a valid email to track your order.</p>}
+        </div>
 
-        {/* Payment Button */}
-        <div className="mt-4">
-          <button className="w-full bg-blue-600 text-white py-2 rounded" onClick={handlePayment} disabled={loading}>
-            {loading ? 'Processing...' : 'Pay Now'}
+        {/* Payment Section */}
+        <div className="p-4 border rounded-md bg-gray-50 flex items-center justify-between">
+          <Image src="/paystack.png" width={150} height={50} alt="Paystack" />
+          <button className="bg-blue-600 text-white px-4 py-2 rounded" onClick={handlePayment} disabled={loading}>
+            {loading ? "Processing..." : "Pay Now"}
           </button>
         </div>
 
-        <button className="w-full bg-gray-500 text-white py-2 rounded mt-2" onClick={onClose}>Cancel</button>
+        {/* Close Button */}
+        <button className="w-full bg-gray-500 text-white py-2 rounded mt-4" onClick={onClose}>Cancel</button>
       </div>
     </div>
   );
