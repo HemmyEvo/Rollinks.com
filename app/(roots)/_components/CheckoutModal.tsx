@@ -140,12 +140,11 @@ const CheckoutModal = ({ isOpen, onClose }: CheckoutModalProps) => {
     setEmailWarning(false);
     setLoading(true);
 
-    const paystack = new PaystackInline();
-
+    
     paystack.newTransaction({
       key: process.env.NEXT_PUBLIC_PAYSTACK_PUBLIC_KEY || '',
       email: email,
-      amount: totalAmount * 100,
+      amount: totalAmount * 100, // Include shipping fee
       currency: 'NGN',
       metadata: {
         custom_fields: [
@@ -154,7 +153,16 @@ const CheckoutModal = ({ isOpen, onClose }: CheckoutModalProps) => {
             variable_name: 'full_name',
             value: `${firstName} ${lastName}`,
           },
-          
+          {
+            display_name: 'Phone Number',
+            variable_name: 'phone',
+            value: phone,
+          },
+          {
+            display_name: 'Address',
+            variable_name: 'address',
+            value: address,
+          },
           {
             display_name: 'City',
             variable_name: 'city',
@@ -177,12 +185,27 @@ const CheckoutModal = ({ isOpen, onClose }: CheckoutModalProps) => {
           _type: 'order',
           reference: response.reference,
           amount: totalAmount * 100,
-          paymentDetails: { method: response.message, status: response.status },
-          customerDetails: { fullName: `${firstName} ${lastName}`, email },
-          cart: { items: cartDetails || [], total: totalPrice || 0 },
+          paymentDetails: {
+            method: response.message,
+            status: response.status,
+          },
+          customerDetails: {
+            fullName: `${firstName} ${lastName}`,
+            email: email,
+            phone: phone,
+            address: {
+              street: address,
+              city: city,
+              state: selectedState?.label || '',
+              country: selectedCountry?.label || '',
+            },
+          },
+          cart: {
+            items: cartDetails || [],
+            total: totalPrice || 0,
+          },
           createdAt: new Date().toISOString(),
-        };
-
+        }
         try {
           const createdOrder = await client.create(orderData);
           clearCart();
@@ -220,6 +243,13 @@ const CheckoutModal = ({ isOpen, onClose }: CheckoutModalProps) => {
           <h2 className="text-xl font-semibold mb-2">Your Information</h2>
           <input type="text" value={firstName} onChange={(e) => setFirstName(e.target.value)} placeholder="First Name" className="mt-2 p-2 border rounded w-full" />
           <input type="text" value={lastName} onChange={(e) => setLastName(e.target.value)} placeholder="Last Name" className="mt-2 p-2 border rounded w-full" />
+          <input
+            type="text"
+            placeholder="Address"
+            className="w-full p-2 border border-gray-300 rounded-md mt-2"
+            required
+            onChange={(e) => setAddress(e.target.value)}
+          />
           <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="Email" className="mt-2 p-2 border rounded w-full" />
           {emailWarning && <p className="text-red-500 text-sm mt-1">Please enter a valid email to track your order.</p>}
                <Select options={countries} value={selectedCountry} onChange={handleCountryChange} placeholder="Select Country" />
