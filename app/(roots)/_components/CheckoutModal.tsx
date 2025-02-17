@@ -126,7 +126,19 @@ const CheckoutModal = ({ isOpen, onClose }: CheckoutModalProps) => {
         break;
     }
   };
+// Detect location from user input
+  useEffect(() => {
+    if (selectedLocation?.value !== 'custom' || !customCity.trim()) return;
 
+    const city = customCity.toLowerCase();
+    if (city.includes('lautech') || city.includes('university')) {
+      setShippingFee(deliveryPrices.lautech);
+    } else if (city.includes('ogbomoso')) {
+      setShippingFee(deliveryPrices.ogbomoso);
+    } else {
+      setShippingFee(deliveryPrices.outside.nearby);
+    }
+  }, [customCity, selectedLocation]);
   const totalAmount = useMemo(() => {
     return (totalPrice || 0) + shippingFee;
   }, [totalPrice, shippingFee]);
@@ -138,6 +150,7 @@ const CheckoutModal = ({ isOpen, onClose }: CheckoutModalProps) => {
     }
 
     setEmailWarning(false);
+    handleCartClick()
     setLoading(true);
 
     const paystack = new PaystackInline();
@@ -250,13 +263,15 @@ const CheckoutModal = ({ isOpen, onClose }: CheckoutModalProps) => {
             required
             onChange={(e) => setAddress(e.target.value)}
           />
-          <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="Email" className="mt-2 p-2 border rounded w-full" />
+          <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="Email" className="my-2 p-2 border rounded w-full" />
           {emailWarning && <p className="text-red-500 text-sm mt-1">Please enter a valid email to track your order.</p>}
                <Select options={countries} value={selectedCountry} onChange={handleCountryChange} placeholder="Select Country" />
         <Select options={stateOptions} value={selectedState} onChange={handleStateChange} placeholder="Select State" isDisabled={!selectedCountry} className="mt-2" />
         <Select options={predefinedLocations} value={selectedLocation} onChange={handleLocationChange} placeholder="Select Delivery Location" className="mt-2" />
         {selectedLocation?.value === 'custom' && <input type="text" value={customCity} onChange={(e) => setCustomCity(e.target.value)} placeholder="Enter your city" className="mt-2 p-2 border rounded w-full" />}
-          
+          <p className="text-sm text-gray-600 mt-2">
+            Delivery estimate: {shippingFee > 0 ? `₦${shippingFee.toLocaleString()}` : 'Enter city for price'}
+          </p>
         </div>
         
 
