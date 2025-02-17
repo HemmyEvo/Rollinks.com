@@ -8,7 +8,7 @@ import Image from 'next/image';
 import { useAuth } from '@clerk/nextjs';
 import { api } from '@/convex/_generated/api';
 import { useConvexAuth, useQuery } from "convex/react";
-import { useRouter } from 'next/router';
+import { useRouter } from 'next/navigation';
 interface CheckoutModalProps {
   isOpen: boolean;
   onClose: () => void;
