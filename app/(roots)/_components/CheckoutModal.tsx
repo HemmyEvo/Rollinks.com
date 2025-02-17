@@ -23,6 +23,13 @@ interface Option {
 const CheckoutModal = ({ isOpen, onClose }: CheckoutModalProps) => {
   const { totalPrice, clearCart, cartDetails } = useShoppingCart();
   const [loading, setLoading] = useState(false);
+  const router = useRouter();
+
+  const [firstName, setFirstName] = useState('');
+  const [lastName, setLastName] = useState('');
+  const [email, setEmail] = useState('');
+  const [emailWarning, setEmailWarning] = useState(false);
+
   const [selectedCountry, setSelectedCountry] = useState<Option | null>(null);
   const [selectedState, setSelectedState] = useState<Option | null>(null);
   const [stateOptions, setStateOptions] = useState<Option[]>([]);
@@ -30,24 +37,11 @@ const CheckoutModal = ({ isOpen, onClose }: CheckoutModalProps) => {
   const [customCity, setCustomCity] = useState('');
   const [shippingFee, setShippingFee] = useState(0);
   
-  const [firstName, setFirstName] = useState('');
-  const [lastName, setLastName] = useState('');
-  const [email, setEmail] = useState('');
-  const [emailWarning, setEmailWarning] = useState(false);
-
   const { isSignedIn } = useAuth();
   const { isAuthenticated } = useConvexAuth();
   const me = useQuery(api.user.getMe, isAuthenticated ? undefined : "skip");
-  const router = useRouter();
 
-  useEffect(() => {
-    if (me) {
-      setFirstName(me.firstName || '');
-      setLastName(me.lastName || '');
-      setEmail(me.email || '');
-    }
-  }, [me]);
-
+  // Delivery pricing
   const deliveryPrices = {
     lautech: 200,
     ogbomoso: 500,
@@ -67,6 +61,7 @@ const CheckoutModal = ({ isOpen, onClose }: CheckoutModalProps) => {
     { value: 'custom', label: 'Other (Enter Manually)' },
   ];
 
+  // Build the country list
   const countries = useMemo(() => {
     return data.map((country: any) => ({
       value: country.iso2,
@@ -74,6 +69,7 @@ const CheckoutModal = ({ isOpen, onClose }: CheckoutModalProps) => {
     }));
   }, []);
 
+  // When country changes, update states list
   const handleCountryChange = (selectedOption: Option | null) => {
     setSelectedCountry(selectedOption);
     setSelectedState(null);
@@ -82,7 +78,7 @@ const CheckoutModal = ({ isOpen, onClose }: CheckoutModalProps) => {
 
     if (selectedOption) {
       const country = data.find((c: any) => c.iso2 === selectedOption.value);
-      if (country && country.states) {
+      if (country?.states) {
         setStateOptions(
           country.states.map((state: any) => ({
             value: state.state_code,
@@ -131,19 +127,6 @@ const CheckoutModal = ({ isOpen, onClose }: CheckoutModalProps) => {
     }
   };
 
-  useEffect(() => {
-    if (selectedLocation?.value !== 'custom' || !customCity.trim()) return;
-
-    const city = customCity.toLowerCase();
-    if (city.includes('lautech') || city.includes('university')) {
-      setShippingFee(deliveryPrices.lautech);
-    } else if (city.includes('ogbomoso')) {
-      setShippingFee(deliveryPrices.ogbomoso);
-    } else {
-      setShippingFee(deliveryPrices.outside.nearby);
-    }
-  }, [customCity, selectedLocation]);
-
   const totalAmount = useMemo(() => {
     return (totalPrice || 0) + shippingFee;
   }, [totalPrice, shippingFee]);
@@ -157,11 +140,45 @@ const CheckoutModal = ({ isOpen, onClose }: CheckoutModalProps) => {
     setEmailWarning(false);
     setLoading(true);
 
-    // Simulate successful payment
-    setTimeout(() => {
-      const orderId = Math.floor(Math.random() * 1000000); 
-      router.push(`/order-tracking/${orderId}`);
-    }, 2000);
+    const paystack = new PaystackInline();
+
+    paystack.newTransaction({
+      key: process.env.NEXT_PUBLIC_PAYSTACK_PUBLIC_KEY || '',
+      email: email,
+      amount: totalAmount * 100,
+      currency: 'NGN',
+      metadata: {
+        custom_fields: [
+          { display_name: 'Full Name', value: `${firstName} ${lastName}` },
+          { display_name: 'Email', value: email },
+        ],
+      },
+      onSuccess: async (response: any) => {
+        const orderData = {
+          _type: 'order',
+          reference: response.reference,
+          amount: totalAmount * 100,
+          paymentDetails: { method: response.message, status: response.status },
+          customerDetails: { fullName: `${firstName} ${lastName}`, email },
+          cart: { items: cartDetails || [], total: totalPrice || 0 },
+          createdAt: new Date().toISOString(),
+        };
+
+        try {
+          const createdOrder = await client.create(orderData);
+          clearCart();
+          onClose();
+
+          //router.push(`/order-tracking/${createdOrder._id}`);
+        } catch (error) {
+          console.error('Error saving order to Sanity:', error);
+        }
+      },
+      onCancel: () => {
+        console.log('Payment Cancelled');
+        setLoading(false);
+      },
+    });
   };
 
   if (!isOpen) return null;
@@ -169,34 +186,22 @@ const CheckoutModal = ({ isOpen, onClose }: CheckoutModalProps) => {
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
       <div className="w-full max-w-3xl bg-white p-6 rounded-lg shadow-lg">
-        
-        {/* Order Summary */}
-        <div className="border-b pb-4 mb-4">
-          <h2 className="text-xl font-semibold mb-2">Order Summary</h2>
-          <div className="flex justify-between"><span>Subtotal</span><span>₦{(totalPrice || 0).toLocaleString()}</span></div>
-          <div className="flex justify-between"><span>Shipping</span><span>₦{shippingFee.toLocaleString()}</span></div>
-          <div className="flex justify-between font-bold"><span>Total</span><span>₦{totalAmount.toLocaleString()}</span></div>
-        </div>
+        <h2 className="text-xl font-semibold mb-2">Checkout</h2>
 
-        {/* User Information */}
-        <div className="mb-4">
-          <h2 className="text-xl font-semibold mb-2">Your Information</h2>
-          <input type="text" value={firstName} onChange={(e) => setFirstName(e.target.value)} placeholder="First Name" className="mt-2 p-2 border rounded w-full" />
-          <input type="text" value={lastName} onChange={(e) => setLastName(e.target.value)} placeholder="Last Name" className="mt-2 p-2 border rounded w-full" />
-          <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="Email" className="mt-2 p-2 border rounded w-full" />
-          {emailWarning && <p className="text-red-500 text-sm mt-1">Please enter a valid email to track your order.</p>}
-        </div>
+        {/* Name and Email Inputs */}
+        <input type="text" placeholder="First Name" value={firstName} onChange={(e) => setFirstName(e.target.value)} className="p-2 border rounded w-full mt-2" />
+        <input type="text" placeholder="Last Name" value={lastName} onChange={(e) => setLastName(e.target.value)} className="p-2 border rounded w-full mt-2" />
+        <input type="email" placeholder="Email Address" value={email} onChange={(e) => setEmail(e.target.value)} className="p-2 border rounded w-full mt-2" />
+        {emailWarning && <p className="text-red-500 text-sm">Enter a valid email for transaction history</p>}
 
-        {/* Payment Section */}
-        <div className="p-4 border rounded-md bg-gray-50 flex items-center justify-between">
-          <Image src="/paystack.png" width={150} height={50} alt="Paystack" />
-          <button className="bg-blue-600 text-white px-4 py-2 rounded" onClick={handlePayment} disabled={loading}>
-            {loading ? "Processing..." : "Pay Now"}
+        {/* Payment Button */}
+        <div className="mt-4">
+          <button className="w-full bg-blue-600 text-white py-2 rounded" onClick={handlePayment} disabled={loading}>
+            {loading ? 'Processing...' : 'Pay Now'}
           </button>
         </div>
 
-        {/* Close Button */}
-        <button className="w-full bg-gray-500 text-white py-2 rounded mt-4" onClick={onClose}>Cancel</button>
+        <button className="w-full bg-gray-500 text-white py-2 rounded mt-2" onClick={onClose}>Cancel</button>
       </div>
     </div>
   );
