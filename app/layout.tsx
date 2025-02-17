@@ -9,7 +9,7 @@ import {Toaster} from "react-hot-toast"
 import { ConvexClientProvider } from "@/provider/ConvexProvider";
 import { ClerkLoading } from "@clerk/nextjs";
 import Loading from "@/components/ui/Loading";
-
+import React from 'react';
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
   variable: "--font-geist-sans",
@@ -35,7 +35,9 @@ export const metadata: Metadata = {
   title: "Rollinks Store",
   description: "This is a skincare store",
 };
-
+React.useEffect(() => {
+    if(window.document.fonts.status !== 'loaded') return <Loading />  
+  }, []);
 export default function RootLayout({
   children,
 }: Readonly<{
