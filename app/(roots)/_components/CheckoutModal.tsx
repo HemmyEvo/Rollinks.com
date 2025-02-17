@@ -154,11 +154,7 @@ const CheckoutModal = ({ isOpen, onClose }: CheckoutModalProps) => {
             variable_name: 'full_name',
             value: `${firstName} ${lastName}`,
           },
-          {
-            display_name: 'Address',
-            variable_name: 'address',
-            value: address,
-          },
+          
           {
             display_name: 'City',
             variable_name: 'city',
@@ -226,7 +222,13 @@ const CheckoutModal = ({ isOpen, onClose }: CheckoutModalProps) => {
           <input type="text" value={lastName} onChange={(e) => setLastName(e.target.value)} placeholder="Last Name" className="mt-2 p-2 border rounded w-full" />
           <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="Email" className="mt-2 p-2 border rounded w-full" />
           {emailWarning && <p className="text-red-500 text-sm mt-1">Please enter a valid email to track your order.</p>}
+               <Select options={countries} value={selectedCountry} onChange={handleCountryChange} placeholder="Select Country" />
+        <Select options={stateOptions} value={selectedState} onChange={handleStateChange} placeholder="Select State" isDisabled={!selectedCountry} className="mt-2" />
+        <Select options={predefinedLocations} value={selectedLocation} onChange={handleLocationChange} placeholder="Select Delivery Location" className="mt-2" />
+        {selectedLocation?.value === 'custom' && <input type="text" value={customCity} onChange={(e) => setCustomCity(e.target.value)} placeholder="Enter your city" className="mt-2 p-2 border rounded w-full" />}
+          
         </div>
+        
 
         {/* Payment Section */}
         <div className="p-4 border rounded-md bg-gray-50 flex items-center justify-between">
