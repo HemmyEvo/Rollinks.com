@@ -9,7 +9,6 @@ import { useAuth } from '@clerk/nextjs';
 import { api } from '@/convex/_generated/api';
 import { useConvexAuth, useQuery } from "convex/react";
 import { useRouter } from 'next/router';
-p
 interface CheckoutModalProps {
   isOpen: boolean;
   onClose: () => void;
