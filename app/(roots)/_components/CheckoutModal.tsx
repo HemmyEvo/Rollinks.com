@@ -8,6 +8,7 @@ import Image from 'next/image';
 import { useAuth } from '@clerk/nextjs';
 import { api } from '@/convex/_generated/api';
 import { useConvexAuth, useQuery } from "convex/react";
+import { useRouter } from 'next/router';
 
 interface CheckoutModalProps {
   isOpen: boolean;
@@ -20,21 +21,33 @@ interface Option {
 }
 
 const CheckoutModal = ({ isOpen, onClose }: CheckoutModalProps) => {
-  const { totalPrice, clearCart, handleCartClick, cartDetails } = useShoppingCart();
+  const { totalPrice, clearCart, cartDetails } = useShoppingCart();
   const [loading, setLoading] = useState(false);
-
   const [selectedCountry, setSelectedCountry] = useState<Option | null>(null);
   const [selectedState, setSelectedState] = useState<Option | null>(null);
   const [stateOptions, setStateOptions] = useState<Option[]>([]);
   const [selectedLocation, setSelectedLocation] = useState<Option | null>(null);
   const [customCity, setCustomCity] = useState('');
   const [shippingFee, setShippingFee] = useState(0);
+  
+  const [firstName, setFirstName] = useState('');
+  const [lastName, setLastName] = useState('');
+  const [email, setEmail] = useState('');
+  const [emailWarning, setEmailWarning] = useState(false);
 
   const { isSignedIn } = useAuth();
   const { isAuthenticated } = useConvexAuth();
   const me = useQuery(api.user.getMe, isAuthenticated ? undefined : "skip");
+  const router = useRouter();
 
-  // Delivery pricing
+  useEffect(() => {
+    if (me) {
+      setFirstName(me.firstName || '');
+      setLastName(me.lastName || '');
+      setEmail(me.email || '');
+    }
+  }, [me]);
+
   const deliveryPrices = {
     lautech: 200,
     ogbomoso: 500,
@@ -54,7 +67,6 @@ const CheckoutModal = ({ isOpen, onClose }: CheckoutModalProps) => {
     { value: 'custom', label: 'Other (Enter Manually)' },
   ];
 
-  // Build the country list
   const countries = useMemo(() => {
     return data.map((country: any) => ({
       value: country.iso2,
@@ -62,7 +74,6 @@ const CheckoutModal = ({ isOpen, onClose }: CheckoutModalProps) => {
     }));
   }, []);
 
-  // When country changes, update states list
   const handleCountryChange = (selectedOption: Option | null) => {
     setSelectedCountry(selectedOption);
     setSelectedState(null);
@@ -115,12 +126,11 @@ const CheckoutModal = ({ isOpen, onClose }: CheckoutModalProps) => {
         setShippingFee(deliveryPrices.outside.far);
         break;
       case 'custom':
-        setShippingFee(0); // Wait for manual city input
+        setShippingFee(0);
         break;
     }
   };
 
-  // Detect location from user input
   useEffect(() => {
     if (selectedLocation?.value !== 'custom' || !customCity.trim()) return;
 
@@ -138,58 +148,55 @@ const CheckoutModal = ({ isOpen, onClose }: CheckoutModalProps) => {
     return (totalPrice || 0) + shippingFee;
   }, [totalPrice, shippingFee]);
 
+  const handlePayment = () => {
+    if (!email.includes('@')) {
+      setEmailWarning(true);
+      return;
+    }
+
+    setEmailWarning(false);
+    setLoading(true);
+
+    // Simulate successful payment
+    setTimeout(() => {
+      const orderId = Math.floor(Math.random() * 1000000); 
+      router.push(`/order-tracking/${orderId}`);
+    }, 2000);
+  };
+
   if (!isOpen) return null;
 
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
       <div className="w-full max-w-3xl bg-white p-6 rounded-lg shadow-lg">
+        
         {/* Order Summary */}
         <div className="border-b pb-4 mb-4">
           <h2 className="text-xl font-semibold mb-2">Order Summary</h2>
-          <div className="flex justify-between">
-            <span>Subtotal</span>
-            <span>₦{(totalPrice || 0).toLocaleString()}</span>
-          </div>
-          <div className="flex justify-between">
-            <span>Shipping</span>
-            <span>₦{shippingFee.toLocaleString()}</span>
-          </div>
-          <div className="flex justify-between font-bold">
-            <span>Total</span>
-            <span>₦{totalAmount.toLocaleString()}</span>
-          </div>
+          <div className="flex justify-between"><span>Subtotal</span><span>₦{(totalPrice || 0).toLocaleString()}</span></div>
+          <div className="flex justify-between"><span>Shipping</span><span>₦{shippingFee.toLocaleString()}</span></div>
+          <div className="flex justify-between font-bold"><span>Total</span><span>₦{totalAmount.toLocaleString()}</span></div>
         </div>
 
-        {/* Shipping Section */}
+        {/* User Information */}
         <div className="mb-4">
-          <h2 className="text-xl font-semibold mb-2">Shipping Information</h2>
-          <Select options={countries} value={selectedCountry} onChange={handleCountryChange} placeholder="Select Country" />
-          <Select options={stateOptions} value={selectedState} onChange={handleStateChange} placeholder="Select State" isDisabled={!selectedCountry} className="mt-2" />
-
-          <Select options={predefinedLocations} value={selectedLocation} onChange={handleLocationChange} placeholder="Select Delivery Location" className="mt-2" />
-          
-          {selectedLocation?.value === 'custom' && (
-            <input type="text" value={customCity} onChange={(e) => setCustomCity(e.target.value)} placeholder="Enter your city" className="mt-2 p-2 border rounded w-full" />
-          )}
-
-          <p className="text-sm text-gray-600 mt-2">
-            Delivery estimate: {shippingFee > 0 ? `₦${shippingFee.toLocaleString()}` : 'Enter city for price'}
-          </p>
+          <h2 className="text-xl font-semibold mb-2">Your Information</h2>
+          <input type="text" value={firstName} onChange={(e) => setFirstName(e.target.value)} placeholder="First Name" className="mt-2 p-2 border rounded w-full" />
+          <input type="text" value={lastName} onChange={(e) => setLastName(e.target.value)} placeholder="Last Name" className="mt-2 p-2 border rounded w-full" />
+          <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="Email" className="mt-2 p-2 border rounded w-full" />
+          {emailWarning && <p className="text-red-500 text-sm mt-1">Please enter a valid email to track your order.</p>}
         </div>
 
         {/* Payment Section */}
-        <div className="mb-4">
-          <h2 className="text-xl font-semibold mb-2">Payment</h2>
-          <div className="p-4 border rounded-md bg-gray-50 flex items-center justify-between">
-            <Image src="/paystack.png" width={150} height={50} alt="Paystack" />
-            <button className="bg-blue-600 text-white px-4 py-2 rounded" onClick={() => alert("Proceed to Paystack")}>
-              Pay Now
-            </button>
-          </div>
+        <div className="p-4 border rounded-md bg-gray-50 flex items-center justify-between">
+          <Image src="/paystack.png" width={150} height={50} alt="Paystack" />
+          <button className="bg-blue-600 text-white px-4 py-2 rounded" onClick={handlePayment} disabled={loading}>
+            {loading ? "Processing..." : "Pay Now"}
+          </button>
         </div>
 
         {/* Close Button */}
-        <button className="w-full bg-gray-500 text-white py-2 rounded" onClick={onClose}>Cancel</button>
+        <button className="w-full bg-gray-500 text-white py-2 rounded mt-4" onClick={onClose}>Cancel</button>
       </div>
     </div>
   );
