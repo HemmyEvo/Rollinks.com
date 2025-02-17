@@ -6,9 +6,7 @@ import Link from 'next/link'
 import React from 'react'
 import { useShoppingCart } from 'use-shopping-cart'
 const Header = () => {
-  React.useEffect(() => {
-    if(window.document.fonts.status !== 'loaded') return 
-  }, []);
+  
   const [isToggle, setisToggle] = React.useState(false)
   const {cartCount, handleCartClick} = useShoppingCart()
   return (
