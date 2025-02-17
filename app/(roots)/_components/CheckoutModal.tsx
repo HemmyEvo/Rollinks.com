@@ -25,6 +25,7 @@ const CheckoutModal = ({ isOpen, onClose }: CheckoutModalProps) => {
   const router = useRouter();
 
   const [firstName, setFirstName] = useState('');
+  const [phone, setPhone] = useState('');
   const [lastName, setLastName] = useState('');
   const [email, setEmail] = useState('');
   const [emailWarning, setEmailWarning] = useState(false);
