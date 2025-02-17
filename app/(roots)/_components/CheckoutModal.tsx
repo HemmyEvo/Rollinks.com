@@ -9,7 +9,7 @@ import { useAuth } from '@clerk/nextjs';
 import { api } from '@/convex/_generated/api';
 import { useConvexAuth, useQuery } from "convex/react";
 import { useRouter } from 'next/router';
-
+p
 interface CheckoutModalProps {
   isOpen: boolean;
   onClose: () => void;
@@ -29,7 +29,7 @@ const CheckoutModal = ({ isOpen, onClose }: CheckoutModalProps) => {
   const [lastName, setLastName] = useState('');
   const [email, setEmail] = useState('');
   const [emailWarning, setEmailWarning] = useState(false);
-
+  const [address, setAddress] = useState('');
   const [selectedCountry, setSelectedCountry] = useState<Option | null>(null);
   const [selectedState, setSelectedState] = useState<Option | null>(null);
   const [stateOptions, setStateOptions] = useState<Option[]>([]);
@@ -140,7 +140,7 @@ const CheckoutModal = ({ isOpen, onClose }: CheckoutModalProps) => {
     setEmailWarning(false);
     setLoading(true);
 
-    
+    const paystack = new PaystackInline();
     paystack.newTransaction({
       key: process.env.NEXT_PUBLIC_PAYSTACK_PUBLIC_KEY || '',
       email: email,
