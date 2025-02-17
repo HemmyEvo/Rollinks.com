@@ -20,7 +20,7 @@ interface Option {
 }
 
 const CheckoutModal = ({ isOpen, onClose }: CheckoutModalProps) => {
-  const { totalPrice, clearCart, cartDetails } = useShoppingCart();
+  const { totalPrice, clearCart, handleCartClick, cartDetails } = useShoppingCart();
   const [loading, setLoading] = useState(false);
   const router = useRouter();
 
