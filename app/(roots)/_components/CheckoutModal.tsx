@@ -166,7 +166,7 @@ const CheckoutModal = ({ isOpen, onClose }: CheckoutModalProps) => {
           {
             display_name: 'City',
             variable_name: 'city',
-            value: city,
+            value: selectedLocation || customCity,
           },
           {
             display_name: 'State',
@@ -195,7 +195,7 @@ const CheckoutModal = ({ isOpen, onClose }: CheckoutModalProps) => {
             phone: phone,
             address: {
               street: address,
-              city: city,
+              city:selectedLocation || customCity,
               state: selectedState?.label || '',
               country: selectedCountry?.label || '',
             },
