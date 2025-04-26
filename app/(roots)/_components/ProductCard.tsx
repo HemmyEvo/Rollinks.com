@@ -69,13 +69,13 @@ const ProductCard = ({ id, title, price, description, slug, image, discount }: P
           whileHover={{ y: -5 }}
         >
           {/* Image Container */}
-          <div className="relative h-64 w-full overflow-hidden">
+          <div className="relative h-48 sm:h-56 md:h-64 w-full overflow-hidden">
             <Image
               src={image}
               alt={title}
               fill
               className="object-cover object-center transition-transform duration-500 group-hover:scale-105"
-              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+              sizes="(max-width: 640px) 100vw, (max-width: 768px) 50vw, (max-width: 1024px) 33vw, 25vw"
               priority
             />
             
@@ -87,7 +87,7 @@ const ProductCard = ({ id, title, price, description, slug, image, discount }: P
               transition={{ duration: 0.3 }}
             >
               <motion.div
-                className="absolute top-4 right-4 flex flex-col space-y-3"
+                className="absolute top-3 right-3 sm:top-4 sm:right-4 flex flex-col space-y-2 sm:space-y-3"
                 initial={{ y: -20, opacity: 0 }}
                 animate={{ 
                   y: isHovered ? 0 : -20,
@@ -96,12 +96,12 @@ const ProductCard = ({ id, title, price, description, slug, image, discount }: P
                 transition={{ delay: 0.1 }}
               >
                 <Link href={`/product/${slug}`}>
-                  <button className="p-2 bg-white/90 rounded-full shadow-md hover:bg-white transition-colors">
-                    <Eye className="w-5 h-5 text-gray-700" />
+                  <button className="p-1.5 sm:p-2 bg-white/90 rounded-full shadow-md hover:bg-white transition-colors">
+                    <Eye className="w-4 h-4 sm:w-5 sm:h-5 text-gray-700" />
                   </button>
                 </Link>
-                <button className="p-2 bg-white/90 rounded-full shadow-md hover:bg-white transition-colors">
-                  <Heart className="w-5 h-5 text-rose-500" />
+                <button className="p-1.5 sm:p-2 bg-white/90 rounded-full shadow-md hover:bg-white transition-colors">
+                  <Heart className="w-4 h-4 sm:w-5 sm:h-5 text-rose-500" />
                 </button>
               </motion.div>
             </motion.div>
@@ -109,7 +109,7 @@ const ProductCard = ({ id, title, price, description, slug, image, discount }: P
             {/* Discount Badge */}
             {discount && (
               <motion.div 
-                className="absolute top-4 left-4 bg-amber-600 text-white text-xs font-bold px-2 py-1 rounded-full"
+                className="absolute top-3 left-3 sm:top-4 sm:left-4 bg-amber-600 text-white text-xs font-bold px-2 py-1 rounded-full"
                 initial={{ scale: 0 }}
                 animate={{ scale: 1 }}
                 transition={{ delay: 0.3 }}
@@ -120,37 +120,37 @@ const ProductCard = ({ id, title, price, description, slug, image, discount }: P
           </div>
 
           {/* Product Info */}
-          <div className="p-4">
+          <div className="p-3 sm:p-4">
             <Link href={`/product/${slug}`}>
-              <h3 className="font-medium text-gray-800 hover:text-amber-600 transition-colors line-clamp-1">
+              <h3 className="font-medium text-gray-800 hover:text-amber-600 transition-colors line-clamp-1 text-sm sm:text-base">
                 {title}
               </h3>
             </Link>
             
-            <div className="flex items-center justify-between mt-2">
-              <div className="flex items-center space-x-2">
-                <span className="text-lg font-bold text-amber-700">
+            <div className="flex items-center justify-between mt-1 sm:mt-2">
+              <div className="flex items-center space-x-1 sm:space-x-2">
+                <span className="text-sm sm:text-lg font-bold text-amber-700">
                   ₦{price.toFixed(2)}
                 </span>
                 {discount && (
-                  <span className="text-sm text-gray-400 line-through">
+                  <span className="text-xs sm:text-sm text-gray-400 line-through">
                     ₦{discount.toFixed(2)}
                   </span>
                 )}
               </div>
             </div>
 
-            {/* Quantity Selector */}
-            <div className="mt-4 flex items-center justify-between">
+            {/* Quantity Selector and Add to Cart - Stack on small screens */}
+            <div className="mt-3 sm:mt-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
               <motion.div 
-                className="flex items-center border border-gray-200 rounded-full overflow-hidden bg-white/90"
+                className="flex items-center border border-gray-200 rounded-full overflow-hidden bg-white/90 w-full sm:w-auto"
                 whileTap={{ scale: 0.95 }}
               >
                 <button 
                   className="px-2 py-1 text-gray-600 hover:bg-amber-50 transition-colors"
                   onClick={() => handleQuantityChange(quantity - 1)}
                 >
-                  <Minus className="w-4 h-4" />
+                  <Minus className="w-3 h-3 sm:w-4 sm:h-4" />
                 </button>
                 <input
                   type="number"
@@ -158,20 +158,20 @@ const ProductCard = ({ id, title, price, description, slug, image, discount }: P
                   max="100"
                   value={quantity}
                   onChange={(e) => handleQuantityChange(parseInt(e.target.value) || 1)}
-                  className="w-12 text-center bg-transparent outline-none text-sm"
+                  className="w-8 sm:w-12 text-center bg-transparent outline-none text-xs sm:text-sm"
                 />
                 <button 
                   className="px-2 py-1 text-gray-600 hover:bg-amber-50 transition-colors"
                   onClick={() => handleQuantityChange(quantity + 1)}
                 >
-                  <Plus className="w-4 h-4" />
+                  <Plus className="w-3 h-3 sm:w-4 sm:h-4" />
                 </button>
               </motion.div>
 
-              {/* Add to Cart Button */}
+              {/* Add to Cart Button - Full width on mobile */}
               <motion.button
                 onClick={handleAddToCart}
-                className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
+                className={`w-full sm:w-auto px-3 py-1.5 sm:px-4 sm:py-2 rounded-full text-xs sm:text-sm font-medium transition-colors ${
                   addMessage === "Added" 
                     ? "bg-green-500 text-white" 
                     : "bg-amber-600 hover:bg-amber-700 text-white"
@@ -179,7 +179,7 @@ const ProductCard = ({ id, title, price, description, slug, image, discount }: P
                 whileHover={addMessage !== "Added" ? { scale: 1.05 } : {}}
                 whileTap={addMessage !== "Added" ? { scale: 0.95 } : {}}
               >
-                <div className="flex items-center space-x-1">
+                <div className="flex items-center justify-center sm:justify-start space-x-1">
                   <span>{addMessage}</span>
                   <AnimatePresence>
                     {addMessage === "Added" && (
@@ -189,7 +189,7 @@ const ProductCard = ({ id, title, price, description, slug, image, discount }: P
                         exit={{ scale: 0 }}
                         transition={{ type: "spring" }}
                       >
-                        <CheckCircle className="w-4 h-4" />
+                        <CheckCircle className="w-3 h-3 sm:w-4 sm:h-4" />
                       </motion.span>
                     )}
                   </AnimatePresence>
@@ -203,13 +203,13 @@ const ProductCard = ({ id, title, price, description, slug, image, discount }: P
         <AnimatePresence>
           {addMessage === "Added" && (
             <motion.div
-              className="absolute -top-3 -right-3 bg-green-500 text-white rounded-full p-2 shadow-lg"
+              className="absolute -top-2 -right-2 sm:-top-3 sm:-right-3 bg-green-500 text-white rounded-full p-1 sm:p-2 shadow-lg"
               initial={{ scale: 0, rotate: -45 }}
               animate={{ scale: 1, rotate: 0 }}
               exit={{ scale: 0, rotate: 45 }}
               transition={{ type: "spring", damping: 10, stiffness: 100 }}
             >
-              <CheckCircle className="w-5 h-5" />
+              <CheckCircle className="w-4 h-4 sm:w-5 sm:h-5" />
             </motion.div>
           )}
         </AnimatePresence>
