@@ -5,77 +5,218 @@ import { Heart, LucideAlignRight, MenuIcon, Search, Settings, ShoppingCart, User
 import Link from 'next/link'
 import React from 'react'
 import { useShoppingCart } from 'use-shopping-cart'
+import { motion } from 'framer-motion'
+
 const Header = () => {
-  
   const [isToggle, setisToggle] = React.useState(false)
   const {cartCount, handleCartClick} = useShoppingCart()
+  
   return (
-    <div className="h-[56px] bg-[#b63333] relative">
-      <div className='flex fixed inset-x-0 items-center py-2 z-50 bg-[#e09d22dc] justify-between px-8'>
-        <p className="logo font-[gerald]  text-4xl flex items-end font-medium tracking-wider text-[#f0ebf0] ">
-          <span className=' font-semibold text-[gold] '>R</span>ollinks
-        </p>
-        <section className='hidden space-x-4 items-center min-[874px]:flex '>
-        <div className="menu-items space-x-3 text-[#ffecd7] text-sm">
-        <Link className='hover:text-[#583e1be0]' href={"/"}>Home</Link>
-            <Link className='hover:text-[#583e1be0]' href={"/product"}>Products</Link>
-            <Link className='hover:text-[#583e1be0]' href={"/about-us"}>About</Link>
-            <Link className='hover:text-[#583e1be0]' href={"/history"}>Transaction history</Link>
-            <Link className='hover:text-[#583e1be0]' href={"/contact"}>Contact</Link>
-       
-        </div>
-        <div className="search-bar flex items-center space-x-2 ">
-          <input type="text" className='outline-none rounded-xl px-2 py-1 text-sm' placeholder='Search for products...' name="" id="" />
-          <Search className='w-5 text-[#ffecd7] ' />
-        </div>
-        </section>
-        <div className="icon space-x-5 items-center flex">
-          <div onClick={() => handleCartClick()} className="cart  cursor-pointer relative">
-            <ShoppingCart className='w-8 h-8'/>
-            <span className='text-sm absolute -right-2 -top-2 px-1  bg-black text-white flex items-center justify-center  rounded-full'>
-              {cartCount && (cartCount < 100 ? cartCount : "99+")}
-            </span>
-          </div>
-          <SignedIn>
-          <UserButton />
-          </SignedIn>
-          <SignedOut>
-          <SignInButton>
-            <Button>Sign In</Button>
-          </SignInButton>
-          </SignedOut>
-          <div className="menu max-[874px]:flex hidden">
-            {!isToggle ?  <LucideAlignRight onClick={() => setisToggle(prev => !prev)} className='cursor-pointer'/> : <X onClick={() => setisToggle(prev => !prev)} className='cursor-pointer'/>}
-          </div>
-        </div>
-        { isToggle &&(
-          <div className={`fixed max-[874px]:flex hidden z-50 top-14 py-4 px-7 bg-[#070707da] bottom-0 left-0 right-0 `}>
-          <div className="search relative h-full flex flex-col w-full">
-          <div className="search-input overflow-hidden items-center flex px-4 w-full h-10 rounded-full bg-[#e2e2e2]">
-            <input type="text" name="" className='flex-1 outline-none bg-transparent' placeholder='Search for products...' id="" />
-            <Search />
-          </div>
-          <div className="bg-white relative flex-1 mt-2 w-full">
-            <div className="absolute w-full top-0 bg-[#0080003a] hidden h-[50vh]"></div>
-           <div className='flex flex-col px-5 py-10 space-y-5'>
-           <Link onClick={() => setisToggle(prev => !prev)} className='hover:bg-[#583e1be0] hover:text-white bg-[gold] px-5 py-1 shadow-md rounded-full ' href={"/"}>Home</Link>
-            <Link onClick={() => setisToggle(prev => !prev)} className='hover:bg-[#583e1be0] hover:text-white bg-[gold] px-5 py-1 shadow-md rounded-full' href={"/product"}>Products</Link>
-            <Link onClick={() => setisToggle(prev => !prev)} className='hover:bg-[#583e1be0] hover:text-white bg-[gold] px-5 py-1 shadow-md rounded-full' href={"/about-us"}>About</Link>
-            <Link onClick={() => setisToggle(prev => !prev)} className='hover:bg-[#583e1be0] hover:text-white bg-[gold] px-5 py-1 shadow-md rounded-full' href={"/history"}>Transaction history</Link>
-            <Link onClick={() => setisToggle(prev => !prev)} className='hover:bg-[#583e1be0] hover:text-white bg-[gold] px-5 py-1 shadow-md rounded-full' href={"/contact"}>Contact</Link>
-           </div>
-           <div className="footer absolute w-full px-5 bottom-0">
-           <p className="text-sm text-gray-500 text-center  dark:text-gray-400">© 2025 HemmyEvo™. All Rights Reserved.
-           </p>
-           </div>
-          </div>
+    <header className="fixed inset-x-0 top-0 z-50">
+      {/* Glassmorphism Navbar */}
+      <nav className="backdrop-blur-lg bg-white/80 border-b border-white/20 shadow-sm">
+        <div className="container mx-auto px-4">
+          <div className="flex items-center justify-between h-16">
+            {/* Logo */}
+            <motion.div 
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.5 }}
+              className="flex items-center"
+            >
+              <Link href="/" className="text-2xl font-bold text-amber-800 flex items-end">
+                <span className="text-3xl text-amber-600">R</span>ollinks
+              </Link>
+            </motion.div>
+
+            {/* Desktop Navigation */}
+            <div className="hidden md:flex items-center space-x-8">
+              <div className="flex space-x-6">
+                <Link 
+                  href="/" 
+                  className="text-gray-700 hover:text-amber-600 transition-colors font-medium text-sm"
+                >
+                  Home
+                </Link>
+                <Link 
+                  href="/product" 
+                  className="text-gray-700 hover:text-amber-600 transition-colors font-medium text-sm"
+                >
+                  Products
+                </Link>
+                <Link 
+                  href="/about-us" 
+                  className="text-gray-700 hover:text-amber-600 transition-colors font-medium text-sm"
+                >
+                  About
+                </Link>
+                <Link 
+                  href="/history" 
+                  className="text-gray-700 hover:text-amber-600 transition-colors font-medium text-sm"
+                >
+                  History
+                </Link>
+                <Link 
+                  href="/contact" 
+                  className="text-gray-700 hover:text-amber-600 transition-colors font-medium text-sm"
+                >
+                  Contact
+                </Link>
+              </div>
+
+              {/* Search Bar */}
+              <motion.div 
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 0.2 }}
+                className="relative"
+              >
+                <input
+                  type="text"
+                  placeholder="Search products..."
+                  className="bg-white/70 border border-gray-200 rounded-full py-1.5 px-4 text-sm focus:outline-none focus:ring-2 focus:ring-amber-300 focus:border-transparent w-48"
+                />
+                <Search className="absolute right-3 top-2 text-gray-400 w-4 h-4" />
+              </motion.div>
+            </div>
+
+            {/* Icons */}
+            <div className="flex items-center space-x-4">
+              {/* Cart */}
+              <motion.button
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                onClick={() => handleCartClick()}
+                className="relative p-2 rounded-full hover:bg-amber-50 transition-colors"
+              >
+                <ShoppingCart className="w-5 h-5 text-gray-700" />
+                {cartCount > 0 && (
+                  <span className="absolute -top-1 -right-1 bg-amber-600 text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center">
+                    {cartCount < 100 ? cartCount : "99+"}
+                  </span>
+                )}
+              </motion.button>
+
+              {/* User Auth */}
+              <div className="hidden md:block">
+                <SignedIn>
+                  <UserButton 
+                    appearance={{
+                      elements: {
+                        userButtonAvatarBox: "w-8 h-8",
+                        userButtonPopoverCard: "backdrop-blur-lg bg-white/90"
+                      }
+                    }}
+                  />
+                </SignedIn>
+                <SignedOut>
+                  <SignInButton>
+                    <Button 
+                      variant="outline" 
+                      className="bg-transparent border-amber-600 text-amber-700 hover:bg-amber-50 hover:text-amber-800"
+                    >
+                      Sign In
+                    </Button>
+                  </SignInButton>
+                </SignedOut>
+              </div>
+
+              {/* Mobile Menu Button */}
+              <button 
+                onClick={() => setisToggle(!isToggle)}
+                className="md:hidden p-2 rounded-full hover:bg-amber-50 transition-colors"
+              >
+                {!isToggle ? (
+                  <LucideAlignRight className="w-5 h-5 text-gray-700" />
+                ) : (
+                  <X className="w-5 h-5 text-gray-700" />
+                )}
+              </button>
             </div>
           </div>
-          )
-        }
-        
-    </div>
-    </div>
+        </div>
+
+        {/* Mobile Menu */}
+        {isToggle && (
+          <motion.div 
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
+            transition={{ duration: 0.2 }}
+            className="md:hidden absolute top-16 left-0 right-0 bg-white/95 backdrop-blur-lg border-t border-white/20 shadow-lg"
+          >
+            <div className="container mx-auto px-4 py-4">
+              <div className="flex flex-col space-y-4">
+                <Link 
+                  href="/" 
+                  onClick={() => setisToggle(false)}
+                  className="text-gray-700 hover:text-amber-600 transition-colors font-medium py-2 border-b border-gray-100"
+                >
+                  Home
+                </Link>
+                <Link 
+                  href="/product" 
+                  onClick={() => setisToggle(false)}
+                  className="text-gray-700 hover:text-amber-600 transition-colors font-medium py-2 border-b border-gray-100"
+                >
+                  Products
+                </Link>
+                <Link 
+                  href="/about-us" 
+                  onClick={() => setisToggle(false)}
+                  className="text-gray-700 hover:text-amber-600 transition-colors font-medium py-2 border-b border-gray-100"
+                >
+                  About
+                </Link>
+                <Link 
+                  href="/history" 
+                  onClick={() => setisToggle(false)}
+                  className="text-gray-700 hover:text-amber-600 transition-colors font-medium py-2 border-b border-gray-100"
+                >
+                  History
+                </Link>
+                <Link 
+                  href="/contact" 
+                  onClick={() => setisToggle(false)}
+                  className="text-gray-700 hover:text-amber-600 transition-colors font-medium py-2 border-b border-gray-100"
+                >
+                  Contact
+                </Link>
+              </div>
+
+              <div className="mt-6">
+                <div className="relative mb-4">
+                  <input
+                    type="text"
+                    placeholder="Search products..."
+                    className="bg-white border border-gray-200 rounded-full py-2 px-4 text-sm focus:outline-none focus:ring-2 focus:ring-amber-300 focus:border-transparent w-full"
+                  />
+                  <Search className="absolute right-3 top-2.5 text-gray-400 w-4 h-4" />
+                </div>
+
+                <div className="pt-4 border-t border-gray-100">
+                  <SignedIn>
+                    <div className="flex justify-center">
+                      <UserButton />
+                    </div>
+                  </SignedIn>
+                  <SignedOut>
+                    <SignInButton>
+                      <Button 
+                        variant="default" 
+                        className="w-full bg-amber-600 hover:bg-amber-700"
+                      >
+                        Sign In
+                      </Button>
+                    </SignInButton>
+                  </SignedOut>
+                </div>
+              </div>
+            </div>
+          </motion.div>
+        )}
+      </nav>
+    </header>
   )
 }
 
