@@ -35,7 +35,7 @@ export interface fullProduct {
   discountPrice?: number;
   category: SanityReference;
   categoryName: string;
-  description: string | any[]; // For portable text
+  description: string; // For portable text
   ingredients?: string[];
   benefits?: string[];
   rating?: number;
