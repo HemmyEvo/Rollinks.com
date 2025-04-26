@@ -6,48 +6,52 @@ export interface simplifiedProduct {
     price: number;
     categoryName: string;
 }
-interface SanityReference {
-  _ref: string;
-  _type: 'reference';
+export interface ProductImage {
+  _key: string;
+  asset: {
+    _ref: string;
+    _type: string;
+  };
+  alt?: string;
 }
 
-
-interface SeoMetadata {
+export interface SEO {
   metaTitle?: string;
   metaDescription?: string;
   keywords?: string[];
 }
 
-interface ProductSpecification {
-  key: string;
-  value: string;
+export interface CategoryReference {
+  _ref: string;
+  _type: string;
+  name?: string; // This would be populated when using the 'category.name' in your preview
 }
 
 export interface fullProduct {
   _id: string;
-  _createdAt?: string;
-  _updatedAt?: string;
+  _type: 'product';
+  _createdAt: string;
+  _updatedAt: string;
+  _rev: string;
   name: string;
-  slug: string;
-  images: any;
+  slug: {
+    _type: 'slug';
+    current: string;
+  };
+  images: ProductImage[];
   price: number;
-  originalPrice?: number;
   discountPrice?: number;
-  category: SanityReference;
-  categoryName: string;
-  description: string; // For portable text
+  category: CategoryReference;
+  categoryName?: string; // This would be populated when joining data
+  description: any[]; // Array of block content or images
   ingredients?: string[];
   benefits?: string[];
   rating?: number;
-  reviewCount?: number;
-  isNew?: boolean;
-  isBestSeller?: boolean;
-  skinType?: ('dry' | 'oily' | 'combination' | 'sensitive' | 'normal')[];
+  isNew: boolean;
+  isBestSeller: boolean;
+  skinType?: string[];
   volume?: string;
   howToUse?: string;
-  inStock?: boolean;
-  seo?: SeoMetadata;
-  specifications?: ProductSpecification[];
-  sku?: string;
-  brand?: SanityReference;
+  inStock: boolean;
+  seo?: SEO;
 }
