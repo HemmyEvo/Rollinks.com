@@ -102,7 +102,7 @@ export default function ProductPage() {
               )}
             </div>
             <div className="grid grid-cols-4 gap-2 p-4 border-t border-white/20">
-              {data.images?.map((image, index) => (
+              {data.images?.map((image : any, index) => (
                 <button
                   key={index}
                   onClick={() => setActiveImage(index)}
