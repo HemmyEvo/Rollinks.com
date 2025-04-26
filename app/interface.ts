@@ -11,11 +11,6 @@ interface SanityReference {
   _type: 'reference';
 }
 
-interface SanityImage {
-  _key: string;
-  asset: SanityReference;
-  alt?: string;
-}
 
 interface SeoMetadata {
   metaTitle?: string;
@@ -34,7 +29,7 @@ export interface fullProduct {
   _updatedAt?: string;
   name: string;
   slug: string;
-  images: SanityImage[];
+  images: any;
   price: number;
   originalPrice?: number;
   discountPrice?: number;
