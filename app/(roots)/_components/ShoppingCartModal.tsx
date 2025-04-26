@@ -17,7 +17,7 @@ import { Leaf, Droplet } from 'lucide-react'
 const CheckoutButton = dynamic(() => import('./CheckoutButton'), { ssr: false })
 
 export default function ShoppingCartModal() {
-    const {cartCount, shouldDisplayCart, handleCartClick, cartDetails, removeItem, totalPrice} = useShoppingCart()
+    const {cartCount =0, shouldDisplayCart, handleCartClick, cartDetails, removeItem, totalPrice} = useShoppingCart()
 
     return (
       <Sheet open={shouldDisplayCart} onOpenChange={() => handleCartClick()}>
