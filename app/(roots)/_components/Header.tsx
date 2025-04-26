@@ -9,7 +9,7 @@ import { motion } from 'framer-motion'
 
 const Header = () => {
   const [isToggle, setisToggle] = React.useState(false)
-  const {cartCount, handleCartClick} = useShoppingCart()
+  const {cartCount = 0, handleCartClick} = useShoppingCart()
   
   return (
     <header className="fixed inset-x-0 top-0 z-50">
