@@ -3,132 +3,309 @@ import { fullProduct } from '@/app/interface';
 import { client, urlFor } from '@/lib/sanity';
 import React from 'react'
 import { useParams } from 'next/navigation';
-import ImageGallery from '../../_components/ImageGallery';
-import { CheckCircle, Star, Truck } from 'lucide-react';
+import { CheckCircle, Star, Truck, ChevronRight, Leaf, Droplet } from 'lucide-react';
 import { useShoppingCart } from 'use-shopping-cart';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import Loading from '@/components/ui/Loading';
+import Image from 'next/image';
 
-// Fetch data from Sanity
-async function getData(slug: any) {
+async function getData(slug: string) {
   const query = `*[_type == "product" && slug.current == "${slug}"][0]{
     _id,
     name,
     "slug": slug.current,
-    "images":image,
+    "images": image,
     description,
     price,
-    "categoryName": category->name
+    originalPrice,
+    "categoryName": category->name,
+    rating,
+    reviewCount,
+    isNew,
+    ingredients,
+    benefits,
+    skinType,
+    volume,
+    howToUse
   }`;
-  const data = await client.fetch(query);
-  return data;
+  return await client.fetch(query);
 }
 
-export default function Page() {
-    const params = useParams();
-    const [number, setNumber] = React.useState(1)
-    if(number > 100) setNumber(100)
-    if(number < 1) setNumber(1)
-    const [addMessage, SetAddMessage] = React.useState("Add to cart")
-      const { addItem, incrementItem, setItemQuantity, cartDetails } = useShoppingCart();
-    const HandleAddToCart =(item:any) =>{
-        SetAddMessage("Added")
-        const image = urlFor(item.images[0]).url()
-      
-        const product = {
-            name: item.name,
-            description: item.description,
-            price:item.price,
-            currency: "NGN",
-            image: image,
-            quantity: item.number,
-            id: item._id
-        }
-           // If the product already exists in the cart, update its quantity.
+export default function ProductPage() {
+  const params = useParams();
+  const [quantity, setQuantity] = React.useState(1);
+  const [addMessage, setAddMessage] = React.useState("Add to cart");
+  const { addItem, incrementItem, setItemQuantity, cartDetails } = useShoppingCart();
+  const [data, setData] = React.useState<fullProduct | null>(null);
+  const [activeImage, setActiveImage] = React.useState(0);
+
+  const handleAddToCart = (item: any) => {
+    setAddMessage("Added");
+    const image = urlFor(item.images[0]).url();
+
+    const product = {
+      name: item.name,
+      description: item.description,
+      price: item.price,
+      currency: "NGN",
+      image: image,
+      quantity: quantity,
+      id: item._id
+    }
+
     if (cartDetails && cartDetails[item._id]) {
-        // Get the current quantity and add the new number.
-        const currentQuantity = cartDetails[item._id].quantity;
-        incrementItem(item._id, { count: number });
-      } else {
-        addItem(product);
-        setItemQuantity(item._id,number)
-      } 
-  
-        setTimeout(() => {
-            SetAddMessage("Add to cart")
-        }, 2000);
-        
+      incrementItem(item._id, { count: quantity });
+    } else {
+      addItem(product);
+      setItemQuantity(item._id, quantity);
     }
-    const [data, setData] = React.useState<fullProduct | null>(null);
 
-    React.useEffect(() => {
-        async function fetchData() {
-            const productData = await getData(params.productId);
-            setData(productData);
-        }
-        fetchData();
-    }, [params.productId]);
+    setTimeout(() => setAddMessage("Add to cart"), 2000);
+  }
 
-    if (!data) {
-        return <Loading />;
+  React.useEffect(() => {
+    async function fetchData() {
+      const productData = await getData(params.productId as string);
+      setData(productData);
     }
-      
-    
-    
+    fetchData();
+  }, [params.productId]);
 
-    return (
-        <div className='py-10 bg-[gre] min-h-[100vh]'>
-            <div className="mx-auto max-w-screen-xl px-4 sm:px-8">
-                <div className="grid sm:grid-cols-2 gap-8">
-                {data && <ImageGallery images={data.images} />}
-                <div className="md:py-8">
-                    <div className="mb-2 md:mb-3">
-                        <span className='mb-0.5 inline-block text-gray-500'>{data.categoryName}</span>
-                        <h2 className='text-2xl font-bold text-gray-800 lg:text-3xl'>{data.name}</h2>
-                    </div>
-                    <div className="mb-6 flex items-center gap-3 md:mb-18">
-                    <button className='bg-[#e09d22dc] flex rounded-full gap-2 px-2 py-1 '>
-                        <span className='text-sm'>4.2</span>
-                        <Star className='w-5 h-5' />
-                    </button>
-                    <span className='text-sm text-gray-500 transition duration-100'>56 Ratings</span>
-                    </div>
-                    <div className="mb-4">
-                        <div className="flex items-end gap-2">
-                            <span className='text-xl font-bold text-gray-800 md:text-2xl'>#{data.price}</span>
-                            <span className='mb-0.5 text-red-500 line-through '>#{data.price + 1000}</span>
-                        </div>
-                    </div>
-                    <div className="mb-6 flex items-center gap-2 text-gray-500">
-                        <Truck />
-                        <span className='text-sm'>1-2 Day Shipping </span>
-                    </div>
-                    <div className="flex gap-2.5">
-                    <div className="quality items-center justify-center flex w-24  bg-gray-200 drop-shadow-lg rounded-full shadow-inner shadow-white overflow-hidden">
-                    <button className='text-xl outline-none px-2 bg-[#fcfcfca1] rounded-l-full shadow-inner shadow-white backdrop-blur-md bg-opacity-30' onClick={() => setNumber(prev => (--prev))}>-</button>
-                    <input type="text" onChange={(e) => isNaN(Number(e.target.value)) ? setNumber(0) : setNumber(Number(e.target.value))} className='outline-none bg-[#ffc982] shadow-inner shadow-[#e0e0e0] text-center w-10 backdrop-blur-2xl bg-opacity-30' value={number} placeholder='1'  />
-                    <button className='text-xl px-2 bg-[#fcfcfca1] rounded-r-full outline-none shadow-inner shadow-white' onClick={() => setNumber(prev => (++prev))}>+</button>
-                   </div>
-                    <button 
-                    onClick={() => HandleAddToCart(data)} 
-                    className='shadow-inner shadow-white bg-[goldenrod] outline-none overflow-hidden flex space-x-1 items-center text-white px-4 py-2 text-sm rounded-full drop-shadow-xl'
-                    >
-                    <p>{addMessage}</p>
-                    {addMessage === "Added" && (
-                    <motion.p transition={{ delay: 0.1, duration: 0.2 }} initial={{ x: -100 }} animate={{ x: 0 }}>
-                    <CheckCircle className='w-4 text-[green] h-4'/>
-                    </motion.p>
-                    )}
-                    </button>
-                   
-                    </div>
-                    <div className="mt-10 text-base text-gray-500 tracking-wide">
-                        {data.description}
-                    </div>
-                    
-                </div>
-                </div>
-            </div>
+  if (!data) return <Loading />;
+
+  const discount = data.originalPrice ? Math.round(((data.originalPrice - data.price) / data.originalPrice) * 100) : 0;
+
+  return (
+    <div className='min-h-screen bg-gradient-to-b from-blue-50/30 to-purple-50/30 py-12 px-4 sm:px-6'>
+      <div className="max-w-7xl mx-auto">
+        {/* Breadcrumbs */}
+        <div className="flex items-center text-sm text-gray-600 mb-6">
+          <span>Home</span>
+          <ChevronRight className="mx-2 h-4 w-4" />
+          <span>Products</span>
+          <ChevronRight className="mx-2 h-4 w-4" />
+          <span className="text-blue-600">{data.categoryName}</span>
         </div>
-    );
+
+        <div className="grid md:grid-cols-2 gap-8 md:gap-12">
+          {/* Image Gallery */}
+          <div className="bg-white/80 backdrop-blur-sm rounded-2xl overflow-hidden border border-white/20 shadow-lg">
+            <div className="relative aspect-square w-full">
+              {data.images?.[activeImage] && (
+                <Image
+                  src={urlFor(data.images[activeImage]).url()}
+                  alt={data.name}
+                  fill
+                  className="object-contain p-4"
+                  priority
+                />
+              )}
+            </div>
+            <div className="grid grid-cols-4 gap-2 p-4 border-t border-white/20">
+              {data.images?.map((image, index) => (
+                <button
+                  key={index}
+                  onClick={() => setActiveImage(index)}
+                  className={`aspect-square rounded-lg overflow-hidden border-2 transition-all ${activeImage === index ? 'border-blue-500' : 'border-transparent'}`}
+                >
+                  <Image
+                    src={urlFor(image).url()}
+                    alt={`${data.name} thumbnail ${index + 1}`}
+                    width={100}
+                    height={100}
+                    className="object-cover w-full h-full"
+                  />
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Product Info */}
+          <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 border border-white/20 shadow-lg">
+            <div className="flex flex-col h-full">
+              {/* Category & Badges */}
+              <div className="flex items-center justify-between mb-4">
+                <span className="text-sm text-blue-600">{data.categoryName}</span>
+                <div className="flex gap-2">
+                  {data.isNew && (
+                    <span className="px-2 py-1 text-xs bg-green-100 text-green-800 rounded-full">
+                      New
+                    </span>
+                  )}
+                  {discount > 0 && (
+                    <span className="px-2 py-1 text-xs bg-red-100 text-red-800 rounded-full">
+                      -{discount}%
+                    </span>
+                  )}
+                </div>
+              </div>
+
+              {/* Title */}
+              <h1 className="text-3xl font-bold text-gray-900 mb-2">{data.name}</h1>
+
+              {/* Rating */}
+              <div className="flex items-center gap-2 mb-4">
+                <div className="flex items-center bg-amber-100 text-amber-800 px-2 py-1 rounded-full">
+                  <Star className="w-4 h-4 fill-current" />
+                  <span className="ml-1 text-sm font-medium">
+                    {data.rating?.toFixed(1) || '4.5'}
+                  </span>
+                </div>
+                <span className="text-sm text-gray-500">
+                  {data.reviewCount || '24'} reviews
+                </span>
+              </div>
+
+              {/* Price */}
+              <div className="my-4">
+                <div className="flex items-end gap-3">
+                  <span className="text-3xl font-bold text-gray-900">
+                    ₦{data.price.toLocaleString()}
+                  </span>
+                  {data.originalPrice && (
+                    <span className="text-lg text-gray-500 line-through">
+                      ₦{data.originalPrice.toLocaleString()}
+                    </span>
+                  )}
+                </div>
+                {discount > 0 && (
+                  <span className="text-sm text-green-600">
+                    You save ₦{(data.originalPrice! - data.price).toLocaleString()} ({discount}%)
+                  </span>
+                )}
+              </div>
+
+              {/* Volume */}
+              {data.volume && (
+                <div className="mb-4">
+                  <span className="text-sm text-gray-500">Size: </span>
+                  <span className="text-sm font-medium">{data.volume}</span>
+                </div>
+              )}
+
+              {/* Skin Type */}
+              {data.skinType && data.skinType.length > 0 && (
+                <div className="mb-4">
+                  <span className="text-sm text-gray-500">Recommended for: </span>
+                  <div className="flex flex-wrap gap-2 mt-1">
+                    {data.skinType.map((type, i) => (
+                      <span key={i} className="px-2 py-1 text-xs bg-blue-100 text-blue-800 rounded-full">
+                        {type}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Quantity & Add to Cart */}
+              <div className="mt-4 mb-6">
+                <div className="flex items-center gap-4">
+                  <div className="flex items-center bg-white rounded-full border border-gray-200 overflow-hidden">
+                    <button
+                      onClick={() => setQuantity(prev => Math.max(1, prev - 1))}
+                      className="px-3 py-2 text-gray-600 hover:bg-gray-50 transition-colors"
+                    >
+                      -
+                    </button>
+                    <input
+                      type="number"
+                      min="1"
+                      max="100"
+                      value={quantity}
+                      onChange={(e) => {
+                        const value = parseInt(e.target.value);
+                        if (!isNaN(value)) setQuantity(Math.max(1, Math.min(100, value)));
+                      }}
+                      className="w-12 text-center border-x border-gray-200 py-2 outline-none"
+                    />
+                    <button
+                      onClick={() => setQuantity(prev => Math.min(100, prev + 1))}
+                      className="px-3 py-2 text-gray-600 hover:bg-gray-50 transition-colors"
+                    >
+                      +
+                    </button>
+                  </div>
+
+                  <motion.button
+                    whileTap={{ scale: 0.95 }}
+                    onClick={() => handleAddToCart(data)}
+                    className="flex-1 bg-gradient-to-r from-blue-600 to-blue-500 text-white px-6 py-3 rounded-full font-medium shadow-md hover:shadow-lg transition-all"
+                  >
+                    <div className="flex items-center justify-center gap-2">
+                      <span>{addMessage}</span>
+                      {addMessage === "Added" && (
+                        <motion.span
+                          initial={{ scale: 0 }}
+                          animate={{ scale: 1 }}
+                          transition={{ type: 'spring' }}
+                        >
+                          <CheckCircle className="h-5 w-5" />
+                        </motion.span>
+                      )}
+                    </div>
+                  </motion.button>
+                </div>
+              </div>
+
+              {/* Delivery Info */}
+              <div className="flex items-center gap-3 p-4 bg-blue-50/50 rounded-lg mb-6">
+                <Truck className="text-blue-500" />
+                <div>
+                  <p className="text-sm font-medium">Free delivery</p>
+                  <p className="text-xs text-gray-500">Estimated 1-2 business days</p>
+                </div>
+              </div>
+
+              {/* Description */}
+              <div className="prose prose-sm text-gray-600 mb-6">
+                {data.description}
+              </div>
+
+              {/* Ingredients */}
+              {data.ingredients && data.ingredients.length > 0 && (
+                <div className="mb-6">
+                  <h3 className="font-medium text-gray-900 mb-2">Key Ingredients</h3>
+                  <div className="flex flex-wrap gap-2">
+                    {data.ingredients.map((ingredient, i) => (
+                      <span key={i} className="px-3 py-1.5 bg-white rounded-full text-sm shadow-sm border border-gray-100">
+                        {ingredient}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* How to Use */}
+              {data.howToUse && (
+                <div className="mt-auto pt-4 border-t border-gray-100">
+                  <h3 className="font-medium text-gray-900 mb-2">How To Use</h3>
+                  <p className="text-sm text-gray-600">{data.howToUse}</p>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+
+        {/* Benefits Section */}
+        {data.benefits && data.benefits.length > 0 && (
+          <div className="mt-12 grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            {data.benefits.map((benefit, i) => (
+              <motion.div
+                key={i}
+                whileHover={{ y: -5 }}
+                className="bg-white/80 backdrop-blur-sm p-6 rounded-xl border border-white/20 shadow-sm hover:shadow-md transition-all"
+              >
+                <div className="flex items-center gap-3">
+                  <div className="p-2 bg-blue-100/50 rounded-full">
+                    <Leaf className="h-5 w-5 text-blue-600" />
+                  </div>
+                  <h3 className="font-medium text-gray-900">{benefit}</h3>
+                </div>
+              </motion.div>
+            ))}
+          </div>
+        )}
+      </div>
+    </div>
+  );
 }
