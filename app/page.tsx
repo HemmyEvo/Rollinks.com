@@ -8,119 +8,259 @@ import NewArrival from "./(roots)/_components/NewArrival";
 import HomeProducts from "./(roots)/_components/HomeProducts";
 import Category from "./(roots)/_components/Category";
 
-
-
 export default function Home() {
-
-
   const heroFooter = [
     {
-      icon: <Leaf className="md:w-8 md:h-8" />,
+      icon: <Leaf className="w-6 h-6" />,
       title: "Naturally Derived",
-      label: "natural and organic beauty product",
+      label: "Natural and organic beauty products",
     },
     {
-      icon: <Truck className="md:w-8 md:h-8" />,
-      title: "Free shipping",
-      label: "free shipping on all order's over $99",
+      icon: <Truck className="w-6 h-6" />,
+      title: "Free Shipping",
+      label: "Free shipping on all orders over $99",
     },
     {
-      icon: <HandCoins className="md:w-8 md:h-8" />,
-      title: "secure payment",
+      icon: <HandCoins className="w-6 h-6" />,
+      title: "Secure Payment",
       label: "Fully protected while paying online",
     },
   ];
 
-
   const containerVariants = {
-    transition: { staggerChildren: 2, delayChildren: 0.6 }
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.2,
+        delayChildren: 0.3
+      }
+    }
   };
 
   const itemVariants = {
-    open: {
-        y: 0,
-        opacity: 1,
-        transition: {
-            y: { stiffness: 1000, velocity: -100 },
-        },
-    },
-    closed: {
-        y: 100,
-        opacity: 0,
-        transition: {
-            y: { stiffness: 1000 },
-        },
-    },
-};
+    hidden: { y: 50, opacity: 0 },
+    visible: {
+      y: 0,
+      opacity: 1,
+      transition: {
+        type: "spring",
+        stiffness: 100,
+        damping: 10
+      }
+    }
+  };
 
   return (
-    <div className="relative overflow-x-hidden">
+    <div className="relative overflow-x-hidden bg-gradient-to-b from-[#fff9f5] to-white">
       {/* Hero Section */}
       <section
-        className="hero w-full px-4 flex flex-col items-center relative justify-center bg-cover bg-center h-[calc(90vh-56px)]"
+        className="relative w-full h-screen min-h-[600px] flex items-center justify-center bg-cover bg-center"
         style={{ backgroundImage: "url('/heroBkg.jpg')" }}
       >
-        <div className="overlay absolute top-0 bottom-0 left-0 right-0 bg-[#4d240d70]"></div>
+        <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-black/30"></div>
+        
         <motion.div
-          variants={containerVariants}
+          className="container mx-auto px-6 z-10"
           initial="hidden"
           animate="visible"
-          className="text-cont flex items-center flex-col justify-center z-30 max-w-prose leading-none"
+          variants={containerVariants}
         >
-          <motion.p variants={itemVariants} initial="closed" whileInView="open" className="text-white font-medium text-center text-2xl">
-            Indulge your skin with our Luxurious range of skincare product
-          </motion.p>
-          <motion.button variants={itemVariants} initial="closed" whileInView="open" className="mt-10 bg-[orange] text-white px-4 py-2 z-30 rounded-full shadow-md shadow-[#be975c]">
-            <Link href="/product">Shop Now</Link>
-          </motion.button>
+          <div className="max-w-3xl mx-auto text-center">
+            <motion.h1 
+              variants={itemVariants}
+              className="text-4xl md:text-6xl font-bold text-white mb-6 leading-tight"
+            >
+              Indulge Your Skin With Luxurious Skincare
+            </motion.h1>
+            <motion.p 
+              variants={itemVariants}
+              className="text-lg md:text-xl text-white/90 mb-10 max-w-2xl mx-auto"
+            >
+              Discover our premium collection of natural skincare products designed to nourish and rejuvenate your skin.
+            </motion.p>
+            <motion.div variants={itemVariants}>
+              <Link 
+                href="/product" 
+                className="inline-block bg-white/90 hover:bg-white text-amber-800 font-medium px-8 py-3 rounded-full transition-all duration-300 shadow-lg hover:shadow-xl hover:-translate-y-1"
+              >
+                Shop Now
+              </Link>
+            </motion.div>
+          </div>
         </motion.div>
       </section>
 
-      {/* Hero Footer */}
-      <section className="hero-footer px-10 min-h-[calc(20vh-56px)] flex justify-center items-center w-full">
-        <div className="h-full flex max-[600px]:flex-col min-[600px]:space-x-6 min-[791px]:space-x-20">
-          {heroFooter.map((item, i) => (
-            <div key={i} className="flex space-x-4 max-[600px]:py-3 items-center">
-              <div className="icon">{item.icon}</div>
-              <div className="text">
-                <p className="uppercase max-[791px]:text-[12px] text-sm font-semibold">{item.title}</p>
-                <p className="text-xs capitalize text-[#696969]">{item.label}</p>
-              </div>
-            </div>
-          ))}
+      {/* Features Section */}
+      <section className="relative z-10 -mt-16 md:-mt-20 px-4">
+        <div className="container mx-auto">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {heroFooter.map((item, i) => (
+              <motion.div 
+                key={i}
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ delay: i * 0.1, duration: 0.5 }}
+                viewport={{ once: true }}
+                className="bg-white/80 backdrop-blur-lg rounded-xl p-6 shadow-lg border border-white/20"
+              >
+                <div className="flex items-start space-x-4">
+                  <div className="p-3 bg-amber-100/50 rounded-full">
+                    {React.cloneElement(item.icon, { className: "w-6 h-6 text-amber-700" })}
+                  </div>
+                  <div>
+                    <h3 className="font-semibold text-lg text-gray-800">{item.title}</h3>
+                    <p className="text-gray-600 text-sm mt-1">{item.label}</p>
+                  </div>
+                </div>
+              </motion.div>
+            ))}
+          </div>
         </div>
       </section>
-        <NewArrival/>
 
-      {/* Banner */}
-      <section
-        className="w-full h-[40vh] flex items-center justify-center relative bg-center bg-cover bg-fixed"
-        style={{ backgroundImage: "url('/banner.jpeg')" }}
-      >
-        <div className="overlay absolute top-0 bottom-0 left-0 right-0 bg-[#1818185e]"></div>
-        <p className="capitalize z-40 font-[gerald] text-4xl text-center text-[#ffc595]">
-          Elevate your beauty routine and embrace a radiant, youth glow!
-        </p>
+      {/* New Arrivals */}
+      <section className="py-16 md:py-24 px-4">
+        <div className="container mx-auto">
+          <div className="text-center mb-12">
+            <motion.h2 
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5 }}
+              viewport={{ once: true }}
+              className="text-3xl md:text-4xl font-bold text-gray-900 mb-4"
+            >
+              New Arrivals
+            </motion.h2>
+            <motion.p 
+              initial={{ opacity: 0 }}
+              whileInView={{ opacity: 1 }}
+              transition={{ delay: 0.2, duration: 0.5 }}
+              viewport={{ once: true }}
+              className="text-gray-600 max-w-2xl mx-auto"
+            >
+              Discover our latest collection of premium skincare products
+            </motion.p>
+          </div>
+          <NewArrival />
+        </div>
       </section>
 
-
-
-      {/* Category */}
-      <Category />
-
-      {/* Second Banner */}
-      <section
-        className="w-full shadow-xl h-[40vh] flex items-center justify-center relative bg-center bg-cover bg-fixed"
-        style={{ backgroundImage: "url('/banner.jpeg')" }}
-      >
-        <p className="capitalize z-40 font-[gerald] text-4xl text-center text-[#ffc595]">
-          Grow your skin with natural products
-        </p>
-        <div className="overlay absolute top-0 bottom-0 left-0 right-0 bg-[#1818185e]"></div>
+      {/* Parallax Banner */}
+      <section className="relative h-[400px] md:h-[500px] overflow-hidden">
+        <div 
+          className="absolute inset-0 bg-cover bg-center bg-fixed"
+          style={{ backgroundImage: "url('/banner.jpeg')" }}
+        ></div>
+        <div className="absolute inset-0 bg-black/40 backdrop-blur-sm"></div>
+        <div className="relative z-10 h-full flex items-center justify-center px-6">
+          <motion.div
+            initial={{ opacity: 0, scale: 0.9 }}
+            whileInView={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.8 }}
+            viewport={{ once: true }}
+            className="text-center max-w-3xl mx-auto"
+          >
+            <h2 className="text-3xl md:text-5xl font-bold text-white mb-6">
+              Elevate Your Beauty Routine
+            </h2>
+            <p className="text-lg md:text-xl text-white/90 mb-8">
+              Embrace a radiant, youthful glow with our carefully crafted formulas
+            </p>
+            <Link 
+              href="/shop" 
+              className="inline-block bg-white/20 hover:bg-white/30 text-white font-medium px-8 py-3 rounded-full transition-all duration-300 border border-white/30 backdrop-blur-md hover:shadow-lg"
+            >
+              Discover More
+            </Link>
+          </motion.div>
+        </div>
       </section>
 
-      {/* Products */}
-      <HomeProducts />
+      {/* Categories */}
+      <section className="py-16 md:py-24 px-4 bg-white/50">
+        <div className="container mx-auto">
+          <div className="text-center mb-12">
+            <motion.h2 
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5 }}
+              viewport={{ once: true }}
+              className="text-3xl md:text-4xl font-bold text-gray-900 mb-4"
+            >
+              Shop By Category
+            </motion.h2>
+            <motion.p 
+              initial={{ opacity: 0 }}
+              whileInView={{ opacity: 1 }}
+              transition={{ delay: 0.2, duration: 0.5 }}
+              viewport={{ once: true }}
+              className="text-gray-600 max-w-2xl mx-auto"
+            >
+              Find the perfect products for your skincare needs
+            </motion.p>
+          </div>
+          <Category />
+        </div>
+      </section>
+
+      {/* Second Parallax Banner */}
+      <section className="relative h-[400px] overflow-hidden">
+        <div 
+          className="absolute inset-0 bg-cover bg-center bg-fixed"
+          style={{ backgroundImage: "url('/banner2.jpg')" }}
+        ></div>
+        <div className="absolute inset-0 bg-gradient-to-r from-black/60 to-black/30 backdrop-blur-sm"></div>
+        <div className="relative z-10 h-full flex items-center px-6 md:px-12">
+          <motion.div
+            initial={{ opacity: 0, x: -50 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.8 }}
+            viewport={{ once: true }}
+            className="max-w-xl"
+          >
+            <h2 className="text-3xl md:text-4xl font-bold text-white mb-6">
+              Grow Your Skin With Natural Products
+            </h2>
+            <p className="text-lg text-white/90 mb-8">
+              Our plant-based formulas work in harmony with your skin's natural biology
+            </p>
+            <Link 
+              href="/natural" 
+              className="inline-block bg-amber-600 hover:bg-amber-700 text-white font-medium px-8 py-3 rounded-full transition-all duration-300 shadow-md hover:shadow-lg"
+            >
+              Explore Naturals
+            </Link>
+          </motion.div>
+        </div>
+      </section>
+
+      {/* Featured Products */}
+      <section className="py-16 md:py-24 px-4 bg-gradient-to-b from-white to-[#fff9f5]">
+        <div className="container mx-auto">
+          <div className="text-center mb-12">
+            <motion.h2 
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5 }}
+              viewport={{ once: true }}
+              className="text-3xl md:text-4xl font-bold text-gray-900 mb-4"
+            >
+              Our Best Sellers
+            </motion.h2>
+            <motion.p 
+              initial={{ opacity: 0 }}
+              whileInView={{ opacity: 1 }}
+              transition={{ delay: 0.2, duration: 0.5 }}
+              viewport={{ once: true }}
+              className="text-gray-600 max-w-2xl mx-auto"
+            >
+              Loved by thousands of customers worldwide
+            </motion.p>
+          </div>
+          <HomeProducts />
+        </div>
+      </section>
     </div>
   );
 }
