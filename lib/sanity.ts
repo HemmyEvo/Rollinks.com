@@ -4,7 +4,7 @@ export const client = createClient({
     projectId: 'vuzl9arg',
     dataset: 'production',
     apiVersion: 'v2022-03-07',
-    token: "skyFb73CDmxbU086OtKAxfsYSHOOdoi7VQ7SPp5m1YosJqU74A1KXFdr271y8iczhqCXsDD84DxRSKvrSInF2D7VQ6BDF0WFhfrrB6vTbiAV5BHAu767CaHd8u227nNZoCPq9yzgoWzcaShq5htIdYHpPgqFGp8F9I7X5mN8dMo4nQK8j1to",
+    token: "skkSnKk3HT1v5QjMJNmpBHPkbg4khR1y3xDCH0OLxgEV3PdgpXm7LzqiDozc8DR4zuGsShahoMbfjqGVkuu0J3Xb09NGWvPUR7n0r5k2ebPHZuSx2crht0DBniFvNh2l98AfEKFbxTT5NQomMI8s6zPrLL1ZPtpjpnUFCWxqYKueH6Urd6fk",
     useCdn: true
     })
 
