@@ -193,7 +193,7 @@ const CheckoutModal = ({ isOpen, onClose }: CheckoutModalProps) => {
 
   const handlePayment = async () => {
     if (!validateForm()) return;
-
+    onClose()
     setLoading(true);
     const paystack = new PaystackInline();
     paystack.newTransaction({
