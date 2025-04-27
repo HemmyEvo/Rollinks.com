@@ -9,7 +9,7 @@ type Props = {
   id: string,
   title: string,
   price: number,
-  description: string,
+  description: any[],
   image: string,
   discount: number,
   slug: string,
@@ -102,9 +102,7 @@ const ProductCard = ({ id, title, price, description, slug, image, discount, rat
                     <Eye className="w-4 h-4 sm:w-5 sm:h-5 text-gray-700" />
                   </button>
                 </Link>
-                <button className="p-1.5 sm:p-2 bg-white/90 rounded-full shadow-md hover:bg-white transition-colors">
-                  <Heart className="w-4 h-4 sm:w-5 sm:h-5 text-rose-500" />
-                </button>
+               
               </motion.div>
             </motion.div>
 
