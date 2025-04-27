@@ -1,6 +1,7 @@
+
 import { useShoppingCart } from 'use-shopping-cart';
 import PaystackInline from '@paystack/inline-js';
-import { useState, useMemo, useEffect } from 'react';
+import { useState, useMemo, useEffect, useRef } from 'react';
 import { client } from '../../../lib/sanity';
 import Select from 'react-select';
 import data from '../../api/countries+states.json';
@@ -22,11 +23,12 @@ interface Option {
 }
 
 const CheckoutModal = ({ isOpen, onClose }: CheckoutModalProps) => {
-  const { totalPrice, clearCart, handleCartClick, cartDetails, formattedTotalPrice } = useShoppingCart();
+  const { totalPrice, clearCart, cartDetails } = useShoppingCart();
   const [loading, setLoading] = useState(false);
   const [paymentSuccess, setPaymentSuccess] = useState(false);
   const [orderId, setOrderId] = useState('');
   const router = useRouter();
+  const modalRef = useRef<HTMLDivElement>(null);
 
   // Form state
   const [formData, setFormData] = useState({
@@ -49,7 +51,7 @@ const CheckoutModal = ({ isOpen, onClose }: CheckoutModalProps) => {
   const [customCity, setCustomCity] = useState('');
   const [shippingFee, setShippingFee] = useState(0);
 
-  const { isSignedIn, userId } = useAuth();
+  const { userId } = useAuth();
   const { isAuthenticated } = useConvexAuth();
   const me = useQuery(api.user.getMe, isAuthenticated ? undefined : "skip");
 
@@ -193,8 +195,14 @@ const CheckoutModal = ({ isOpen, onClose }: CheckoutModalProps) => {
 
   const handlePayment = async () => {
     if (!validateForm()) return;
-    onClose()
+
     setLoading(true);
+    
+    // Temporarily hide our modal while Paystack is open
+    if (modalRef.current) {
+      modalRef.current.style.display = 'none';
+    }
+
     const paystack = new PaystackInline();
     paystack.newTransaction({
       key: process.env.NEXT_PUBLIC_PAYSTACK_PUBLIC_KEY || '',
@@ -304,11 +312,19 @@ const CheckoutModal = ({ isOpen, onClose }: CheckoutModalProps) => {
           alert('Order was successful but there was an issue saving your details. Please contact support with your payment reference.');
         } finally {
           setLoading(false);
+          // Show our modal again
+          if (modalRef.current) {
+            modalRef.current.style.display = 'block';
+          }
           router.push('/history');
         }
       },
       onCancel: () => {
         setLoading(false);
+        // Show our modal again if payment is cancelled
+        if (modalRef.current) {
+          modalRef.current.style.display = 'block';
+        }
       },
     });
   };
@@ -317,7 +333,7 @@ const CheckoutModal = ({ isOpen, onClose }: CheckoutModalProps) => {
 
   if (paymentSuccess) {
     return (
-      <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+      <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-[1000]">
         <div className="bg-white rounded-lg max-w-md w-full max-h-[90vh] overflow-y-auto">
           <div className="p-6">
             <div className="flex justify-between items-center mb-4">
