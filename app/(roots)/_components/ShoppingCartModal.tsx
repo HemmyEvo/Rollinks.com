@@ -21,7 +21,7 @@ export default function ShoppingCartModal() {
 
     return (
       <Sheet open={shouldDisplayCart} onOpenChange={() => handleCartClick()}>
-        <SheetContent className="w-full sm:max-w-lg bg-white/90 backdrop-blur-lg border-l border-green-50 shadow-xl">
+        <SheetContent className="w-full sm:max-w-lg bg-white/90 backdrop-blur-lg border-l border-green-50 shadow-xl" showX={false}>
           <motion.div 
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
