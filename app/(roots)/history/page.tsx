@@ -7,87 +7,229 @@ import { useAuth } from '@clerk/nextjs';
 import { useConvexAuth, useQuery } from 'convex/react';
 import { api } from '@/convex/_generated/api';
 import { formatDate } from '@/lib/utils';
+import { FiPackage, FiCheckCircle, FiTruck, FiClock, FiXCircle, FiDollarSign } from 'react-icons/fi';
+import Link from 'next/link';
 
-export default function Transactions() {
+export default function OrderHistory() {
   const [orders, setOrders] = useState<any[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 
-  const { isSignedIn } = useAuth();
+  const { isSignedIn, userId } = useAuth();
   const { isAuthenticated } = useConvexAuth();
   const me = useQuery(api.user.getMe, isAuthenticated ? undefined : "skip");
 
   useEffect(() => {
     async function fetchOrders() {
-      if (!me) return;
-      
+      if (!me?.email) return;
+
       try {
         setLoading(true);
-        const query = `*[_type == "order"] | order(createdAt desc) {
+        const query = `*[_type == "order" && customer.email == $email] | order(createdAt desc) {
           _id,
-          reference,
-          amount,
-          customerDetails,
+          orderId,
+          status,
+          customer->{name, email, phone},
+          shippingAddress,
+          items[]->{
+            _id,
+            name,
+            price,
+            quantity,
+            image,
+            product->{
+              _id,
+              name,
+              slug
+            }
+          },
+          payment {
+            method,
+            status,
+            transactionId,
+            amount,
+            currency
+          },
+          shipping {
+            method,
+            cost,
+            trackingNumber,
+            carrier
+          },
+          subtotal,
+          total,
+          discount,
           createdAt,
-          paymentDetails
+          updatedAt
         }`;
-        const ordersData = await client.fetch(query);
         
-        const filteredOrders = ordersData.filter((order: any) => order.customerDetails?.email === me.email);
-        setOrders(filteredOrders);
+        const ordersData = await client.fetch(query, { email: me.email });
+        setOrders(ordersData);
       } catch (err) {
         console.error('Failed to fetch orders:', err);
-        setError('Failed to load transactions');
+        setError('Failed to load order history');
       } finally {
         setLoading(false);
       }
     }
-    
+
     fetchOrders();
-  }, [me]);
+  }, [me?.email]);
+
+  const getStatusIcon = (status: string) => {
+    switch (status) {
+      case 'processing':
+        return <FiClock className="text-yellow-500" />;
+      case 'confirmed':
+        return <FiCheckCircle className="text-blue-500" />;
+      case 'shipped':
+        return <FiTruck className="text-purple-500" />;
+      case 'delivered':
+        return <FiCheckCircle className="text-green-500" />;
+      case 'cancelled':
+        return <FiXCircle className="text-red-500" />;
+      default:
+        return <FiPackage className="text-gray-500" />;
+    }
+  };
 
   if (loading) return <Loading />;
   if (error) return <p className="text-center mt-8 text-red-600">{error}</p>;
 
   return (
-    <div className="max-w-7xl min-h-[80vh] mx-auto p-4">
-      <h1 className="text-2xl font-semibold mb-6">Transaction History</h1>
+    <div className="max-w-7xl min-h-[80vh] mx-auto px-4 py-8 sm:px-6 lg:px-8">
+      <div className="mb-8">
+        <h1 className="text-3xl font-bold text-gray-900">Order History</h1>
+        <p className="mt-2 text-sm text-gray-600">
+          View all your past orders and their current status
+        </p>
+      </div>
+
       {orders.length === 0 ? (
-        <p className="text-gray-600">No transactions found.</p>
+        <div className="bg-white rounded-lg shadow-sm p-8 text-center">
+          <FiPackage className="mx-auto h-12 w-12 text-gray-400" />
+          <h3 className="mt-2 text-lg font-medium text-gray-900">No orders found</h3>
+          <p className="mt-1 text-sm text-gray-500">
+            You haven't placed any orders yet. Start shopping to see orders here.
+          </p>
+          <div className="mt-6">
+            <Link
+              href="/products"
+              className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+            >
+              Browse Products
+            </Link>
+          </div>
+        </div>
       ) : (
-        <div className="overflow-x-auto">
-          <table className="min-w-full bg-white shadow-md rounded-lg overflow-hidden">
-            <thead className="bg-gray-200">
-              <tr>
-                <th className="px-4 py-2 text-left text-sm font-medium text-gray-700">Reference</th>
-                <th className="px-4 py-2 text-left text-sm font-medium text-gray-700">Phone</th>
-                <th className="px-4 py-2 text-left text-sm font-medium text-gray-700">Message</th>
-                <th className="px-4 py-2 text-left text-sm font-medium text-gray-700">Status</th>
-                <th className="px-4 py-2 text-left text-sm font-medium text-gray-700">Amount (₦)</th>
-                <th className="px-4 py-2 text-left text-sm font-medium text-gray-700">Paid At</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-gray-100">
-              {orders.map(order => {
-                const amountNaira = (order.amount / 100).toFixed(2);
-                const paidAt = new Date(order.createdAt).toLocaleString();
-                const paymentDetails = order.paymentDetails || {};
-                const status = paymentDetails.status || 'N/A';
-                const method = paymentDetails.method || 'N/A';
-                
-                return (
-                  <tr key={order._id}>
-                    <td className="px-4 py-2 text-sm text-gray-800">{order.reference}</td>
-                    <td className="px-4 py-2 text-sm text-gray-800">{order.customerDetails.phone}</td>
-                    <td className="px-4 capitalize py-2 text-sm text-gray-800">{method}</td>
-                    <td className="px-4 py-2 capitalize text-sm text-gray-800">{status}</td>
-                    <td className="px-4 py-2 text-sm text-gray-800">₦{amountNaira}</td>
-                    <td className="px-4 py-2 text-sm text-gray-800">{paidAt}</td>
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
+        <div className="space-y-6">
+          {orders.map((order) => (
+            <div key={order._id} className="bg-white shadow-sm rounded-lg overflow-hidden border border-gray-200">
+              <div className="px-6 py-4 border-b border-gray-200 flex flex-col sm:flex-row sm:items-center sm:justify-between">
+                <div className="flex items-center space-x-4">
+                  <div className="flex-shrink-0">
+                    {getStatusIcon(order.status)}
+                  </div>
+                  <div>
+                    <h3 className="text-lg font-medium text-gray-900">
+                      Order #{order.orderId}
+                    </h3>
+                    <p className="text-sm text-gray-500">
+                      Placed on {formatDate(order.createdAt)}
+                    </p>
+                  </div>
+                </div>
+                <div className="mt-3 sm:mt-0">
+                  <Link
+                    href={`/order-tracking/${order._id}`}
+                    className="inline-flex items-center px-3 py-1.5 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                  >
+                    View Details
+                  </Link>
+                </div>
+              </div>
+
+              <div className="px-6 py-4 grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div>
+                  <h4 className="text-sm font-medium text-gray-900 mb-2">Payment</h4>
+                  <div className="flex items-center">
+                    <FiDollarSign className="flex-shrink-0 h-5 w-5 text-gray-400" />
+                    <div className="ml-2">
+                      <p className="text-sm text-gray-500 capitalize">
+                        {order.payment?.method || 'N/A'}
+                      </p>
+                      <p className={`text-sm ${
+                        order.payment?.status === 'completed' 
+                          ? 'text-green-600' 
+                          : order.payment?.status === 'failed' 
+                            ? 'text-red-600' 
+                            : 'text-yellow-600'
+                      } capitalize`}>
+                        {order.payment?.status || 'N/A'}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
+                <div>
+                  <h4 className="text-sm font-medium text-gray-900 mb-2">Shipping</h4>
+                  <div className="flex items-center">
+                    <FiTruck className="flex-shrink-0 h-5 w-5 text-gray-400" />
+                    <div className="ml-2">
+                      <p className="text-sm text-gray-500 capitalize">
+                        {order.shipping?.method || 'Standard'}
+                      </p>
+                      <p className="text-sm text-gray-500">
+                        {order.shipping?.carrier || 'Local Delivery'}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
+                <div>
+                  <h4 className="text-sm font-medium text-gray-900 mb-2">Total</h4>
+                  <p className="text-lg font-semibold text-gray-900">
+                    ₦{(order.total || 0).toLocaleString()}
+                  </p>
+                  <p className="text-sm text-gray-500">
+                    {order.items?.length || 0} item{order.items?.length !== 1 ? 's' : ''}
+                  </p>
+                </div>
+              </div>
+
+              <div className="px-6 py-4 bg-gray-50 border-t border-gray-200">
+                <h4 className="text-sm font-medium text-gray-900 mb-2">Items</h4>
+                <div className="space-y-4">
+                  {order.items?.slice(0, 2).map((item: any) => (
+                    <div key={item._id} className="flex items-center">
+                      <div className="flex-shrink-0 w-16 h-16 bg-gray-200 rounded-md overflow-hidden">
+                        {item.image && (
+                          <img
+                            src={item.image}
+                            alt={item.name}
+                            className="w-full h-full object-cover"
+                          />
+                        )}
+                      </div>
+                      <div className="ml-4 flex-1">
+                        <h5 className="text-sm font-medium text-gray-900">
+                          {item.name}
+                        </h5>
+                        <p className="text-sm text-gray-500">
+                          Qty: {item.quantity} × ₦{item.price?.toLocaleString()}
+                        </p>
+                      </div>
+                    </div>
+                  ))}
+                  {order.items?.length > 2 && (
+                    <p className="text-sm text-gray-500">
+                      + {order.items.length - 2} more item{order.items.length - 2 !== 1 ? 's' : ''}
+                    </p>
+                  )}
+                </div>
+              </div>
+            </div>
+          ))}
         </div>
       )}
     </div>
