@@ -1,4 +1,4 @@
-import { CheckCircle, Eye, Heart, Plus, Minus, Star } from 'lucide-react'
+import { CheckCircle, Eye, Heart, Plus, Minus, Star, ShoppingCart } from 'lucide-react'
 import Image from 'next/image'
 import React from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
@@ -27,12 +27,13 @@ const ProductCard = ({ id, title, price, description, slug, image, discount, rat
     setAddMessage("Added")
 
     const product = {
-  sku: id,
-  name: title,
-  price: price,
-  currency: "NGN",
-  image: image,
-};
+      id: id
+      sku: id,
+      name: title,
+      price: price,
+      currency: "NGN",
+      image: image,
+    };
 
     if (cartDetails && cartDetails[id]) {
       incrementItem(id, { count: quantity })
@@ -66,29 +67,34 @@ const ProductCard = ({ id, title, price, description, slug, image, discount, rat
       >
         {/* Glassmorphism Card */}
         <motion.div 
-          className="bg-white/80 backdrop-blur-lg rounded-xl overflow-hidden shadow-lg border border-white/20 transition-all duration-300 hover:shadow-xl"
+          className="bg-white/20 backdrop-blur-xl rounded-2xl overflow-hidden shadow-lg border border-white/30 transition-all duration-300 hover:shadow-2xl hover:border-white/50"
           whileHover={{ y: -5 }}
+          style={{
+            boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)',
+            background: 'linear-gradient(135deg, rgba(255,255,255,0.25) 0%, rgba(255,255,255,0.15) 100%)'
+          }}
         >
-          {/* Image Container */}
-          <div className="relative h-48 sm:h-56 md:h-64 w-full overflow-hidden">
+          {/* Image Container with Frosted Glass Effect */}
+          <div className="relative h-64 w-full overflow-hidden">
+            <div className="absolute inset-0 bg-gradient-to-b from-transparent to-black/10 z-10" />
             <Image
               src={image}
               alt={title}
               fill
-              className="object-cover object-center transition-transform duration-500 group-hover:scale-105"
+              className="object-cover object-center transition-transform duration-700 group-hover:scale-110"
               sizes="(max-width: 640px) 100vw, (max-width: 768px) 50vw, (max-width: 1024px) 33vw, 25vw"
               priority
             />
 
             {/* Hover Overlay */}
             <motion.div 
-              className="absolute inset-0 bg-black/20 flex items-center justify-center"
+              className="absolute inset-0 bg-black/10 flex items-center justify-center z-20"
               initial={{ opacity: 0 }}
               animate={{ opacity: isHovered ? 1 : 0 }}
               transition={{ duration: 0.3 }}
             >
               <motion.div
-                className="absolute top-3 right-3 sm:top-4 sm:right-4 flex flex-col space-y-2 sm:space-y-3"
+                className="absolute top-4 right-4 flex flex-col space-y-3"
                 initial={{ y: -20, opacity: 0 }}
                 animate={{ 
                   y: isHovered ? 0 : -20,
@@ -97,19 +103,21 @@ const ProductCard = ({ id, title, price, description, slug, image, discount, rat
                 transition={{ delay: 0.1 }}
               >
                 <Link href={`/product/${slug}`}>
-                  <button className="p-1.5 sm:p-2 bg-white/90 rounded-full shadow-md hover:bg-white transition-colors">
-                    <Eye className="w-4 h-4 sm:w-5 sm:h-5 text-gray-700" />
+                  <button className="p-2 bg-white/90 rounded-full shadow-md hover:bg-white transition-colors hover:scale-110">
+                    <Eye className="w-5 h-5 text-gray-700" />
                   </button>
                 </Link>
-               
+                <button className="p-2 bg-white/90 rounded-full shadow-md hover:bg-white transition-colors hover:scale-110">
+                  <Heart className="w-5 h-5 text-rose-500" />
+                </button>
               </motion.div>
             </motion.div>
 
-            {/* Badges */}
-            <div className="absolute top-3 left-3 sm:top-4 sm:left-4 flex flex-col space-y-1">
+            {/* Badges - Floating Glass Effect */}
+            <div className="absolute top-4 left-4 flex flex-col space-y-2 z-20">
               {isNew && (
                 <motion.div 
-                  className="bg-green-600 text-white text-xs font-bold px-2 py-1 rounded-full"
+                  className="bg-gradient-to-r from-emerald-500 to-teal-600 text-white text-xs font-bold px-3 py-1 rounded-full backdrop-blur-sm shadow-md"
                   initial={{ scale: 0 }}
                   animate={{ scale: 1 }}
                   transition={{ delay: 0.2 }}
@@ -119,7 +127,7 @@ const ProductCard = ({ id, title, price, description, slug, image, discount, rat
               )}
               {discount && (
                 <motion.div 
-                  className="bg-amber-600 text-white text-xs font-bold px-2 py-1 rounded-full"
+                  className="bg-gradient-to-r from-amber-500 to-orange-600 text-white text-xs font-bold px-3 py-1 rounded-full backdrop-blur-sm shadow-md"
                   initial={{ scale: 0 }}
                   animate={{ scale: 1 }}
                   transition={{ delay: 0.3 }}
@@ -130,44 +138,46 @@ const ProductCard = ({ id, title, price, description, slug, image, discount, rat
             </div>
           </div>
 
-          {/* Product Info */}
-          <div className="p-3 sm:p-4">
+          {/* Product Info - Frosted Glass Panel */}
+          <div className="p-5 bg-white/10 backdrop-blur-md border-t border-white/20">
             <Link href={`/product/${slug}`}>
-              <h3 className="font-medium text-gray-800 hover:text-amber-600 transition-colors line-clamp-1 text-sm sm:text-base">
+              <h3 className="font-semibold text-gray-800 hover:text-amber-600 transition-colors line-clamp-1 text-lg mb-1">
                 {title}
               </h3>
             </Link>
 
-            {/* Rating */}
-            <div className="flex items-center mt-1 space-x-1 text-amber-500 text-xs sm:text-sm">
-              <span>{rating.toFixed(1)}</span>
-              <Star className="w-3 h-3 sm:w-4 sm:h-4 fill-amber-500" />
+            {/* Rating with Glass Background */}
+            <div className="inline-flex items-center px-2 py-1 rounded-full bg-white/30 backdrop-blur-sm mb-3">
+              <Star className="w-4 h-4 fill-amber-500 text-amber-500 mr-1" />
+              <span className="text-sm font-medium text-gray-700">{rating.toFixed(1)}</span>
             </div>
 
-            <div className="flex items-center justify-between mt-1 sm:mt-2">
-              <div className="flex items-center space-x-1 sm:space-x-2">
-                <span className="text-sm sm:text-lg font-bold text-amber-700">
-                  ₦{price.toFixed(2)}
+            {/* Price Section */}
+            <div className="flex items-center justify-between mb-4">
+              <div className="flex items-end space-x-2">
+                <span className="text-xl font-bold text-gray-800">
+                  ₦{price.toLocaleString('en-US', {minimumFractionDigits: 2})}
                 </span>
                 {discount && (
-                  <span className="text-xs sm:text-sm text-gray-400 line-through">
-                    ₦{discount.toFixed(2)}
+                  <span className="text-sm text-gray-500 line-through">
+                    ₦{discount.toLocaleString('en-US', {minimumFractionDigits: 2})}
                   </span>
                 )}
               </div>
             </div>
 
-            {/* Quantity Selector and Add to Cart */}
-            <div className="mt-3 sm:mt-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+            {/* Add to Cart Section */}
+            <div className="flex flex-col space-y-3">
+              {/* Quantity Selector - Glass Style */}
               <motion.div 
-                className="flex items-center border border-gray-200 rounded-full overflow-hidden bg-white/90 w-full sm:w-auto"
+                className="flex items-center justify-between bg-white/30 backdrop-blur-sm rounded-full overflow-hidden border border-white/40"
                 whileTap={{ scale: 0.95 }}
               >
                 <button 
-                  className="px-2 py-1 text-gray-600 hover:bg-amber-50 transition-colors"
+                  className="px-3 py-2 text-gray-700 hover:bg-white/20 transition-colors"
                   onClick={() => handleQuantityChange(quantity - 1)}
                 >
-                  <Minus className="w-3 h-3 sm:w-4 sm:h-4" />
+                  <Minus className="w-4 h-4" />
                 </button>
                 <input
                   type="number"
@@ -175,57 +185,57 @@ const ProductCard = ({ id, title, price, description, slug, image, discount, rat
                   max="100"
                   value={quantity}
                   onChange={(e) => handleQuantityChange(parseInt(e.target.value) || 1)}
-                  className="w-8 sm:w-12 text-center bg-transparent outline-none text-xs sm:text-sm"
+                  className="w-12 text-center bg-transparent outline-none text-sm font-medium text-gray-700"
                 />
                 <button 
-                  className="px-2 py-1 text-gray-600 hover:bg-amber-50 transition-colors"
+                  className="px-3 py-2 text-gray-700 hover:bg-white/20 transition-colors"
                   onClick={() => handleQuantityChange(quantity + 1)}
                 >
-                  <Plus className="w-3 h-3 sm:w-4 sm:h-4" />
+                  <Plus className="w-4 h-4" />
                 </button>
               </motion.div>
 
+              {/* Add to Cart Button - Glass Morphic */}
               <motion.button
                 onClick={handleAddToCart}
-                className={`w-full sm:w-auto px-3 py-1.5 sm:px-4 sm:py-2 rounded-full text-xs sm:text-sm font-medium transition-colors ${
+                className={`w-full flex items-center justify-center space-x-2 px-4 py-3 rounded-full text-sm font-semibold transition-all ${
                   addMessage === "Added" 
-                    ? "bg-green-500 text-white" 
-                    : "bg-amber-600 hover:bg-amber-700 text-white"
+                    ? "bg-gradient-to-r from-green-500 to-emerald-600 text-white shadow-lg" 
+                    : "bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 text-white shadow-lg hover:shadow-xl"
                 }`}
-                whileHover={addMessage !== "Added" ? { scale: 1.05 } : {}}
-                whileTap={addMessage !== "Added" ? { scale: 0.95 } : {}}
+                whileHover={addMessage !== "Added" ? { scale: 1.02 } : {}}
+                whileTap={addMessage !== "Added" ? { scale: 0.98 } : {}}
               >
-                <div className="flex items-center justify-center sm:justify-start space-x-1">
-                  <span>{addMessage}</span>
-                  <AnimatePresence>
-                    {addMessage === "Added" && (
-                      <motion.span
-                        initial={{ scale: 0 }}
-                        animate={{ scale: 1 }}
-                        exit={{ scale: 0 }}
-                        transition={{ type: "spring" }}
-                      >
-                        <CheckCircle className="w-3 h-3 sm:w-4 sm:h-4" />
-                      </motion.span>
-                    )}
-                  </AnimatePresence>
-                </div>
+                <ShoppingCart className="w-5 h-5" />
+                <span>{addMessage}</span>
+                <AnimatePresence>
+                  {addMessage === "Added" && (
+                    <motion.span
+                      initial={{ scale: 0 }}
+                      animate={{ scale: 1 }}
+                      exit={{ scale: 0 }}
+                      transition={{ type: "spring" }}
+                    >
+                      <CheckCircle className="w-5 h-5" />
+                    </motion.span>
+                  )}
+                </AnimatePresence>
               </motion.button>
             </div>
           </div>
         </motion.div>
 
-        {/* Floating animation when added to cart */}
+        {/* Floating Confirmation Animation */}
         <AnimatePresence>
           {addMessage === "Added" && (
             <motion.div
-              className="absolute -top-2 -right-2 sm:-top-3 sm:-right-3 bg-green-500 text-white rounded-full p-1 sm:p-2 shadow-lg"
+              className="absolute -top-3 -right-3 bg-gradient-to-r from-green-500 to-emerald-600 text-white rounded-full p-2 shadow-xl z-30"
               initial={{ scale: 0, rotate: -45 }}
               animate={{ scale: 1, rotate: 0 }}
               exit={{ scale: 0, rotate: 45 }}
               transition={{ type: "spring", damping: 10, stiffness: 100 }}
             >
-              <CheckCircle className="w-4 h-4 sm:w-5 sm:h-5" />
+              <CheckCircle className="w-6 h-6" />
             </motion.div>
           )}
         </AnimatePresence>
