@@ -286,7 +286,7 @@ const Page = () => {
   description={item.description}
   slug={item.slug.current}
   discount={item.price + 1000}
-  rating={item.rating}
+  rating={item.rating ?? 0}
   isNew={item.isNew}
 />
 
