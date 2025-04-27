@@ -59,7 +59,7 @@ const Footer = () => {
   ]
 
   return (
-    <footer className="relative bg-amber-900/90 backdrop-blur-lg text-white overflow-hidden border-t border-amber-800/30">
+    <footer className="relative bg-amber-900/90 backdrop-blur-lg text-white overflow-hidden z-50 border-t border-amber-800/30">
       {/* Decorative elements */}
       <motion.div 
         initial={{ opacity: 0 }}
