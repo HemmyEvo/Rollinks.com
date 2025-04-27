@@ -59,14 +59,8 @@ const Footer = () => {
   ]
 
   return (
-    <footer className="relative bg-amber-900/90 backdrop-blur-lg text-white overflow-hidden z-50 border-t border-amber-800/30">
-      {/* Decorative elements */}
-      <motion.div 
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 0.1 }}
-        transition={{ duration: 1 }}
-        className="absolute inset-0 bg-[url('/pattern.svg')] bg-repeat opacity-10"
-      />
+    <footer className="relative bg-amber-900/90 backdrop-blur-lg text-white overflow-hidden border-t border-amber-800/30">
+      
       
       <div className="container mx-auto px-4 py-12 sm:py-16">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10">
