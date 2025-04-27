@@ -15,7 +15,7 @@ async function getData() {
     name,
     description,
     "slug": slug.current,
-    "images": image[0].asset->url,
+    "images": images[].asset->url,
     price,
     "categoryName": category->name,
     rating,
@@ -278,17 +278,19 @@ const Page = () => {
                   transition={{ type: 'spring', stiffness: 400, damping: 20 }}
                   className="bg-white/80 backdrop-blur-sm rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-shadow border border-white/20"
                 >
-                  <ProductCard
-                    id={item._id}
-                    title={item.name}
-                    image={item.images}
-                    price={item.price}
-                    description={item.description}
-                    slug={item.slug}
-                    discount={item.price + 1000}
-                    rating={item.rating}
-                    isNew={item.isNew}
-                  />
+                <ProductCard
+  id={item._id}
+  title={item.name}
+  image={item.images?.[0]} // use the first image
+  price={item.price}
+  description={item.description}
+  slug={item.slug}
+  discount={item.price + 1000}
+  rating={item.rating}
+  isNew={item.isNew}
+/>
+
+
                 </motion.div>
               ))}
             </AnimatePresence>
