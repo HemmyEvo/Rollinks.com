@@ -1,4 +1,4 @@
-import { CheckCircle, Eye, Heart, Plus, Minus } from 'lucide-react'
+import { CheckCircle, Eye, Heart, Plus, Minus, Star } from 'lucide-react'
 import Image from 'next/image'
 import React from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
@@ -12,10 +12,12 @@ type Props = {
   description: string,
   image: string,
   discount: number,
-  slug: string
+  slug: string,
+  rating: number,
+  isNew: boolean
 }
 
-const ProductCard = ({ id, title, price, description, slug, image, discount }: Props) => {
+const ProductCard = ({ id, title, price, description, slug, image, discount, rating, isNew }: Props) => {
   const [quantity, setQuantity] = React.useState(1)
   const [addMessage, setAddMessage] = React.useState("Add to cart")
   const [isHovered, setIsHovered] = React.useState(false)
@@ -78,7 +80,7 @@ const ProductCard = ({ id, title, price, description, slug, image, discount }: P
               sizes="(max-width: 640px) 100vw, (max-width: 768px) 50vw, (max-width: 1024px) 33vw, 25vw"
               priority
             />
-            
+
             {/* Hover Overlay */}
             <motion.div 
               className="absolute inset-0 bg-black/20 flex items-center justify-center"
@@ -105,18 +107,30 @@ const ProductCard = ({ id, title, price, description, slug, image, discount }: P
                 </button>
               </motion.div>
             </motion.div>
-            
-            {/* Discount Badge */}
-            {discount && (
-              <motion.div 
-                className="absolute top-3 left-3 sm:top-4 sm:left-4 bg-amber-600 text-white text-xs font-bold px-2 py-1 rounded-full"
-                initial={{ scale: 0 }}
-                animate={{ scale: 1 }}
-                transition={{ delay: 0.3 }}
-              >
-                {Math.round(((discount - price) / discount) * 100)}% OFF
-              </motion.div>
-            )}
+
+            {/* Badges */}
+            <div className="absolute top-3 left-3 sm:top-4 sm:left-4 flex flex-col space-y-1">
+              {isNew && (
+                <motion.div 
+                  className="bg-green-600 text-white text-xs font-bold px-2 py-1 rounded-full"
+                  initial={{ scale: 0 }}
+                  animate={{ scale: 1 }}
+                  transition={{ delay: 0.2 }}
+                >
+                  New
+                </motion.div>
+              )}
+              {discount && (
+                <motion.div 
+                  className="bg-amber-600 text-white text-xs font-bold px-2 py-1 rounded-full"
+                  initial={{ scale: 0 }}
+                  animate={{ scale: 1 }}
+                  transition={{ delay: 0.3 }}
+                >
+                  {Math.round(((discount - price) / discount) * 100)}% OFF
+                </motion.div>
+              )}
+            </div>
           </div>
 
           {/* Product Info */}
@@ -126,7 +140,13 @@ const ProductCard = ({ id, title, price, description, slug, image, discount }: P
                 {title}
               </h3>
             </Link>
-            
+
+            {/* Rating */}
+            <div className="flex items-center mt-1 space-x-1 text-amber-500 text-xs sm:text-sm">
+              <span>{rating.toFixed(1)}</span>
+              <Star className="w-3 h-3 sm:w-4 sm:h-4 fill-amber-500" />
+            </div>
+
             <div className="flex items-center justify-between mt-1 sm:mt-2">
               <div className="flex items-center space-x-1 sm:space-x-2">
                 <span className="text-sm sm:text-lg font-bold text-amber-700">
@@ -140,7 +160,7 @@ const ProductCard = ({ id, title, price, description, slug, image, discount }: P
               </div>
             </div>
 
-            {/* Quantity Selector and Add to Cart - Stack on small screens */}
+            {/* Quantity Selector and Add to Cart */}
             <div className="mt-3 sm:mt-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
               <motion.div 
                 className="flex items-center border border-gray-200 rounded-full overflow-hidden bg-white/90 w-full sm:w-auto"
@@ -168,7 +188,6 @@ const ProductCard = ({ id, title, price, description, slug, image, discount }: P
                 </button>
               </motion.div>
 
-              {/* Add to Cart Button - Full width on mobile */}
               <motion.button
                 onClick={handleAddToCart}
                 className={`w-full sm:w-auto px-3 py-1.5 sm:px-4 sm:py-2 rounded-full text-xs sm:text-sm font-medium transition-colors ${
