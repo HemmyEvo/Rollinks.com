@@ -308,6 +308,7 @@ const CheckoutModal = ({ isOpen, onClose }: CheckoutModalProps) => {
           clearCart();
         } catch (error) {
           console.error('Error saving order:', error);
+          alert(error)
           alert('Order was successful but there was an issue saving your details. Please contact support with your payment reference.');
         } finally {
           setLoading(false);
