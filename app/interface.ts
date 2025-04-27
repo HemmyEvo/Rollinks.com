@@ -38,7 +38,7 @@ export interface fullProduct {
     _type: 'slug';
     current: string;
   };
-  images: any[];
+  images: ProductImage[];
   price: number;
   discountPrice?: number;
   category: CategoryReference;
