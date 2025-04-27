@@ -4,7 +4,7 @@ import React, { useEffect, useState } from 'react';
 import ProductCard from '../_components/ProductCard';
 import { client } from '@/lib/sanity';
 import { fullProduct, simplifiedProduct } from '@/app/interface';
-import { useSearchParams } from 'next/navigation';
+
 import { Filter, X, ChevronDown, ChevronUp, Star, ArrowLeft } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import Link from 'next/link';
@@ -35,10 +35,8 @@ async function getCategory() {
 }
 
 const ProductPage = () => {
-  const searchParams = useSearchParams();
-  const urlCategory = searchParams.get('category');
-
-  const [selectedCategory, setSelectedCategory] = useState<string | null>(urlCategory);
+  
+  const [selectedCategory, setSelectedCategory] = useState<string | null>
   const [maxPrice, setMaxPrice] = useState<number | null>(null);
   const [minRating, setMinRating] = useState<number | null>(null);
   const [sortOption, setSortOption] = useState<string>('featured');
@@ -47,11 +45,7 @@ const ProductPage = () => {
   const [categories, setCategories] = useState<simplifiedProduct[]>([]);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    if (urlCategory) {
-      setSelectedCategory(urlCategory);
-    }
-  }, [urlCategory]);
+  
 
   useEffect(() => {
     async function fetchData() {
