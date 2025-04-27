@@ -16,7 +16,7 @@ async function getData(slug: string) {
     name,
     "slug": slug.current,
     images,
-    description,
+    "description": description,
     price,
     discountPrice,
     "categoryName": category->name,
