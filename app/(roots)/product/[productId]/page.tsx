@@ -9,7 +9,7 @@ import { useShoppingCart } from 'use-shopping-cart';
 import { motion } from 'framer-motion';
 import Loading from '@/components/ui/Loading';
 import Image from 'next/image';
-
+import { PortableText } from '@portabletext/react';
 async function getData(slug: string) {
   const query = `*[_type == "product" && slug.current == "${slug}"][0]{
     _id,
@@ -264,7 +264,8 @@ export default function ProductPage() {
 
             {/* Description */}
             <div className="prose prose-sm text-gray-600 mb-6">
-              {data.description}
+              
+             <PortableText value={data.description} />
             </div>
 
             {/* Ingredients */}
