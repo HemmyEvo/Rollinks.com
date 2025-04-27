@@ -27,7 +27,7 @@ const ProductCard = ({ id, title, price, description, slug, image, discount, rat
     setAddMessage("Added")
 
     const product = {
-      id: id
+      id: id,
       sku: id,
       name: title,
       price: price,
