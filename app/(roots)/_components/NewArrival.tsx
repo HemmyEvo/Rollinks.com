@@ -10,7 +10,7 @@ async function getData() {
     name,
     description,
     "slug": slug.current,
-    "images": image[].asset->url,
+    "images": images[].asset->url,
     price,
     "categoryName": category->name,
     rating,
