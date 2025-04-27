@@ -96,7 +96,7 @@ export default function NewArrival() {
                    <ProductCard
                     id={item._id}
                     title={item.name}
-                    image={item.images}
+                      image={item.images?.[0]} 
                     price={item.price}
                     description={item.description}
                     slug={item.slug}
