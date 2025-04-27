@@ -1,55 +1,212 @@
-import { FacebookIcon, Github, InstagramIcon, Linkedin, Twitter } from 'lucide-react'
+"use client"
+import { FacebookIcon, Github, InstagramIcon, Linkedin, Twitter, Mail, Phone } from 'lucide-react'
 import Link from 'next/link'
 import React from 'react'
+import { motion } from 'framer-motion'
 
-const Footer = async () => {
-  const icon = [
+const Footer = () => {
+  const socialIcons = [
     {
-        path:'https://www.facebook.com/profile.php?id=100084631813516',
-        icon:<FacebookIcon className="w-5 h-5" />
+      path: 'https://www.facebook.com/profile.php?id=100084631813516',
+      icon: <FacebookIcon className="w-5 h-5" />,
+      name: 'Facebook'
     },
     {
-        path:'https://x.com/Hemmyevo?t=mMX6xoH_0SJs6pL8bLYblQ&s=09',
-        icon:<Twitter className="w-5 h-5" />
+      path: 'https://x.com/Hemmyevo?t=mMX6xoH_0SJs6pL8bLYblQ&s=09',
+      icon: <Twitter className="w-5 h-5" />,
+      name: 'Twitter'
     },
     {
-        path:'https://www.instagram.com/hemmy_evo?igsh=M2Q1eTNra2x4c3o4',
-        icon: <InstagramIcon className="w-5 h-5" />
+      path: 'https://www.instagram.com/hemmy_evo?igsh=M2Q1eTNra2x4c3o4',
+      icon: <InstagramIcon className="w-5 h-5" />,
+      name: 'Instagram'
     },
     {
-        path:'https://www.linkedin.com/in/atilola-emmanuel-99964b324?utm_source=sare&utm_campaign=share_via&utm_content=profile&utm_medium=android_app',
-        icon: <Linkedin className="w-5 h-5" />
+      path: 'https://www.linkedin.com/in/atilola-emmanuel-99964b324',
+      icon: <Linkedin className="w-5 h-5" />,
+      name: 'LinkedIn'
     },
   ]
 
-  return (
-    <div className="pt-10 px-8 overflow-hidden relative">
-      <div className="absolute inset-0 bg-white/10 backdrop-blur-lg z-[-1]" />
-      
-      <div className="mx-auto w-full p-1">
-        <hr className="my-4 border-white/20" />
-        
-        <div className="md:flex space-y-6 md:space-y-0 justify-center md:px-10 items-center w-full md:items-center md:justify-between">
-          <p className="text-sm text-white/80 text-center">
-            © 2024 <Link href="https://Hemmyevo.vercel.app" className="hover:underline hover:text-white transition-colors">HemmyEvo™</Link>. All Rights Reserved.
-          </p>
+  const footerLinks = [
+    {
+      title: "Shop",
+      links: [
+        { name: "All Products", href: "/products" },
+        { name: "Featured", href: "/featured" },
+        { name: "New Arrivals", href: "/new" },
+        { name: "Sale Items", href: "/sale" },
+      ]
+    },
+    {
+      title: "Company",
+      links: [
+        { name: "About Us", href: "/about" },
+        { name: "Our Story", href: "/story" },
+        { name: "Careers", href: "/careers" },
+        { name: "Press", href: "/press" },
+      ]
+    },
+    {
+      title: "Support",
+      links: [
+        { name: "Contact Us", href: "/contact" },
+        { name: "FAQs", href: "/faqs" },
+        { name: "Shipping", href: "/shipping" },
+        { name: "Returns", href: "/returns" },
+      ]
+    }
+  ]
 
-          <div className="flex mt-4 justify-center space-x-5 sm:mt-0">
-            {icon.map((list,i) => (
-              <Link 
-                key={i} 
-                href={list.path} 
-                className="text-white/70 hover:text-white transition-colors p-2 rounded-full hover:bg-white/10"
-                target="_blank"
-                rel="noopener noreferrer"
+  return (
+    <footer className="relative bg-amber-900/90 backdrop-blur-lg text-white overflow-hidden border-t border-amber-800/30">
+      {/* Decorative elements */}
+      <motion.div 
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 0.1 }}
+        transition={{ duration: 1 }}
+        className="absolute inset-0 bg-[url('/pattern.svg')] bg-repeat opacity-10"
+      />
+      
+      <div className="container mx-auto px-4 py-12 sm:py-16">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10">
+          {/* Brand info */}
+          <motion.div 
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+            viewport={{ once: true }}
+            className="space-y-4"
+          >
+            <Link href="/" className="text-2xl font-bold text-amber-100 flex items-end">
+              <span className="text-3xl text-amber-300">R</span>ollinks
+            </Link>
+            <p className="text-amber-100/80 text-sm">
+              Premium quality products with a heritage of craftsmanship and timeless design.
+            </p>
+            
+            <div className="flex space-x-4 pt-2">
+              {socialIcons.map((social, index) => (
+                <motion.a
+                  key={index}
+                  href={social.path}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  whileHover={{ y: -3, scale: 1.1 }}
+                  whileTap={{ scale: 0.9 }}
+                  className="text-amber-100 hover:text-white transition-colors p-2 rounded-full hover:bg-amber-800/50"
+                  aria-label={social.name}
+                >
+                  {social.icon}
+                </motion.a>
+              ))}
+            </div>
+          </motion.div>
+
+          {/* Footer links */}
+          {footerLinks.map((section, index) => (
+            <motion.div
+              key={index}
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: index * 0.1 }}
+              viewport={{ once: true }}
+              className="space-y-4"
+            >
+              <h3 className="text-lg font-semibold text-amber-200">{section.title}</h3>
+              <ul className="space-y-3">
+                {section.links.map((link, linkIndex) => (
+                  <motion.li 
+                    key={linkIndex}
+                    whileHover={{ x: 5 }}
+                    transition={{ type: "spring", stiffness: 300 }}
+                  >
+                    <Link 
+                      href={link.href} 
+                      className="text-amber-100/80 hover:text-amber-50 text-sm transition-colors"
+                    >
+                      {link.name}
+                    </Link>
+                  </motion.li>
+                ))}
+              </ul>
+            </motion.div>
+          ))}
+
+          {/* Contact info */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.3 }}
+            viewport={{ once: true }}
+            className="space-y-4"
+          >
+            <h3 className="text-lg font-semibold text-amber-200">Contact Us</h3>
+            <div className="space-y-3 text-sm text-amber-100/80">
+              <motion.div 
+                whileHover={{ x: 5 }}
+                className="flex items-start space-x-3"
               >
-                {list.icon}
-              </Link>
-            ))}
-          </div>
+                <Mail className="w-4 h-4 mt-0.5 flex-shrink-0 text-amber-200" />
+                <span>atilolaemmanuel22@gmail.com</span>
+              </motion.div>
+              <motion.div 
+                whileHover={{ x: 5 }}
+                className="flex items-start space-x-3"
+              >
+                <Phone className="w-4 h-4 mt-0.5 flex-shrink-0 text-amber-200" />
+                <span>+234 705 314 2223</span>
+              </motion.div>
+              <p className="pt-2">
+                Lautech,<br />
+                Ogbomosho<br />
+                Oyo state, Nigeria
+              </p>
+            </div>
+          </motion.div>
         </div>
+
+        {/* Bottom section */}
+        <motion.div 
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          transition={{ delay: 0.4 }}
+          viewport={{ once: true }}
+          className="mt-16 pt-8 border-t border-amber-800/30"
+        >
+          <div className="flex flex-col md:flex-row justify-between items-center gap-4">
+            <p className="text-xs text-amber-100/60 text-center md:text-left">
+              © {new Date().getFullYear()} Rollinks. All rights reserved.
+            </p>
+            
+            <div className="flex flex-wrap justify-center gap-x-6 gap-y-2 text-xs">
+              <Link href="/privacy" className="text-amber-100/60 hover:text-amber-50 transition-colors">
+                Privacy Policy
+              </Link>
+              <Link href="/terms" className="text-amber-100/60 hover:text-amber-50 transition-colors">
+                Terms of Service
+              </Link>
+              <Link href="/cookies" className="text-amber-100/60 hover:text-amber-50 transition-colors">
+                Cookie Policy
+              </Link>
+              <Link href="/sitemap" className="text-amber-100/60 hover:text-amber-50 transition-colors">
+                Sitemap
+              </Link>
+            </div>
+          </div>
+
+          <motion.p 
+            initial={{ opacity: 0, y: 10 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.5 }}
+            viewport={{ once: true }}
+            className="mt-6 text-xs text-amber-100/40 text-center"
+          >
+            Crafted with passion by <a href="https://hemmyevo.vercel.app" target="_blank" rel="noopener" className="hover:text-amber-100/80 transition-colors">HemmyEvo</a>
+          </motion.p>
+        </motion.div>
       </div>
-    </div>
+    </footer>
   )
 }
 
