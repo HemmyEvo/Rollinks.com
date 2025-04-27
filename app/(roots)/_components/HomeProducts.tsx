@@ -6,13 +6,15 @@ import { motion } from "framer-motion";
 // Fetch data from Sanity
 async function getData() {
     const query = `*[_type == "product"] {
-        _id,
-        name,
-        description,
-        "slug": slug.current,
-        "imageUrl": image[0].asset->url,
-        price,
-        "categoryName": category->name
+           _id,
+    name,
+    description,
+    "slug": slug.current,
+    "images": image[0].asset->url,
+    price,
+    "categoryName": category->name,
+    rating,
+    isNew
     }`;
     function shuffleArray(array: any[]) {
         for (let i = array.length - 1; i > 0; i--) {
@@ -103,15 +105,17 @@ export default function HomeProducts() {
                         whileInView="open"
 
                     >
-                      <ProductCard
-                        id={item._id}
-                        title={item.name}
-                        image={item.imageUrl}
-                        price={item.price}
-                        description={item.description}
-                        slug={item.slug}
-                        discount={item.price + 1000}
-                      />
+                    <ProductCard
+                    id={item._id}
+                    title={item.name}
+                    image={item.images}
+                    price={item.price}
+                    description={item.description}
+                    slug={item.slug}
+                    discount={item.price + 1000}
+                    rating={item.rating}
+                    isNew={item.isNew}
+                  />
                     </motion.div>
                   ))}
                 </motion.div>
