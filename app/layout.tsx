@@ -51,7 +51,9 @@ export default function RootLayout({
         <CartProvider>
         <Header />
         <ShoppingCartModal />
+        <div className="py-5">
         {children}
+</div>
         <Footer/>
         </CartProvider>
        
