@@ -36,7 +36,7 @@ async function getCategory() {
 
 const ProductPage = () => {
   
-  const [selectedCategory, setSelectedCategory] = useState<string | null>
+  const [selectedCategory, setSelectedCategory] = useState<string | null>(null)
   const [maxPrice, setMaxPrice] = useState<number | null>(null);
   const [minRating, setMinRating] = useState<number | null>(null);
   const [sortOption, setSortOption] = useState<string>('featured');
