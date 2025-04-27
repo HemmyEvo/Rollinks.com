@@ -27,13 +27,12 @@ const ProductCard = ({ id, title, price, description, slug, image, discount, rat
     setAddMessage("Added")
 
     const product = {
-      id: id,
-      name: title,
-      description: description,
-      price: price,
-      currency: "NGN",
-      image: image,
-    };
+  sku: id,
+  name: title,
+  price: price,
+  currency: "NGN",
+  image: image,
+};
 
     if (cartDetails && cartDetails[id]) {
       incrementItem(id, { count: quantity })
