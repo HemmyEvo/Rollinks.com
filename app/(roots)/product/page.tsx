@@ -35,7 +35,7 @@ async function getCategory() {
   return data;
 }
 
-const Page = () => {
+const ProductPage = () => {
   const searchParams = useSearchParams();
   const urlCategory = searchParams.get('category');
   
@@ -321,4 +321,4 @@ const Page = () => {
   );
 };
 
-export default Page;
+export default ProductPage;
