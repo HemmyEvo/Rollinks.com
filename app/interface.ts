@@ -48,6 +48,7 @@ export interface fullProduct {
   benefits?: string[];
   rating?: number;
   isNew: boolean;
+  reviewCount: number;
   isBestSeller: boolean;
   skinType?: string[];
   volume?: string;
