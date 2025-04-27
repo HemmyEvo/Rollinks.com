@@ -10,7 +10,7 @@ async function getData() {
     name,
     description,
     "slug": slug.current,
-    "images": image[0].asset->url,
+    "images": images[].asset->url,
     price,
     "categoryName": category->name,
     rating,
@@ -108,7 +108,7 @@ export default function HomeProducts() {
                     <ProductCard
                     id={item._id}
                     title={item.name}
-                    image={item.images}
+                      image={item.images?.[0]}
                     price={item.price}
                     description={item.description}
                     slug={item.slug}
