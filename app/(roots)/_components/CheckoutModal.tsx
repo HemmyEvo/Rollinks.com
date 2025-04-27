@@ -253,7 +253,7 @@ const CheckoutModal = ({ isOpen, onClose }: CheckoutModalProps) => {
           const orderItems = cartDetails ? Object.values(cartDetails).map(item => ({
             product: {
               _type: 'reference',
-              _ref: item.product_id
+              _ref: item._id
             },
             name: item.name,
             quantity: item.quantity,
@@ -272,7 +272,7 @@ const CheckoutModal = ({ isOpen, onClose }: CheckoutModalProps) => {
               email: formData.email,
               phone: formData.phone,
               userId: userId || null
-            },
+            }, 
             shippingAddress: {
               street: formData.address,
               city: selectedLocation?.value === 'custom' ? customCity : selectedLocation?.label || '',
@@ -332,7 +332,7 @@ const CheckoutModal = ({ isOpen, onClose }: CheckoutModalProps) => {
 
   if (paymentSuccess) {
     return (
-      <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-[1000]">
+      <div className="absolute left-0 right-0 bottom-0 top-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-[1000]">
         <div className="bg-white rounded-lg max-w-md w-full max-h-[90vh] overflow-y-auto">
           <div className="p-6">
             <div className="flex justify-between items-center mb-4">
@@ -385,7 +385,7 @@ const CheckoutModal = ({ isOpen, onClose }: CheckoutModalProps) => {
   }
 
   return (
-    <div ref={modalRef} className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-[1000]">
+    <div ref={modalRef} className="absolute left-0 right-0 bottom-0 top-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-[1000]">
       <div  className="bg-white rounded-lg w-full max-w-4xl max-h-[90vh] overflow-y-auto">
         <div className="p-6">
           <div className="flex justify-between items-center mb-6">
