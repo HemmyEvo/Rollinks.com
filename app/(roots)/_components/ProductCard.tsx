@@ -21,11 +21,10 @@ const ProductCard = ({ id, title, price, description, slug, image, discount, rat
   const [quantity, setQuantity] = React.useState(1)
   const [addMessage, setAddMessage] = React.useState("Add to cart")
   const [isHovered, setIsHovered] = React.useState(false)
-  const { addItem, incrementItem, setItemQuantity, cartDetails, clearCart } = useShoppingCart();
+  const { addItem, incrementItem, setItemQuantity, cartDetails } = useShoppingCart();
 
   const handleAddToCart = () => {
     setAddMessage("Added")
-    clearCart()
     const product = {
       id: id,
       sku: id,
