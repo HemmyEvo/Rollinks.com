@@ -59,9 +59,7 @@ const Footer = () => {
   ]
 
   return (
-    <footer className="relative bg-amber-900/90 backdrop-blur-lg text-white overflow-hidden border-t border-amber-800/30">
-      
-      
+    <footer className="relative bg-amber-900/90 backdrop-blur-lg text-white border-t border-amber-800/30">
       <div className="container mx-auto px-4 py-12 sm:py-16">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10">
           {/* Brand info */}
@@ -78,7 +76,7 @@ const Footer = () => {
             <p className="text-amber-100/80 text-sm">
               Premium quality products with a heritage of craftsmanship and timeless design.
             </p>
-            
+
             <div className="flex space-x-4 pt-2">
               {socialIcons.map((social, index) => (
                 <motion.a
@@ -142,14 +140,18 @@ const Footer = () => {
                 className="flex items-start space-x-3"
               >
                 <Mail className="w-4 h-4 mt-0.5 flex-shrink-0 text-amber-200" />
-                <span>atilolaemmanuel22@gmail.com</span>
+                <a href="mailto:atilolaemmanuel22@gmail.com" className="hover:text-amber-50 transition-colors">
+                  atilolaemmanuel22@gmail.com
+                </a>
               </motion.div>
               <motion.div 
                 whileHover={{ x: 5 }}
                 className="flex items-start space-x-3"
               >
                 <Phone className="w-4 h-4 mt-0.5 flex-shrink-0 text-amber-200" />
-                <span>+234 705 314 2223</span>
+                <a href="tel:+2347053142223" className="hover:text-amber-50 transition-colors">
+                  +234 705 314 2223
+                </a>
               </motion.div>
               <p className="pt-2">
                 Lautech,<br />
@@ -172,7 +174,7 @@ const Footer = () => {
             <p className="text-xs text-amber-100/60 text-center md:text-left">
               © {new Date().getFullYear()} Rollinks. All rights reserved.
             </p>
-            
+
             <div className="flex flex-wrap justify-center gap-x-6 gap-y-2 text-xs">
               <Link href="/privacy" className="text-amber-100/60 hover:text-amber-50 transition-colors">
                 Privacy Policy
@@ -196,7 +198,7 @@ const Footer = () => {
             viewport={{ once: true }}
             className="mt-6 text-xs text-amber-100/40 text-center"
           >
-            Crafted with passion by <a href="https://hemmyevo.vercel.app" target="_blank" rel="noopener" className="hover:text-amber-100/80 transition-colors">HemmyEvo</a>
+            Crafted with passion by <a href="https://hemmyevo.vercel.app" target="_blank" rel="noopener noreferrer" className="hover:text-amber-100/80 transition-colors">HemmyEvo</a>
           </motion.p>
         </motion.div>
       </div>
