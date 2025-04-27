@@ -6,13 +6,15 @@ import { motion } from "framer-motion";
 // Fetch data from Sanity
 async function getData() {
   const query = `*[_type == "product"][0...4] | order(createdAt desc) {
-    _id,
+        _id,
     name,
     description,
     "slug": slug.current,
-    "imageUrl": image[0].asset->url,
+    "images": image[0].asset->url,
     price,
-    "categoryName": category->name
+    "categoryName": category->name,
+    rating,
+    isNew
   }`;
   const data = await client.fetch(query);
   return data;
@@ -91,15 +93,17 @@ export default function NewArrival() {
                         initial="closed"
                         whileInView="open"
                     >
-                      <ProductCard
-                        id={item._id}
-                        title={item.name}
-                        image={item.imageUrl}
-                        price={item.price}
-                        description={item.description}
-                        slug={item.slug}
-                        discount={item.price + 1000}
-                      />
+                   <ProductCard
+                    id={item._id}
+                    title={item.name}
+                    image={item.images}
+                    price={item.price}
+                    description={item.description}
+                    slug={item.slug}
+                    discount={item.price + 1000}
+                    rating={item.rating}
+                    isNew={item.isNew}
+                  />
                     </motion.div>
                   ))}
                 </motion.div>
