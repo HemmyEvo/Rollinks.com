@@ -9,7 +9,6 @@ export default {
       title: 'Order ID',
       type: 'string',
       description: 'Unique order identifier',
-      validation: Rule => Rule.required()
     },
     {
       name: 'status',
@@ -27,7 +26,6 @@ export default {
         layout: 'dropdown'
       },
       initialValue: 'processing',
-      validation: Rule => Rule.required()
     },
     {
       name: 'customer',
@@ -38,19 +36,19 @@ export default {
           name: 'name',
           title: 'Full Name',
           type: 'string',
-          validation: Rule => Rule.required()
+     
         },
         {
           name: 'email',
           title: 'Email',
           type: 'string',
-          validation: Rule => Rule.required().email()
+       
         },
         {
           name: 'phone',
           title: 'Phone Number',
           type: 'string',
-          validation: Rule => Rule.required()
+          
         },
         {
           name: 'userId',
@@ -69,31 +67,31 @@ export default {
           name: 'street',
           title: 'Street Address',
           type: 'string',
-          validation: Rule => Rule.required()
+      
         },
         {
           name: 'city',
           title: 'City',
           type: 'string',
-          validation: Rule => Rule.required()
+          
         },
         {
           name: 'state',
           title: 'State',
           type: 'string',
-          validation: Rule => Rule.required()
+         
         },
         {
           name: 'postalCode',
           title: 'Postal Code',
           type: 'string',
-          validation: Rule => Rule.required()
+        
         },
         {
           name: 'country',
           title: 'Country',
           type: 'string',
-          validation: Rule => Rule.required()
+          
         },
         {
           name: 'specialInstructions',
@@ -116,20 +114,20 @@ export default {
               title: 'Product',
               type: 'reference',
               to: [{ type: 'product' }],
-              validation: Rule => Rule.required()
+             
             },
             {
               name: 'quantity',
               title: 'Quantity',
               type: 'number',
               initialValue: 1,
-              validation: Rule => Rule.required().min(1).integer()
+             
             },
             {
               name: 'price',
               title: 'Unit Price (₦)',
               type: 'number',
-              validation: Rule => Rule.required().positive()
+              
             },
             {
               name: 'variant',
@@ -140,7 +138,7 @@ export default {
           ]
         }
       ],
-      validation: Rule => Rule.required().min(1)
+      
     },
     {
       name: 'payment',
@@ -161,7 +159,7 @@ export default {
             ],
             layout: 'dropdown'
           },
-          validation: Rule => Rule.required()
+          
         },
         {
           name: 'status',
@@ -177,7 +175,7 @@ export default {
             layout: 'dropdown'
           },
           initialValue: 'pending',
-          validation: Rule => Rule.required()
+          
         },
         {
           name: 'transactionId',
@@ -188,14 +186,14 @@ export default {
           name: 'amount',
           title: 'Amount Paid (₦)',
           type: 'number',
-          validation: Rule => Rule.required().positive()
+          
         },
         {
           name: 'currency',
           title: 'Currency',
           type: 'string',
           initialValue: 'NGN',
-          validation: Rule => Rule.required()
+         
         }
       ]
     },
@@ -216,14 +214,14 @@ export default {
             ],
             layout: 'dropdown'
           },
-          validation: Rule => Rule.required()
+          
         },
         {
           name: 'cost',
           title: 'Shipping Cost (₦)',
           type: 'number',
           initialValue: 0,
-          validation: Rule => Rule.required().min(0)
+       
         },
         {
           name: 'trackingNumber',
@@ -241,20 +239,20 @@ export default {
       name: 'subtotal',
       title: 'Subtotal (₦)',
       type: 'number',
-      validation: Rule => Rule.required().positive()
+      
     },
     {
       name: 'total',
       title: 'Total Amount (₦)',
       type: 'number',
-      validation: Rule => Rule.required().positive()
+     
     },
     {
       name: 'discount',
       title: 'Discount Amount (₦)',
       type: 'number',
       initialValue: 0,
-      validation: Rule => Rule.min(0)
+     
     },
     {
       name: 'coupon',
@@ -272,7 +270,7 @@ export default {
       title: 'Order Date',
       type: 'datetime',
       initialValue: (new Date()).toISOString(),
-      validation: Rule => Rule.required()
+  
     },
     {
       name: 'updatedAt',
