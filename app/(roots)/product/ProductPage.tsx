@@ -8,7 +8,6 @@ import { useSearchParams } from 'next/navigation';
 import { Filter, X, ChevronDown, ChevronUp, Star, ArrowLeft } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import Link from 'next/link';
-import dynamic from 'next/dynamic';
 async function getData() {
   const query = `*[_type == "product"]{
     _id,
