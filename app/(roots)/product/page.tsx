@@ -12,7 +12,7 @@ async function getData() {
   const query = `*[_type == "product"]{
     _id,
     name,
-    "slug": slug.current,
+    "slug": slug,
     "images": images[].asset->url,
     price,
     "categoryName": category->name,
@@ -40,7 +40,7 @@ const ProductPage = () => {
   const [minRating, setMinRating] = useState<number | null>(null);
   const [sortOption, setSortOption] = useState<string>('featured');
   const [showFilters, setShowFilters] = useState(false);
-  const [data, setData] = useState<simplifiedProduct[]>([]);
+  const [data, setData] = useState<fullProduct[]>([]);
   const [categories, setCategories] = useState<simplifiedProduct[]>([]);
   const [loading, setLoading] = useState(true);
 
