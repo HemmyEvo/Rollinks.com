@@ -13,7 +13,7 @@ async function getData() {
   const query = `*[_type == "product"]{
     _id,
     name,
-    description,
+    "description": description,
     "slug": slug.current,
     "images": images[].asset->url,
     price,
