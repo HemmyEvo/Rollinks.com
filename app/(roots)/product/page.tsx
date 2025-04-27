@@ -276,7 +276,7 @@ const ProductPage = () => {
   image={item.images?.[0]} // use the first image
   price={item.price}
   description={item.description}
-  slug={item.slug}
+  slug={item.slug.current}
   discount={item.price + 1000}
   rating={item.rating ?? 0}
   isNew={item.isNew}
