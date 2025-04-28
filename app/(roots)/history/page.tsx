@@ -191,7 +191,7 @@ if(me?.isAdmin) return <AdminPanel />
                 </div>
               </div>
 
-              <div className="px-6 py-4 grid grid-cols-1 md:grid-cols-3 gap-6">
+              <div className="px-6  py-4 grid grid-cols-1 md:grid-cols-3 gap-6">
                 <div>
                   <h4 className="text-sm font-medium text-gray-900 mb-2">Payment</h4>
                   <div className="flex items-center">
