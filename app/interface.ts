@@ -57,7 +57,7 @@ export interface fullProduct {
   seo?: SEO;
 }
 
-interface Order {
+export interface Order {
   _id: string;
   orderId: string;
   status: string;
