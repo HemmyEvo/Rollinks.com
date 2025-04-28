@@ -140,7 +140,7 @@ const Page = () => {
                     setErr((prev) => ({ ...prev, email: '' }));
                   }}
                   className="w-full px-4 py-3 bg-white/70 dark:bg-gray-800/70 rounded-lg border border-gray-300/50 dark:border-gray-600/50 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  placeholder="your@email.com"
+                  placeholder="user@email.com"
                 />
                 {err.email && <p className="mt-1 text-sm text-red-500">{err.email}</p>}
               </div>
