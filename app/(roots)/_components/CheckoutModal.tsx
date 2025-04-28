@@ -250,18 +250,21 @@ const CheckoutModal = ({ isOpen, onClose }: CheckoutModalProps) => {
       onSuccess: async (response: any) => {
         try {
           // Prepare order items for Sanity
-          const orderItems = cartDetails ? Object.values(cartDetails).map(item => ({
-            product: {
-              _type: 'reference',
-              _ref: item._id
-            },
-            name: item.name,
-            quantity: item.quantity,
-            price: item.price,
-            currency: item.currency,
-            image: item.image
-          })) : [];
-
+          const orderItems = cartDetails 
+  ? Object.values(cartDetails).map((item,i) => ({
+      // Use Sanity's _id or _key as the unique identifier
+      key: item._id || i,
+      product: {
+        _type: 'reference',
+        _ref: item._id,
+      },
+      name: item.name,
+      quantity: item.quantity,
+      price: item.price,
+      currency: item.currency,
+      image: item.image,
+    }))
+  : [];
           // Create order document for Sanity
           const orderDoc = {
             _type: 'order',
