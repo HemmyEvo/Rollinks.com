@@ -159,7 +159,7 @@ export default function AdminPanel() {
   const saveChanges = async (orderId: string) => {
     try {
       setLoading(true);
-      const orderToUpdate = orders.find(o => o._id === orderId);
+      const orderToUpdate = orders.find((o:any) => o._id === orderId);
       if (!orderToUpdate) return;
 
       const updatedOrder = {
@@ -178,7 +178,7 @@ export default function AdminPanel() {
         .set(updatedOrder)
         .commit();
 
-      setOrders(orders.map(o => o._id === orderId ? updatedOrder : o));
+      setOrders(orders.map((o:any) => o._id === orderId ? updatedOrder : o));
       setEditingOrder(null);
       toast.success('Order updated successfully');
       
