@@ -11,11 +11,11 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Badge } from '@/components/ui/badge';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { formatDate } from '@/lib/utils';
-
+import { Order } from '@/app/interface';
 export default function AdminPanel() {
-  const [orders, setOrders] = useState([]);
+  const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true);
-  const [filteredOrders, setFilteredOrders] = useState([]);
+  const [filteredOrders, setFilteredOrders] = useState<Order[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState<string>('all');
   const [dateFilter, setDateFilter] = useState<string>('all');
@@ -110,7 +110,7 @@ export default function AdminPanel() {
 
     // Search filter
     if (searchTerm) {
-      result = result.filter((order:any) => 
+      result = result.filter((order) => 
         order.orderId.toLowerCase().includes(searchTerm.toLowerCase()) ||
         order.customer.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
         order.customer.email.toLowerCase().includes(searchTerm.toLowerCase()) || order.shipping?.trackingNumber?.toLowerCase().includes(searchTerm.toLowerCase()) || false
@@ -119,13 +119,13 @@ export default function AdminPanel() {
 
     // Status filter
     if (statusFilter !== 'all') {
-      result = result.filter((order:any) => order.status === statusFilter);
+      result = result.filter((order) => order.status === statusFilter);
     }
 
     // Date filter
     if (dateFilter !== 'all') {
       const now = new Date();
-      result = result.filter((order:any) => {
+      result = result.filter((order) => {
         const orderDate = new Date(order.createdAt);
         switch (dateFilter) {
           case 'today':
@@ -145,7 +145,7 @@ export default function AdminPanel() {
     setFilteredOrders(result);
   };
 
-  const startEditing = (order: any) => {
+  const startEditing = (order) => {
     setEditingOrder(order._id);
     setTempStatus(order.status);
     setTempTracking(order.shipping?.trackingNumber || '');
@@ -159,11 +159,11 @@ export default function AdminPanel() {
   const saveChanges = async (orderId: string) => {
     try {
       setLoading(true);
-      const orderToUpdate = orders.find((o:any) => o._id === orderId);
+      const orderToUpdate = orders.find((o) => o._id === orderId);
       if (!orderToUpdate) return;
 
       const updatedOrder = {
-        ...orderToUpdate!,
+        ...orderToUpdate,
         status: tempStatus,
         shipping: {
           ...orderToUpdate.shipping,
@@ -178,7 +178,7 @@ export default function AdminPanel() {
         .set(updatedOrder)
         .commit();
 
-      setOrders(orders.map((o:any) => o._id === orderId ? updatedOrder : o));
+      setOrders(orders.map((o) => o._id === orderId ? updatedOrder : o));
       setEditingOrder(null);
       toast.success('Order updated successfully');
       
