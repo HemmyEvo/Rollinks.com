@@ -419,7 +419,7 @@ export default function AdminPanel() {
                                     {order.shipping && (
                                       <>
                                         <p><span className="font-medium">Method:</span> {order.shipping.method}</p>
-                                        <p><span className="font-medium">Cost:</span> ₦{order.shipping.cost.toLocaleString()}</p>
+                                        <p><span className="font-medium">Cost:</span> ₦{order.shipping.cost}</p>
                                         {order.shipping.trackingNumber && (
                                           <p><span className="font-medium">Tracking:</span> {order.shipping.trackingNumber}</p>
                                         )}
@@ -446,7 +446,7 @@ export default function AdminPanel() {
                                         {order.payment.status}
                                       </span>
                                     </p>
-                                    <p><span className="font-medium">Amount:</span> ₦{order.payment.amount.toLocaleString()}</p>
+                                    <p><span className="font-medium">Amount:</span> ₦{order.payment.amount}</p>
                                     {order.payment.transactionId && (
                                       <p><span className="font-medium">Transaction ID:</span> {order.payment.transactionId}</p>
                                     )}
