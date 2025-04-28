@@ -565,7 +565,7 @@ export default function AdminPanel() {
                                   />
                                 </div>
                                 <div>
-                                  <label className="block text-sm font-medium mb-1">Carrier</label>
+                                  <label className="block m text-sm font-medium mb-1">Carrier</label>
                                   <Select value={tempCarrier} onValueChange={setTempCarrier}>
                                     <SelectTrigger>
                                       <SelectValue placeholder="Select carrier" />
