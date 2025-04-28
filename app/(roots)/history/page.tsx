@@ -202,13 +202,13 @@ export default function OrderHistory() {
                   {order.items?.slice(0, 2).map((item: any) => (
                     <div key={item._id} className="flex items-center">
                       <div className="flex-shrink-0 w-16 h-16 bg-gray-200 rounded-md overflow-hidden">
-                        {item.image && (
-                          <img
+                        
+                         <img
                             src={item.image}
                             alt={item.name}
                             className="w-full h-full object-cover"
                           />
-                        )}
+                       
                       </div>
                       <div className="ml-4 flex-1">
                         <h5 className="text-sm font-medium text-gray-900">
