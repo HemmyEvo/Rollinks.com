@@ -250,10 +250,10 @@ const CheckoutModal = ({ isOpen, onClose }: CheckoutModalProps) => {
       onSuccess: async (response: any) => {
         try {
           // Prepare order items for Sanity
-          const orderItems = cartDetails 
-  ? Object.values(cartDetails).map((item,i) => ({
-      // Use Sanity's _id or _key as the unique identifier
-      key: item._id || i,
+   const orderItems = cartDetails 
+  ? Object.values(cartDetails).map((item,i)=> ({
+      // Use existing _key, fallback to _id, or generate a new key
+      _key: item._key || item._id || i,
       product: {
         _type: 'reference',
         _ref: item._id,
