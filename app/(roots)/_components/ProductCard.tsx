@@ -18,7 +18,7 @@ type Props = {
   
 }
 
-const ProductCard = ({ id, title, price, description, slug, image, discount, rating, isNew, sales = 0 }: Props) => {
+const ProductCard = ({ id, title, price, description, slug, image, discount, rating, isNew }: Props) => {
   const [isHovered, setIsHovered] = React.useState(false)
   const [isLiked, setIsLiked] = React.useState(false)
   const { addItem } = useShoppingCart();
