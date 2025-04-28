@@ -120,7 +120,7 @@ export default function AdminPanel() {
         order.customer.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
         order.customer.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
         (order.shipping?.trackingNumber?.toLowerCase().includes(searchTerm.toLowerCase()) || false
-      );
+      )
     }
 
     // Status filter
