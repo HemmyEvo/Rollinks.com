@@ -29,8 +29,8 @@ http.route({
             email: result.data.email_addresses[0]?.email_address,
             firstname: `${result.data.first_name ?? ""}`,
             lastname: `${result.data.last_name ?? ""}`,
-            image: result.data.image_url
-    
+            image: result.data.image_url,
+            isAdmin: false
           });
           break;
         }
