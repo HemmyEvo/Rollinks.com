@@ -21,7 +21,7 @@ export default function OrderHistory() {
 
       try {
         setLoading(true);
-        const query = `*[_type == "order" && customer.userId == userId] | order(createdAt asc) {
+        const query = `*[_type == "order" && customer.userId == $userId] | order(createdAt asc) {
   _id,
   orderId,
   status,
