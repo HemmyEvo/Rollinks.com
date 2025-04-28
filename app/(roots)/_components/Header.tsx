@@ -24,7 +24,7 @@ const Header = () => {
               transition={{ duration: 0.5 }}
               className="flex items-center"
             >
-              <Link href="/" className="text-2xl font-bold text-amber-800 flex items-end">
+              <Link href="/" className="text-2xl font-bold text-amber-800 flex items-end" onClick={() => setisToggle(false)}>
                 <span className="text-3xl text-amber-600">R</span>ollinks
               </Link>
             </motion.div>
@@ -206,6 +206,7 @@ const Header = () => {
                       <Button 
                         variant="default" 
                         className="w-full bg-amber-600 hover:bg-amber-700"
+                  onClick={() => setisToggle(false)}
                       >
                         Sign In
                       </Button>
