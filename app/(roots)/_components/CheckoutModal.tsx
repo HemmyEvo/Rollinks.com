@@ -252,7 +252,7 @@ const CheckoutModal = ({ isOpen, onClose }: CheckoutModalProps) => {
           // Prepare order items for Sanity
    const orderItems = cartDetails 
   ? Object.values(cartDetails).map((item) => ({
-      _key: item.id
+      _key: item.id,
       product: {
         _type: 'reference',
         _ref: item.id,
