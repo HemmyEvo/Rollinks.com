@@ -5,8 +5,8 @@ export function cn(...inputs: ClassValue[]) {
 	return twMerge(clsx(inputs));
 }
 
-export function formatDate(date_ms: number) {
-    const date_obj = new Date(date_ms);
+export function formatDate(dateString: string) {
+    const date_obj = new Date(dateString); // direct parsing from ISO string
 
     const current_date = new Date();
     current_date.setHours(0, 0, 0, 0);
@@ -29,52 +29,6 @@ export function formatDate(date_ms: number) {
 
     const days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
     return days[provided_date.getDay()] || `${provided_date.getMonth() + 1}/${provided_date.getDate()}/${provided_date.getFullYear()}`;
-}
-
-export const isSameDay = (timestamp1: number, timestamp2: number): boolean => {
-    const date1 = new Date(timestamp1);
-    const date2 = new Date(timestamp2);
-    return (
-        date1.getFullYear() === date2.getFullYear() &&
-        date1.getMonth() === date2.getMonth() &&
-        date1.getDate() === date2.getDate()
-    );
-};
-
-export const getRelativeDateTime = (message: any, previousMessage: any) => {
-    const today = new Date();
-    const yesterday = new Date(today);
-    yesterday.setDate(today.getDate() - 1);
-
-    const lastWeek = new Date(today);
-    lastWeek.setDate(today.getDate() - 7);
-
-    const messageDate = new Date(message._creationTime);
-
-    if (!previousMessage || !isSameDay(previousMessage._creationTime, message._creationTime)) {
-        if (isSameDay(message._creationTime, today.getTime())) {
-            return "Today";
-        } else if (isSameDay(message._creationTime, yesterday.getTime())) {
-            return "Yesterday";
-        } else if (messageDate > lastWeek) {
-            return messageDate.toLocaleDateString(undefined, { weekday: "long" });
-        } else {
-            return messageDate.toLocaleDateString(undefined, {
-                day: "2-digit",
-                month: "2-digit",
-                year: "numeric",
-            });
-        }
-    }
-};
-
-export function randomID(len: number) {
-    const chars = "12345qwertyuiopasdfgh67890jklmnbvcxzMNBVCZXASDQWERTYHGFUIOLKJP";
-    let result = "";
-    for (let i = 0; i < len; i++) {
-        result += chars.charAt(Math.floor(Math.random() * chars.length));
-    }
-    return result;
 }
 
 // Define getRelativeDateTime function
