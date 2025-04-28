@@ -21,39 +21,44 @@ export default function OrderHistory() {
 
       try {
         setLoading(true);
-        const query = `*[_type == "order" && customer.userId == $userId] | order(createdAt desc) {
-          _id,
-          orderId,
-          status,
-          customer->{name, email, phone},
-          shippingAddress,
-          items[]->{
-            _id,
-            name,
-            price,
-            quantity,
-            image,
-            product->{_id, name, slug}
-          },
-          payment {
-            method,
-            status,
-            transactionId,
-            amount,
-            currency
-          },
-          shipping {
-            method,
-            cost,
-            trackingNumber,
-            carrier
-          },
-          subtotal,
-          total,
-          discount,
-          createdAt,
-          updatedAt
-        }`;
+        const query = `*[_type == "order" && customer.userId == userId] | order(createdAt asc) {
+  _id,
+  orderId,
+  status,
+  customer {
+    name,
+    email,
+    phone
+  },
+  shippingAddress,
+  items[]{
+    _key,
+    name,
+    price,
+    quantity,
+    currency,
+    image,
+    product->{_id, name, slug}
+  },
+  payment {
+    method,
+    status,
+    transactionId,
+    amount,
+    currency
+  },
+  shipping {
+    method,
+    cost,
+    trackingNumber,
+    carrier
+  },
+  subtotal,
+  total,
+  discount,
+  createdAt,
+  updatedAt
+}`;
 
         const ordersData = await client.fetch(query, { userId: userId });
         setOrders(ordersData);
