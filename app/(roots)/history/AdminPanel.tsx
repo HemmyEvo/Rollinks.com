@@ -481,7 +481,7 @@ export default function AdminPanel() {
                                             <div>
                                               <div className="font-medium">{item.name}</div>
            {item.product && (
-                                                <div className="text-sm text-gray-500">
+                                                <div className="text-sm  text-gray-500">
                                                   SKU: {item.product._id.slice(-6)}
                                                 </div>
                                               )}
