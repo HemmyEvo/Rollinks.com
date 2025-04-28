@@ -204,7 +204,7 @@ export default function OrderHistory() {
                       <div className="flex-shrink-0 w-16 h-16 bg-gray-200 rounded-md overflow-hidden">
                         
                          <img
-                            src={item.image}
+                            src={item.image || ""}
                             alt={item.name}
                             className="w-full h-full object-cover"
                           />
