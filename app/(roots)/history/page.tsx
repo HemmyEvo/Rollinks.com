@@ -97,7 +97,7 @@ export default function OrderHistory() {
   if (error) return <p className="text-center mt-8 text-red-600">{error}</p>;
 
   return (
-    <div className="max-w-7xl min-h-[80vh] mx-auto px-4 my-8 sm:px-6 lg:px-8">
+    <div className="max-w-7xl min-h-[80vh] mx-auto px-4 py-8 sm:px-6 lg:px-8">
       <div className="mb-8">
         <h1 className="text-3xl font-bold text-gray-900">Order History</h1>
         <p className="mt-2 text-sm text-gray-600">
