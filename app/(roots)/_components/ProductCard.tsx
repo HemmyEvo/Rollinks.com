@@ -1,4 +1,4 @@
-import { CheckCircle, Eye, Heart, Plus, Minus, Star, ShoppingCart } from 'lucide-react'
+import { Heart, ShoppingCart, Star, ChevronRight } from 'lucide-react'
 import Image from 'next/image'
 import React from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
@@ -14,17 +14,16 @@ type Props = {
   discount: number,
   slug: string,
   rating: number,
-  isNew: boolean
+  isNew: boolean,
+  sales?: number
 }
 
-const ProductCard = ({ id, title, price, description, slug, image, discount, rating, isNew }: Props) => {
-  const [quantity, setQuantity] = React.useState(1)
-  const [addMessage, setAddMessage] = React.useState("Add to cart")
+const ProductCard = ({ id, title, price, description, slug, image, discount, rating, isNew, sales = 0 }: Props) => {
   const [isHovered, setIsHovered] = React.useState(false)
-  const { addItem, incrementItem, setItemQuantity, cartDetails } = useShoppingCart();
+  const [isLiked, setIsLiked] = React.useState(false)
+  const { addItem } = useShoppingCart();
 
   const handleAddToCart = () => {
-    setAddMessage("Added")
     const product = {
       id: id,
       sku: id,
@@ -33,23 +32,10 @@ const ProductCard = ({ id, title, price, description, slug, image, discount, rat
       currency: "NGN",
       image: image,
     };
-
-    if (cartDetails && cartDetails[id]) {
-      incrementItem(id, { count: quantity })
-    } else {
-      addItem(product)
-      setItemQuantity(id, quantity)
-    }
-
-    setTimeout(() => {
-      setAddMessage("Add to cart")
-    }, 2000)
+    addItem(product)
   }
 
-  const handleQuantityChange = (value: number) => {
-    const newValue = Math.max(1, Math.min(100, value))
-    setQuantity(newValue)
-  }
+  const discountPercentage = discount ? Math.round(((discount - price) / discount) * 100) : 0
 
   return (
     <motion.div 
@@ -57,187 +43,109 @@ const ProductCard = ({ id, title, price, description, slug, image, discount, rat
       initial={{ opacity: 0, y: 20 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: "0px 0px -100px 0px" }}
-      transition={{ duration: 0.5 }}
+      transition={{ duration: 0.3 }}
     >
       <div 
-        className="relative group"
+        className="relative bg-white rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-shadow duration-200"
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
       >
-        {/* Glassmorphism Card */}
-        <motion.div 
-          className="bg-white/20 backdrop-blur-xl rounded-2xl overflow-hidden shadow-lg border border-white/30 transition-all duration-300 hover:shadow-2xl hover:border-white/50"
-          whileHover={{ y: -5 }}
-          style={{
-            boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)',
-            background: 'linear-gradient(135deg, rgba(255,255,255,0.25) 0%, rgba(255,255,255,0.15) 100%)'
-          }}
-        >
-          {/* Image Container with Frosted Glass Effect */}
-          <div className="relative h-64 w-full overflow-hidden">
-            <div className="absolute inset-0 bg-gradient-to-b from-transparent to-black/10 z-10" />
+        {/* Image Container */}
+        <div className="relative aspect-square w-full overflow-hidden">
+          <Link href={`/product/${slug}`}>
             <Image
               src={image}
               alt={title}
               fill
-              className="object-cover object-center transition-transform duration-700 group-hover:scale-110"
+              className="object-cover object-center transition-transform duration-500 group-hover:scale-105"
               sizes="(max-width: 640px) 100vw, (max-width: 768px) 50vw, (max-width: 1024px) 33vw, 25vw"
               priority
             />
+          </Link>
 
-            {/* Hover Overlay */}
-            <motion.div 
-              className="absolute inset-0 bg-black/10 flex items-center justify-center z-20"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: isHovered ? 1 : 0 }}
-              transition={{ duration: 0.3 }}
-            >
-              <motion.div
-                className="absolute top-4 right-4 flex flex-col space-y-3"
-                initial={{ y: -20, opacity: 0 }}
-                animate={{ 
-                  y: isHovered ? 0 : -20,
-                  opacity: isHovered ? 1 : 0
-                }}
-                transition={{ delay: 0.1 }}
-              >
-                <Link href={`/product/${slug}`}>
-                  <button className="p-2 bg-white/90 rounded-full shadow-md hover:bg-white transition-colors hover:scale-110">
-                    <Eye className="w-5 h-5 text-gray-700" />
-                  </button>
-                </Link>
-                <button className="p-2 bg-white/90 rounded-full shadow-md hover:bg-white transition-colors hover:scale-110">
-                  <Heart className="w-5 h-5 text-rose-500" />
-                </button>
-              </motion.div>
-            </motion.div>
-
-            {/* Badges - Floating Glass Effect */}
-            <div className="absolute top-4 left-4 flex flex-col space-y-2 z-20">
-              {isNew && (
-                <motion.div 
-                  className="bg-gradient-to-r from-emerald-500 to-teal-600 text-white text-xs font-bold px-3 py-1 rounded-full backdrop-blur-sm shadow-md"
-                  initial={{ scale: 0 }}
-                  animate={{ scale: 1 }}
-                  transition={{ delay: 0.2 }}
-                >
-                  New
-                </motion.div>
-              )}
-              {discount && (
-                <motion.div 
-                  className="bg-gradient-to-r from-amber-500 to-orange-600 text-white text-xs font-bold px-3 py-1 rounded-full backdrop-blur-sm shadow-md"
-                  initial={{ scale: 0 }}
-                  animate={{ scale: 1 }}
-                  transition={{ delay: 0.3 }}
-                >
-                  {Math.round(((discount - price) / discount) * 100)}% OFF
-                </motion.div>
-              )}
-            </div>
+          {/* Badges */}
+          <div className="absolute top-2 left-2 flex flex-col space-y-1 z-10">
+            {isNew && (
+              <span className="bg-red-500 text-white text-xs font-bold px-2 py-0.5 rounded">
+                New
+              </span>
+            )}
+            {discountPercentage > 0 && (
+              <span className="bg-red-500 text-white text-xs font-bold px-2 py-0.5 rounded">
+                {discountPercentage}% OFF
+              </span>
+            )}
           </div>
 
-          {/* Product Info - Frosted Glass Panel */}
-          <div className="p-5 bg-white/10 backdrop-blur-md border-t border-white/20">
-            <Link href={`/product/${slug}`}>
-              <h3 className="font-semibold text-gray-800 hover:text-amber-600 transition-colors line-clamp-1 text-lg mb-1">
-                {title}
-              </h3>
-            </Link>
+          {/* Like Button */}
+          <button 
+            className={`absolute top-2 right-2 p-1.5 rounded-full ${isLiked ? 'text-red-500' : 'text-gray-400 bg-white/80'}`}
+            onClick={() => setIsLiked(!isLiked)}
+          >
+            <Heart 
+              className="w-5 h-5" 
+              fill={isLiked ? 'currentColor' : 'none'}
+            />
+          </button>
 
-            {/* Rating with Glass Background */}
-            <div className="inline-flex items-center px-2 py-1 rounded-full bg-white/30 backdrop-blur-sm mb-3">
-              <Star className="w-4 h-4 fill-amber-500 text-amber-500 mr-1" />
-              <span className="text-sm font-medium text-gray-700">{rating.toFixed(1)}</span>
-            </div>
-
-            {/* Price Section */}
-            <div className="flex items-center justify-between mb-4">
-              <div className="flex items-end space-x-2">
-                <span className="text-xl font-bold text-gray-800">
-                  ₦{price.toLocaleString('en-US', {minimumFractionDigits: 2})}
-                </span>
-                {discount && (
-                  <span className="text-sm text-gray-500 line-through">
-                    ₦{discount.toLocaleString('en-US', {minimumFractionDigits: 2})}
-                  </span>
-                )}
-              </div>
-            </div>
-
-            {/* Add to Cart Section */}
-            <div className="flex flex-col space-y-3">
-              {/* Quantity Selector - Glass Style */}
-              <motion.div 
-                className="flex items-center justify-between bg-white/30 backdrop-blur-sm rounded-full overflow-hidden border border-white/40"
-                whileTap={{ scale: 0.95 }}
-              >
-                <button 
-                  className="px-3 py-2 text-gray-700 hover:bg-white/20 transition-colors"
-                  onClick={() => handleQuantityChange(quantity - 1)}
-                >
-                  <Minus className="w-4 h-4" />
-                </button>
-                <input
-                  type="number"
-                  min="1"
-                  max="100"
-                  value={quantity}
-                  onChange={(e) => handleQuantityChange(parseInt(e.target.value) || 1)}
-                  className="w-12 text-center bg-transparent outline-none text-sm font-medium text-gray-700"
-                />
-                <button 
-                  className="px-3 py-2 text-gray-700 hover:bg-white/20 transition-colors"
-                  onClick={() => handleQuantityChange(quantity + 1)}
-                >
-                  <Plus className="w-4 h-4" />
-                </button>
-              </motion.div>
-
-              {/* Add to Cart Button - Glass Morphic */}
+          {/* Add to Cart Button - Shows on hover */}
+          <AnimatePresence>
+            {isHovered && (
               <motion.button
                 onClick={handleAddToCart}
-                className={`w-full flex items-center justify-center space-x-2 px-4 py-3 rounded-full text-sm font-semibold transition-all ${
-                  addMessage === "Added" 
-                    ? "bg-gradient-to-r from-green-500 to-emerald-600 text-white shadow-lg" 
-                    : "bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 text-white shadow-lg hover:shadow-xl"
-                }`}
-                whileHover={addMessage !== "Added" ? { scale: 1.02 } : {}}
-                whileTap={addMessage !== "Added" ? { scale: 0.98 } : {}}
+                className="absolute bottom-2 left-1/2 transform -translate-x-1/2 bg-white text-red-500 flex items-center justify-center px-4 py-1.5 rounded-full shadow-md text-sm font-medium"
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: 10 }}
+                transition={{ duration: 0.2 }}
               >
-                <ShoppingCart className="w-5 h-5" />
-                <span>{addMessage}</span>
-                <AnimatePresence>
-                  {addMessage === "Added" && (
-                    <motion.span
-                      initial={{ scale: 0 }}
-                      animate={{ scale: 1 }}
-                      exit={{ scale: 0 }}
-                      transition={{ type: "spring" }}
-                    >
-                      <CheckCircle className="w-5 h-5" />
-                    </motion.span>
-                  )}
-                </AnimatePresence>
+                <ShoppingCart className="w-4 h-4 mr-1" />
+                Add to Cart
               </motion.button>
-            </div>
-          </div>
-        </motion.div>
+            )}
+          </AnimatePresence>
+        </div>
 
-        {/* Floating Confirmation Animation */}
-        <AnimatePresence>
-          {addMessage === "Added" && (
-            <motion.div
-              className="absolute -top-3 -right-3 bg-gradient-to-r from-green-500 to-emerald-600 text-white rounded-full p-2 shadow-xl z-30"
-              initial={{ scale: 0, rotate: -45 }}
-              animate={{ scale: 1, rotate: 0 }}
-              exit={{ scale: 0, rotate: 45 }}
-              transition={{ type: "spring", damping: 10, stiffness: 100 }}
-            >
-              <CheckCircle className="w-6 h-6" />
-            </motion.div>
-          )}
-        </AnimatePresence>
+        {/* Product Info */}
+        <div className="p-3">
+          <Link href={`/product/${slug}`}>
+            <h3 className="text-sm text-gray-800 line-clamp-2 h-10 mb-1 hover:text-red-500 transition-colors">
+              {title}
+            </h3>
+          </Link>
+
+          {/* Price Section */}
+          <div className="mb-1">
+            <span className="text-lg font-bold text-red-500">
+              ₦{price.toLocaleString('en-US', {minimumFractionDigits: 2})}
+            </span>
+            {discount > 0 && (
+              <span className="text-xs text-gray-500 line-through ml-1">
+                ₦{discount.toLocaleString('en-US', {minimumFractionDigits: 2})}
+              </span>
+            )}
+          </div>
+
+          {/* Rating and Sales */}
+          <div className="flex items-center justify-between text-xs text-gray-500">
+            <div className="flex items-center">
+              <div className="flex items-center bg-yellow-50 px-1 py-0.5 rounded">
+                <Star className="w-3 h-3 fill-yellow-400 text-yellow-400 mr-0.5" />
+                <span>{rating.toFixed(1)}</span>
+              </div>
+              <span className="mx-1">|</span>
+              <span>Sold {sales > 1000 ? `${(sales/1000).toFixed(1)}k` : sales}</span>
+            </div>
+            <Link href={`/product/${slug}`} className="text-blue-500 hover:text-blue-600 flex items-center">
+              Details <ChevronRight className="w-3 h-3" />
+            </Link>
+          </div>
+
+          {/* Coupon/Special Offer - Common on Temu */}
+          <div className="mt-2 text-xs bg-yellow-50 text-yellow-700 px-2 py-1 rounded">
+            Extra 10% off with code TEMU10
+          </div>
+        </div>
       </div>
     </motion.div>
   )
