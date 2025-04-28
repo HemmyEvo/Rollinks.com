@@ -335,7 +335,7 @@ export default function AdminPanel() {
                   </TableCell>
                 </TableRow>
               ) : (
-                filteredOrders.map((order:any) => (
+                filteredOrders.map((order:Order) => (
                   <motion.div key={order._id} layout>
                     <TableRow
                       className="cursor-pointer hover:bg-gray-50"
