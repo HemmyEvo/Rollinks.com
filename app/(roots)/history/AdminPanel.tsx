@@ -11,12 +11,11 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Badge } from '@/components/ui/badge';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { formatDate } from '@/lib/utils';
-import { Order } from '@/types/order';
 
 export default function AdminPanel() {
-  const [orders, setOrders] = useState<Order[]>([]);
+  const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [filteredOrders, setFilteredOrders] = useState<Order[]>([]);
+  const [filteredOrders, setFilteredOrders] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState<string>('all');
   const [dateFilter, setDateFilter] = useState<string>('all');
@@ -96,11 +95,7 @@ export default function AdminPanel() {
       setFilteredOrders(ordersData);
     } catch (err) {
       console.error('Failed to fetch orders:', err);
-      toast({
-        title: 'Error',
-        description: 'Failed to load orders',
-        variant: 'destructive'
-      });
+      toast.error('Failed to load order');
     } finally {
       setLoading(false);
     }
