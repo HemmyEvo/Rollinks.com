@@ -12,6 +12,7 @@ async function getData() {
     "slug": slug.current,
     "images": images[].asset->url,
     price,
+    discountPrice,
     "categoryName": category->name,
     rating,
     isNew
@@ -112,7 +113,7 @@ export default function HomeProducts() {
                     price={item.price}
                     description={item.description}
                     slug={item.slug}
-                    discount={item.price + 1000}
+                    discount={item.discountPrice}
                     rating={item.rating}
                     isNew={item.isNew}
                   />
