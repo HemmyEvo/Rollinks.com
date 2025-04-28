@@ -15,7 +15,7 @@ export default function OrderHistory() {
   const [error, setError] = useState<string | null>(null);
 
   const { isSignedIn, userId } = useAuth();
-  const { isAuthenticated } = useConvexAuth();
+  
   
 
   useEffect(() => {
