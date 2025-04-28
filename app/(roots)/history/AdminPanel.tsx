@@ -145,7 +145,7 @@ export default function AdminPanel() {
     setFilteredOrders(result);
   };
 
-  const startEditing = (order) => {
+  const startEditing = (order: Order) => {
     setEditingOrder(order._id);
     setTempStatus(order.status);
     setTempTracking(order.shipping?.trackingNumber || '');
