@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
-import { useAuth, useSignIn, useSignOut } from '@clerk/nextjs';
+import { useAuth, useSignIn, signOut} from '@clerk/nextjs';
 import { Button } from '@/components/ui/button';
 import { Eye, EyeOff } from 'lucide-react';
 import { toast } from 'react-hot-toast';
@@ -18,7 +18,6 @@ const Page = () => {
   const [isLoading, setIsLoading] = useState(false);
 
   const { signIn, isLoaded } = useSignIn();
-  const { signOut } = useSignOut();
   const { isSignedIn } = useAuth();
   const router = useRouter();
 
