@@ -7,6 +7,7 @@ import { useAuth } from '@clerk/nextjs';
 import { formatDate } from '@/lib/utils';
 import { useConvexAuth, useQuery } from 'convex/react';
 import AdminPanel from './AdminPanel'
+import { api } from '@/convex/_generated/api';
 import { 
   FiPackage, 
   FiCheckCircle, 
