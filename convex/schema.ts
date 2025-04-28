@@ -7,6 +7,7 @@ export default defineSchema({
 		lastname:v.string(),
 		email: v.string(),
 		image: v.string(),
+    isAdmin: v.boolean(),
 		tokenIdentifier: v.string(),
 		
 	}).index("by_tokenIdentifier", ["tokenIdentifier"]),
