@@ -251,11 +251,11 @@ const CheckoutModal = ({ isOpen, onClose }: CheckoutModalProps) => {
         try {
           // Prepare order items for Sanity
    const orderItems = cartDetails 
-  ? Object.values(cartDetails).map((item, i) => ({
-      _key: item._key || item._id || String(i), // <- make sure it's a string
+  ? Object.values(cartDetails).map((item) => ({
+      _key: item.id
       product: {
         _type: 'reference',
-        _ref: item._id,
+        _ref: item.id,
       },
       name: item.name,
       quantity: item.quantity,
@@ -264,7 +264,7 @@ const CheckoutModal = ({ isOpen, onClose }: CheckoutModalProps) => {
       image: item.image,
     }))
   : [];
-console.log(cartDetails)
+
           // Create order document for Sanity
           const orderDoc = {
             _type: 'order',
@@ -308,18 +308,19 @@ console.log(cartDetails)
           const createdOrder = await client.create(orderDoc);
           setOrderId(createdOrder.orderId);
           setPaymentSuccess(true);
-          clearCart();
+          
         } catch (error) {
           console.error('Error saving order:', error);
           alert(error)
           alert('Order was successful but there was an issue saving your details. Please contact support with your payment reference.');
         } finally {
+          clearCart();
           setLoading(false);
           // Show our modal again
           if (modalRef.current) {
             modalRef.current.style.display = 'block';
           }
-          router.push('/history');
+          
         }
       },
       onCancel: () => {
