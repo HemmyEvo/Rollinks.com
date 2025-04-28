@@ -15,7 +15,7 @@ type Props = {
   slug: string,
   rating: number,
   isNew: boolean,
-  sales?: number
+  
 }
 
 const ProductCard = ({ id, title, price, description, slug, image, discount, rating, isNew, sales = 0 }: Props) => {
@@ -133,18 +133,14 @@ const ProductCard = ({ id, title, price, description, slug, image, discount, rat
                 <Star className="w-3 h-3 fill-yellow-400 text-yellow-400 mr-0.5" />
                 <span>{rating.toFixed(1)}</span>
               </div>
-              <span className="mx-1">|</span>
-              <span>Sold {sales > 1000 ? `${(sales/1000).toFixed(1)}k` : sales}</span>
+             
             </div>
             <Link href={`/product/${slug}`} className="text-blue-500 hover:text-blue-600 flex items-center">
               Details <ChevronRight className="w-3 h-3" />
             </Link>
           </div>
 
-          {/* Coupon/Special Offer - Common on Temu */}
-          <div className="mt-2 text-xs bg-yellow-50 text-yellow-700 px-2 py-1 rounded">
-            Extra 10% off with code TEMU10
-          </div>
+          
         </div>
       </div>
     </motion.div>
