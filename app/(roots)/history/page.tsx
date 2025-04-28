@@ -120,7 +120,7 @@ const me = useQuery(api.user.getMe, isAuthenticated ? undefined : "skip");
   const getStatusColor = (status: string) => {
     switch (status) {
       case 'processing':
-        return 'bg-yellow-100 text-yellow-800';
+        return 'bg-yellow-100  text-yellow-800';
       case 'confirmed':
         return 'bg-blue-100 text-blue-800';
       case 'shipped':
