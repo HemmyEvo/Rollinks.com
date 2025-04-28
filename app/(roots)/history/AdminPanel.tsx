@@ -336,7 +336,7 @@ export default function AdminPanel() {
                 </TableRow>
               ) : (
                 filteredOrders?.map((order:Order) => (
-                  <motion.div key={order._id} layout>
+                  
                     <TableRow
                       className="cursor-pointer hover:bg-gray-50"
                       onClick={() => toggleExpandOrder(order._id)}
