@@ -8,6 +8,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import React, { useState, SyntheticEvent } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 
 const ForgotPassword: NextPage = () => {
     const [email, setEmail] = useState('');
@@ -16,7 +17,7 @@ const ForgotPassword: NextPage = () => {
     const [code, setCode] = useState('');
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
-    const [err, setErr] = useState({ password: '' ,   confirmPassword: ''});
+    const [err, setErr] = useState({ password: '', confirmPassword: '' });
     const [isCodeVerified, setIsCodeVerified] = useState(false);
     const [complete, setComplete] = useState(false);
     const [showPassword, setShowPassword] = useState(false);
@@ -24,15 +25,15 @@ const ForgotPassword: NextPage = () => {
     const [successfulCreation, setSuccessfulCreation] = useState(false)
     const [secondFactor, setSecondFactor] = useState(false);
     const { signIn, isLoaded, setActive } = useSignIn();
-    const { isSignedIn } = useAuth(); // Check if the user is signed in
+    const { isSignedIn } = useAuth();
     const router = useRouter()
-    // Redirect if authenticated
+
     React.useEffect(() => {
-      if (isSignedIn) {
-        router.push('/');
-       // Redirect to home page if user is signed in
-      }
+        if (isSignedIn) {
+            router.push('/');
+        }
     }, [isSignedIn, router]);
+
     if (!isLoaded) {
         return null
     }
@@ -80,33 +81,29 @@ const ForgotPassword: NextPage = () => {
         const newErr: typeof err = {
             password: '',
             confirmPassword: '',
-          };
-      
-          let hasErrors = false;
-      
-          if (confirmPassword.trim().length < 8) {
+        };
+
+        let hasErrors = false;
+
+        if (confirmPassword.trim().length < 8) {
             newErr.confirmPassword = 'Confirm password must be at least 8 characters long';
             hasErrors = true;
-          }
-          // Validate password confirmation
-          if (password !== confirmPassword) {
+        }
+        if (password !== confirmPassword) {
             newErr.confirmPassword = 'Passwords must be the same';
             hasErrors = true;
-          }
-      
-          // Update error state
-          setErr(newErr);
-      
-          // If there are validation errors, return early
-          if (hasErrors) {
+        }
+
+        setErr(newErr);
+
+        if (hasErrors) {
             return;
-          }
+        }
         setIsLoading(true);
         await signIn?.resetPassword({
             password
         })
         .then(res => {
-            
             if (res.status === 'needs_second_factor') {
                 setSecondFactor(true);
             } else if (res.status === 'complete') {
@@ -122,145 +119,238 @@ const ForgotPassword: NextPage = () => {
     }
 
     return (
-        <div className="h-screen flex items-center justify-center">
-            <div className="max-w-sm w-lvw p-4 bg-[#e09d22dc] rounded-[10px] dark:bg-[#202020] shadow-md shadow-[#3b3b3b] mx-auto">
-            <div className="logo mb-7 text-center">
-       
-       <h1 className="text-xl font-semibold flex items-center justify-center">
-         <span> <Image src="/logo.jpg" alt="Hemmyevo" className='rounded-full drop-shadow-xl' width={50} height={50} /></span>
-         
-       </h1>
-       <p className="tracking-widest font-[gerald] text-2xl text-white mt-2 ">Rollinks Skincare</p>
-     </div>
+        <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-100 to-gray-300 dark:from-gray-800 dark:to-gray-900 p-4">
+            <motion.div 
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5 }}
+                className="w-full max-w-md"
+            >
+                <div className="backdrop-blur-lg bg-white/30 dark:bg-black/30 rounded-2xl shadow-xl overflow-hidden border border-white/20 dark:border-gray-700/50">
+                    <div className="p-8">
+                        <motion.div 
+                            initial={{ scale: 0.9 }}
+                            animate={{ scale: 1 }}
+                            transition={{ delay: 0.2 }}
+                            className="flex flex-col items-center mb-8"
+                        >
+                            <div className="w-20 h-20 rounded-full bg-white/20 backdrop-blur-md p-1 border border-white/30 flex items-center justify-center mb-4">
+                                <Image 
+                                    src="/logo.jpg" 
+                                    alt="Rollinks Skincare" 
+                                    width={64} 
+                                    height={64} 
+                                    className="rounded-full object-cover drop-shadow-xl"
+                                />
+                            </div>
+                            <h1 className="text-2xl font-bold text-gray-800 dark:text-white">Rollinks Skincare</h1>
+                            <p className="text-gray-600 dark:text-gray-300 mt-1">
+                                {successfulCreation && !complete ? 
+                                    (isCodeVerified ? 'Set New Password' : 'Verify Your Email') : 
+                                    (!complete ? 'Reset Your Password' : 'Password Reset Complete')}
+                            </p>
+                        </motion.div>
 
-                <h1 className="text-left font-semibold text-lg mb-3">
-                    {successfulCreation && !complete ? (isCodeVerified ? 'New Password' : 'Verify Code') : (!complete ? 'Forgot Password' : '')}
-                </h1>
-                <form
-                    onSubmit={!successfulCreation ? requestResetCode : (isCodeVerified ? resetPassword : verifyCode)}>
-                    {!successfulCreation && !complete && (
-                        <>
-                            <div className="mb-5">
+                        <AnimatePresence mode="wait">
                             {error && (
-                                    <p className='text-red-500 italic text-xs mb-2'>{error}</p>
-                                )}
-                                <input
-                                    value={email}
-                                    onChange={e => {setEmail(e.target.value); setIsLoading(false) }}
-                                    type="text"
-                                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 mb-5"
-                                    placeholder='Email'
-                                    required
-                                />
-
-                                
-                                <Button type="submit" disabled={isLoading}>
-                                    {isLoading ? 'Sending...' : 'Send Reset Code'}
-                                </Button>
-                            </div>
-                            <hr className="my-5" />
-                            <div className="text-center">
-                                <span>I already have an account? </span>
-                                <span className="underline text-blue-800">
-                                    <Link href="/sign-in">Sign In</Link>
-                                </span>
-                            </div>
-                        </>
-                    )}
-
-                    {successfulCreation && !isCodeVerified && !complete && (
-                        <>  
-                            <p className="text-green-700 mb-2">Verification code has been sent to your email</p>
-                            <div className="mb-5 relative">
-                                <input
-                                    value={code}
-                                    onChange={e => setCode(e.target.value)}
-                                    type="text"
-                                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 mb-2"
-                                    placeholder='Enter Code'
-                                    required
-                                />
-                            </div>
-                            {error && (
-                                <p className='text-red-500 italic text-sm mb-5'>{error}</p>
-                            )}
-                            <Button type="submit" disabled={isLoading}>
-                                {isLoading ? 'Verifying...' : 'Verify Code'}
-                            </Button>
-                        </>
-                    )}
-
-                    {isCodeVerified && !complete && (
-                        <>
-                        {error && (
-                                <p className='text-red-500 italic text-xs mb-5'>{error}</p>
-                            )}
-                            <div className="mb-5 relative">
-                                
-                            
-                                <input
-                                    type={showPassword ? 'text' : 'password'}
-                                    value={password}
-                                    onChange={(e) => { setPassword(e.target.value); setErr((prev) => ({ ...prev, password: '' })); }}
-                                    id="password"
-                                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                                    placeholder="Password"
-                                />
-                                <button
-                                    type="button"
-                                    onClick={() => setShowPassword(!showPassword)}
-                                    className="absolute inset-y-0 right-0 flex items-center pr-3"
-                                    aria-label={showPassword ? 'Hide password' : 'Show password'}
+                                <motion.div
+                                    initial={{ opacity: 0, y: -10 }}
+                                    animate={{ opacity: 1, y: 0 }}
+                                    exit={{ opacity: 0 }}
+                                    className="mb-4 p-3 bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-300 rounded-lg text-sm"
                                 >
-                                    {showPassword ? <EyeOff className="text-gray-500" /> : <Eye className="text-gray-500" />}
-                                </button>
-                                {err.password && <p className="text-red-600 text-sm mt-2">{err.password}</p>}
-                            </div>
-                            <div className="mb-5 relative">
-                            <input
-                            type={showConfirmPassword ? 'text' : 'password'}
-                            value={confirmPassword}
-                            onChange={(e) => { err.confirmPassword = ''; setConfirmPassword(e.target.value) }}
-                            id="confirmPassword"
-                            className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 mb-2"
-                            placeholder='Confirm Password'
-                            />
-                            <button
-                            type="button"
-                            onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                            className="absolute inset-y-0 right-0 flex items-center pr-3"
-                            aria-label={showConfirmPassword ? "Hide password" : "Show password"}
+                                    {error}
+                                </motion.div>
+                            )}
+                        </AnimatePresence>
+
+                        <form onSubmit={!successfulCreation ? requestResetCode : (isCodeVerified ? resetPassword : verifyCode)}>
+                            {!successfulCreation && !complete && (
+                                <motion.div
+                                    initial={{ opacity: 0 }}
+                                    animate={{ opacity: 1 }}
+                                    transition={{ delay: 0.3 }}
+                                    className="space-y-4"
+                                >
+                                    <div>
+                                        <label htmlFor="email" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                                            Email Address
+                                        </label>
+                                        <input
+                                            value={email}
+                                            onChange={e => { setEmail(e.target.value); setError(null) }}
+                                            type="email"
+                                            id="email"
+                                            className="w-full px-4 py-3 bg-white/70 dark:bg-gray-800/70 backdrop-blur-sm rounded-lg border border-gray-300/50 dark:border-gray-600/50 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+                                            placeholder="your@email.com"
+                                            required
+                                        />
+                                    </div>
+
+                                    <Button 
+                                        type="submit" 
+                                        disabled={isLoading}
+                                        className="w-full py-3 px-4 bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-700 hover:to-blue-600 text-white font-medium rounded-lg shadow-md transition-all duration-200"
+                                    >
+                                        {isLoading ? (
+                                            <>
+                                                <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                                                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                                </svg>
+                                                Sending Code...
+                                            </>
+                                        ) : 'Send Reset Code'}
+                                    </Button>
+
+                                    <div className="pt-4 text-center text-sm text-gray-600 dark:text-gray-400">
+                                        <span>Remember your password? </span>
+                                        <Link href="/sign-in" className="font-medium text-blue-600 hover:text-blue-500 dark:text-blue-400 dark:hover:text-blue-300">
+                                            Sign In
+                                        </Link>
+                                    </div>
+                                </motion.div>
+                            )}
+
+                            {successfulCreation && !isCodeVerified && !complete && (
+                                <motion.div
+                                    initial={{ opacity: 0 }}
+                                    animate={{ opacity: 1 }}
+                                    transition={{ delay: 0.3 }}
+                                    className="space-y-4"
+                                >
+                                    <motion.div
+                                        initial={{ opacity: 0 }}
+                                        animate={{ opacity: 1 }}
+                                        className="p-3 bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-300 rounded-lg text-sm"
+                                    >
+                                        Verification code has been sent to your email
+                                    </motion.div>
+
+                                    <div>
+                                        <label htmlFor="code" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                                            Verification Code
+                                        </label>
+                                        <input
+                                            value={code}
+                                            onChange={e => setCode(e.target.value)}
+                                            type="text"
+                                            id="code"
+                                            className="w-full px-4 py-3 bg-white/70 dark:bg-gray-800/70 backdrop-blur-sm rounded-lg border border-gray-300/50 dark:border-gray-600/50 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 text-center tracking-widest font-mono"
+                                            placeholder="123456"
+                                            maxLength={6}
+                                            required
+                                        />
+                                    </div>
+
+                                    <Button 
+                                        type="submit" 
+                                        disabled={isLoading}
+                                        className="w-full py-3 px-4 bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-700 hover:to-blue-600 text-white font-medium rounded-lg shadow-md transition-all duration-200"
+                                    >
+                                        {isLoading ? 'Verifying...' : 'Verify Code'}
+                                    </Button>
+                                </motion.div>
+                            )}
+
+                            {isCodeVerified && !complete && (
+                                <motion.div
+                                    initial={{ opacity: 0 }}
+                                    animate={{ opacity: 1 }}
+                                    transition={{ delay: 0.3 }}
+                                    className="space-y-4"
+                                >
+                                    <div>
+                                        <label htmlFor="password" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                                            New Password
+                                        </label>
+                                        <div className="relative">
+                                            <input
+                                                type={showPassword ? 'text' : 'password'}
+                                                value={password}
+                                                onChange={(e) => { setPassword(e.target.value); setErr(prev => ({...prev, password: ''})) }}
+                                                id="password"
+                                                className="w-full px-4 py-3 bg-white/70 dark:bg-gray-800/70 backdrop-blur-sm rounded-lg border border-gray-300/50 dark:border-gray-600/50 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 pr-12"
+                                                placeholder="••••••••"
+                                                required
+                                            />
+                                            <button
+                                                type="button"
+                                                onClick={() => setShowPassword(!showPassword)}
+                                                className="absolute inset-y-0 right-0 px-3 flex items-center text-gray-500 hover:text-gray-700 dark:hover:text-gray-300"
+                                            >
+                                                {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                                            </button>
+                                        </div>
+                                        {err.password && <p className="mt-1 text-sm text-red-500">{err.password}</p>}
+                                    </div>
+
+                                    <div>
+                                        <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                                            Confirm Password
+                                        </label>
+                                        <div className="relative">
+                                            <input
+                                                type={showConfirmPassword ? 'text' : 'password'}
+                                                value={confirmPassword}
+                                                onChange={(e) => { setConfirmPassword(e.target.value); setErr(prev => ({...prev, confirmPassword: ''})) }}
+                                                id="confirmPassword"
+                                                className="w-full px-4 py-3 bg-white/70 dark:bg-gray-800/70 backdrop-blur-sm rounded-lg border border-gray-300/50 dark:border-gray-600/50 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 pr-12"
+                                                placeholder="••••••••"
+                                                required
+                                            />
+                                            <button
+                                                type="button"
+                                                onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                                                className="absolute inset-y-0 right-0 px-3 flex items-center text-gray-500 hover:text-gray-700 dark:hover:text-gray-300"
+                                            >
+                                                {showConfirmPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                                            </button>
+                                        </div>
+                                        {err.confirmPassword && <p className="mt-1 text-sm text-red-500">{err.confirmPassword}</p>}
+                                    </div>
+
+                                    <Button 
+                                        type="submit" 
+                                        disabled={isLoading}
+                                        className="w-full py-3 px-4 bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-700 hover:to-blue-600 text-white font-medium rounded-lg shadow-md transition-all duration-200"
+                                    >
+                                        {isLoading ? 'Updating...' : 'Update Password'}
+                                    </Button>
+                                </motion.div>
+                            )}
+                        </form>
+
+                        {complete && (
+                            <motion.div
+                                initial={{ opacity: 0, scale: 0.9 }}
+                                animate={{ opacity: 1, scale: 1 }}
+                                className="text-center space-y-4"
                             >
-                            {showConfirmPassword ? <EyeOff className="text-gray-500" /> : <Eye className="text-gray-500" />}
-                            </button>
-                            {err.confirmPassword && <p className="text-red-600 text-sm mt-2">{err.confirmPassword}</p>}
-                             </div>
+                                <div className="p-3 bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-300 rounded-lg text-sm">
+                                    Your password has been successfully updated!
+                                </div>
+                                <Link 
+                                    href="/" 
+                                    className="inline-block w-full py-3 px-4 bg-gradient-to-r from-green-600 to-green-500 hover:from-green-700 hover:to-green-600 text-white font-medium rounded-lg shadow-md transition-all duration-200"
+                                >
+                                    Continue to Homepage
+                                </Link>
+                            </motion.div>
+                        )}
 
-                           
-                   <Button type="submit" disabled={isLoading}>
-                                    {isLoading ? 'Verifying...' : 'Change Password'}
-                        </Button>
-                  
-                   </>
-                    )}
-
-                   
-                    
-                    
-
-                </form>
-                {complete && (
-                        <>
-                        <p className="text-green-800">You have successfully changed your password</p>
-                        <p>Go to <span className="underline  text-blue-800"><Link href="/">homepage...</Link></span></p>
-                        </>
-                        )
-                    
-                    }
-                    {secondFactor && '2FA is required, this UI does not handle that'}
-
-    
-            </div>
+                        {secondFactor && (
+                            <motion.div
+                                initial={{ opacity: 0 }}
+                                animate={{ opacity: 1 }}
+                                className="p-3 bg-yellow-100 dark:bg-yellow-900/30 text-yellow-700 dark:text-yellow-300 rounded-lg text-sm"
+                            >
+                                Two-factor authentication is required. Please check your second authentication device.
+                            </motion.div>
+                        )}
+                    </div>
+                </div>
+            </motion.div>
         </div>
     );
 };
