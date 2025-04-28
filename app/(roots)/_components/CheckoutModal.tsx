@@ -264,6 +264,7 @@ const CheckoutModal = ({ isOpen, onClose }: CheckoutModalProps) => {
       image: item.image,
     }))
   : [];
+console.log(cartDetails)
           // Create order document for Sanity
           const orderDoc = {
             _type: 'order',
