@@ -1,10 +1,9 @@
-"use client"
+"use client";
 
 import { useEffect, useState } from 'react';
 import { client } from '../../../lib/sanity';
 import Loading from '@/components/ui/Loading';
 import { useAuth } from '@clerk/nextjs';
-import { api } from '@/convex/_generated/api';
 import { formatDate } from '@/lib/utils';
 import { FiPackage, FiCheckCircle, FiTruck, FiClock, FiXCircle, FiDollarSign } from 'react-icons/fi';
 import Link from 'next/link';
@@ -15,8 +14,6 @@ export default function OrderHistory() {
   const [error, setError] = useState<string | null>(null);
 
   const { isSignedIn, userId } = useAuth();
-  
-  
 
   useEffect(() => {
     async function fetchOrders() {
@@ -36,11 +33,7 @@ export default function OrderHistory() {
             price,
             quantity,
             image,
-            product->{
-              _id,
-              name,
-              slug
-            }
+            product->{_id, name, slug}
           },
           payment {
             method,
@@ -61,8 +54,8 @@ export default function OrderHistory() {
           createdAt,
           updatedAt
         }`;
-        
-        const ordersData = await client.fetch(query, { userId: userId});
+
+        const ordersData = await client.fetch(query, { userId: userId });
         setOrders(ordersData);
       } catch (err) {
         console.error('Failed to fetch orders:', err);
@@ -158,10 +151,10 @@ export default function OrderHistory() {
                         {order.payment?.method || 'N/A'}
                       </p>
                       <p className={`text-sm ${
-                        order.payment?.status === 'completed' 
-                          ? 'text-green-600' 
-                          : order.payment?.status === 'failed' 
-                            ? 'text-red-600' 
+                        order.payment?.status === 'completed'
+                          ? 'text-green-600'
+                          : order.payment?.status === 'failed'
+                            ? 'text-red-600'
                             : 'text-yellow-600'
                       } capitalize`}>
                         {order.payment?.status || 'N/A'}
@@ -199,27 +192,34 @@ export default function OrderHistory() {
               <div className="px-6 py-4 bg-gray-50 border-t border-gray-200">
                 <h4 className="text-sm font-medium text-gray-900 mb-2">Items</h4>
                 <div className="space-y-4">
-                  {order.items?.slice(0, 2).map((item: any) => (
-                    <div key={item._id} className="flex items-center">
-                      <div className="flex-shrink-0 w-16 h-16 bg-gray-200 rounded-md overflow-hidden">
-                        
-                         <img
-                            src={item.image || ""}
-                            alt={item.name}
-                            className="w-full h-full object-cover"
-                          />
-                       
+                  {order.items?.slice(0, 2).map((item: any) => {
+                    if (!item) return null;
+                    return (
+                      <div key={item._id || Math.random()} className="flex items-center">
+                        <div className="flex-shrink-0 w-16 h-16 bg-gray-200 rounded-md overflow-hidden">
+                          {item.image ? (
+                            <img
+                              src={item.image}
+                              alt={item.name || 'Product image'}
+                              className="w-full h-full object-cover"
+                            />
+                          ) : (
+                            <div className="w-full h-full flex items-center justify-center text-gray-400 text-sm">
+                              No Image
+                            </div>
+                          )}
+                        </div>
+                        <div className="ml-4 flex-1">
+                          <h5 className="text-sm font-medium text-gray-900">
+                            {item.name || 'Unknown Product'}
+                          </h5>
+                          <p className="text-sm text-gray-500">
+                            Qty: {item.quantity ?? 0} × ₦{item.price?.toLocaleString() ?? '0'}
+                          </p>
+                        </div>
                       </div>
-                      <div className="ml-4 flex-1">
-                        <h5 className="text-sm font-medium text-gray-900">
-                          {item.name}
-                        </h5>
-                        <p className="text-sm text-gray-500">
-                          Qty: {item.quantity} × ₦{item.price?.toLocaleString()}
-                        </p>
-                      </div>
-                    </div>
-                  ))}
+                    );
+                  })}
                   {order.items?.length > 2 && (
                     <p className="text-sm text-gray-500">
                       + {order.items.length - 2} more item{order.items.length - 2 !== 1 ? 's' : ''}
