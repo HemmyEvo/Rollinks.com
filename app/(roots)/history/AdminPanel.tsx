@@ -110,7 +110,7 @@ export default function AdminPanel() {
 
     // Search filter
     if (searchTerm) {
-      result = result.filter(order => 
+      result = result.filter((order:any) => 
         order.orderId.toLowerCase().includes(searchTerm.toLowerCase()) ||
         order.customer.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
         order.customer.email.toLowerCase().includes(searchTerm.toLowerCase()) || order.shipping?.trackingNumber?.toLowerCase().includes(searchTerm.toLowerCase()) || false
@@ -119,13 +119,13 @@ export default function AdminPanel() {
 
     // Status filter
     if (statusFilter !== 'all') {
-      result = result.filter(order => order.status === statusFilter);
+      result = result.filter((order:any) => order.status === statusFilter);
     }
 
     // Date filter
     if (dateFilter !== 'all') {
       const now = new Date();
-      result = result.filter(order => {
+      result = result.filter((order:any) => {
         const orderDate = new Date(order.createdAt);
         switch (dateFilter) {
           case 'today':
@@ -145,7 +145,7 @@ export default function AdminPanel() {
     setFilteredOrders(result);
   };
 
-  const startEditing = (order: Order) => {
+  const startEditing = (order: any) => {
     setEditingOrder(order._id);
     setTempStatus(order.status);
     setTempTracking(order.shipping?.trackingNumber || '');
@@ -335,7 +335,7 @@ export default function AdminPanel() {
                   </TableCell>
                 </TableRow>
               ) : (
-                filteredOrders.map((order) => (
+                filteredOrders.map((order:any) => (
                   <motion.div key={order._id} layout>
                     <TableRow
                       className="cursor-pointer hover:bg-gray-50"
