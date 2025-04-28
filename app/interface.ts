@@ -40,7 +40,7 @@ export interface fullProduct {
   };
   images: string[];
   price: number;
-  discountPrice?: number;
+  discountPrice: number;
   category: CategoryReference;
   categoryName?: string; // This would be populated when joining data
   description: any[]; // Array of block content or images
