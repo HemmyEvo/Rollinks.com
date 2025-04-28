@@ -17,30 +17,25 @@ const Page = () => {
   const { signIn, isLoaded } = useSignIn();
   const [isloading, setIsLoading] = useState(false);
   const router = useRouter();
-  const { isSignedIn } = useAuth(); // Check if the user is signed in
+  const { isSignedIn } = useAuth();
 
-  // Redirect if authenticated
   React.useEffect(() => {
     if (isSignedIn) {
       router.push('/');
-      // Redirect to home page if user is signed in
     }
   }, [isSignedIn, router]);
 
   if (!isLoaded) {
-    return null
+    return null;
   }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
 
-    // Reset errors
     const newErr = { email: '', password: '' };
     let hasErrors = false;
 
-    // Validation
-    // Validate each field
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email.trim())) {
       newErr.email = 'Please enter a valid email address';
@@ -64,9 +59,7 @@ const Page = () => {
         password: password,
       });
       if (attemptSignIn) {
-        // Show success toast
         toast.success('Login successful! Redirecting...');
-
         setTimeout(() => {
           window.location.pathname = '/';
         }, 2000);
@@ -87,18 +80,25 @@ const Page = () => {
   };
 
   return (
-    <div className="flex min-h-screen  items-center justify-center">
+    <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-blue-100 via-white to-pink-100 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
       <form
         onSubmit={handleSubmit}
-        className="max-w-sm w-lvw p-4 bg-[#e09d22dc] rounded-[10px] dark:bg-[#202020] shadow-md shadow-[#3b3b3b] mx-auto"
+        className="w-full max-w-md p-8 bg-white/10 backdrop-blur-lg rounded-2xl shadow-xl border border-white/30 dark:border-gray-700"
       >
-        <div className="logo mb-7 text-center">
-          <h1 className="text-xl font-semibold flex items-center justify-center">
-            <span>
-              <Image src="/logo.jpg" alt="Hemmyevo" className='rounded-full' width={50} height={50} />
-            </span>
+        <div className="logo mb-8 text-center">
+          <h1 className="text-2xl font-bold flex items-center justify-center gap-3 text-gray-900 dark:text-white">
+            <Image
+              src="/logo.jpg"
+              alt="Rollinks Skincare"
+              className="rounded-full"
+              width={50}
+              height={50}
+            />
+            Rollinks Skincare
           </h1>
-          <p className="tracking-widest font-[gerald] text-2xl drop-shadow-2xl text-white mt-2 ">Rollinks Skincare</p>
+          <p className="tracking-widest font-semibold text-lg mt-2 text-gray-700 dark:text-gray-300">
+            Welcome Back
+          </p>
         </div>
 
         <div className="mb-5">
@@ -106,47 +106,55 @@ const Page = () => {
             type="text"
             value={email}
             onChange={(e) => { setEmail(e.target.value); setErr((prev) => ({ ...prev, username: '' })); }}
-            id="username"
-            className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 mb-2"
+            id="email"
+            className="bg-white/30 dark:bg-gray-700/30 border border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-3 mb-1 placeholder-gray-500 dark:placeholder-gray-400"
             placeholder="Email"
           />
           {err.email && <p className="text-red-500 text-xs italic">{err.email}</p>}
         </div>
 
-        <div className="mb-5 relative">
-          <div className="relative">
-            <input
-              type={showPassword ? 'text' : 'password'}
-              value={password}
-              onChange={(e) => { err.password = ''; setPassword(e.target.value); }}
-              id="password"
-              className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 mb-2"
-              placeholder="Password"
-            />
-            <button
-              type="button"
-              onClick={() => setShowPassword(!showPassword)}
-              className="absolute inset-y-0 right-0 flex items-center pr-3"
-              aria-label={showPassword ? 'Hide password' : 'Show password'}
-            >
-              {showPassword ? <EyeOff className="text-gray-500" /> : <Eye className="text-gray-500" />}
-            </button>
-          </div>
-          <p className='text-red-500 text-xs italic'>{err.password}</p>
+        <div className="mb-6 relative">
+          <input
+            type={showPassword ? 'text' : 'password'}
+            value={password}
+            onChange={(e) => { err.password = ''; setPassword(e.target.value); }}
+            id="password"
+            className="bg-white/30 dark:bg-gray-700/30 border border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-3 mb-1 placeholder-gray-500 dark:placeholder-gray-400"
+            placeholder="Password"
+          />
+          <button
+            type="button"
+            onClick={() => setShowPassword(!showPassword)}
+            className="absolute inset-y-0 right-3 flex items-center"
+            aria-label={showPassword ? 'Hide password' : 'Show password'}
+          >
+            {showPassword ? <EyeOff className="text-gray-500" size={20} /> : <Eye className="text-gray-500" size={20} />}
+          </button>
+          {err.password && <p className="text-red-500 text-xs italic">{err.password}</p>}
         </div>
 
-        <Button type="submit" disabled={isloading}>{isloading ? 'Signing In...' : 'Sign In'}</Button>
-        <p className="text-sm mt-5 text-right ">
-          <span>Forgot Password?</span>
-          <span><Link className='text-sm underline text-blue-800' href="/forgot-password"> Reset here</Link></span>
-        </p>
-        <hr className="my-5" />
+        <Button
+          type="submit"
+          disabled={isloading}
+          className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg transition duration-300"
+        >
+          {isloading ? 'Signing In...' : 'Sign In'}
+        </Button>
 
-        <div className="text-center">
-          <span>I don&apos;t have an account?</span>
-          <span className="underline text-blue-800">
-            <Link href="/sign-up"> Sign up</Link>
-          </span>
+        <div className="flex justify-between mt-4 text-sm text-gray-700 dark:text-gray-400">
+          <span>Forgot password?</span>
+          <Link href="/forgot-password" className="underline hover:text-blue-600">
+            Reset here
+          </Link>
+        </div>
+
+        <hr className="my-6 border-gray-300 dark:border-gray-700" />
+
+        <div className="text-center text-sm text-gray-700 dark:text-gray-400">
+          <span>Don't have an account? </span>
+          <Link href="/sign-up" className="underline hover:text-blue-600">
+            Sign up
+          </Link>
         </div>
       </form>
     </div>
