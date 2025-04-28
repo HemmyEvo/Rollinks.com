@@ -8,7 +8,7 @@ export const createUser = internalMutation({
 		firstname: v.string(),
 		lastname: v.string(),
 		image: v.string()
-    isAdmin: v.optional(v.boolean())
+    isAdmin: v.boolean()
 	},
 	handler: async (ctx, args) => {
 		await ctx.db.insert("users", {
@@ -17,7 +17,7 @@ export const createUser = internalMutation({
 			firstname: args.firstname,
 			lastname: args.lastname,	
 			image: args.image,
-			isAdmin:false,
+			isAdmin: args.isAdmin
 		});
 	},
 });
