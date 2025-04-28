@@ -13,7 +13,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { formatDate } from '@/lib/utils';
 import { Order } from '@/types/order';
 
-export default function AdminOrdersPanel() {
+export default function AdminPanel() {
   const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true);
   const [filteredOrders, setFilteredOrders] = useState<Order[]>([]);
