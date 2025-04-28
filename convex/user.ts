@@ -7,7 +7,7 @@ export const createUser = internalMutation({
 		email: v.string(),
 		firstname: v.string(),
 		lastname: v.string(),
-		image: v.string()
+		image: v.string(),
     isAdmin: v.boolean()
 	},
 	handler: async (ctx, args) => {
