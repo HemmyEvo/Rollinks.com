@@ -4,7 +4,6 @@ import { useEffect, useState } from 'react';
 import { client } from '../../../lib/sanity';
 import Loading from '@/components/ui/Loading';
 import { useAuth } from '@clerk/nextjs';
-import { useConvexAuth, useQuery } from 'convex/react';
 import { api } from '@/convex/_generated/api';
 import { formatDate } from '@/lib/utils';
 import { FiPackage, FiCheckCircle, FiTruck, FiClock, FiXCircle, FiDollarSign } from 'react-icons/fi';
@@ -17,15 +16,15 @@ export default function OrderHistory() {
 
   const { isSignedIn, userId } = useAuth();
   const { isAuthenticated } = useConvexAuth();
-  const me = useQuery(api.user.getMe, isAuthenticated ? undefined : "skip");
+  
 
   useEffect(() => {
     async function fetchOrders() {
-      if (!me?.email) return;
+      if (!userId) return;
 
       try {
         setLoading(true);
-        const query = `*[_type == "order" && customer.email == $email] | order(createdAt desc) {
+        const query = `*[_type == "order" && customer.userId == $userId] | order(createdAt desc) {
           _id,
           orderId,
           status,
@@ -63,7 +62,7 @@ export default function OrderHistory() {
           updatedAt
         }`;
         
-        const ordersData = await client.fetch(query, { email: me.email });
+        const ordersData = await client.fetch(query, { userId: userId});
         setOrders(ordersData);
       } catch (err) {
         console.error('Failed to fetch orders:', err);
@@ -74,7 +73,7 @@ export default function OrderHistory() {
     }
 
     fetchOrders();
-  }, [me?.email]);
+  }, [userId]);
 
   const getStatusIcon = (status: string) => {
     switch (status) {
