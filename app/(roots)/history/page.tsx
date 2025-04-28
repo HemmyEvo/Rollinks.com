@@ -5,6 +5,8 @@ import { client } from '../../../lib/sanity';
 import Loading from '@/components/ui/Loading';
 import { useAuth } from '@clerk/nextjs';
 import { formatDate } from '@/lib/utils';
+import { useConvexAuth, useQuery } from 'convex/react';
+import AdminPanel from './AdminPanel'
 import { 
   FiPackage, 
   FiCheckCircle, 
@@ -27,9 +29,11 @@ export default function OrderHistory() {
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
 
   const { isSignedIn, userId } = useAuth();
-
+  const { isAuthenticated } = useConvexAuth();
+const me = useQuery(api.user.getMe, isAuthenticated ? undefined : "skip");
   useEffect(() => {
     async function fetchOrders() {
+      if (me?.isAdmin) return
       if (!userId) return;
 
       try {
@@ -132,6 +136,7 @@ export default function OrderHistory() {
 
   if (loading) return <Loading />;
   if (error) return <p className="text-center mt-8 text-red-600">{error}</p>;
+if(me?.isAdmin) return <AdminPanel />
 
   return (
     <div className="max-w-7xl min-h-[80vh] mx-auto px-4 my-6 sm:px-6 lg:px-8">
