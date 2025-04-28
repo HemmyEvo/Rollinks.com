@@ -163,7 +163,7 @@ export default function AdminPanel() {
       if (!orderToUpdate) return;
 
       const updatedOrder = {
-        ...orderToUpdate,
+        ...orderToUpdate!,
         status: tempStatus,
         shipping: {
           ...orderToUpdate.shipping,
