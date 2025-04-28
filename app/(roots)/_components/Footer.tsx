@@ -32,28 +32,28 @@ const Footer = () => {
     {
       title: "Shop",
       links: [
-        { name: "All Products", href: "/products" },
-        { name: "Featured", href: "/featured" },
-        { name: "New Arrivals", href: "/new" },
-        { name: "Sale Items", href: "/sale" },
+        { name: "All Products", href: "/product" },
+        { name: "Featured", href: "#" },
+        { name: "New Arrivals", href: "#" },
+        { name: "Sale Items", href: "" },
       ]
     },
     {
       title: "Company",
       links: [
-        { name: "About Us", href: "/about" },
-        { name: "Our Story", href: "/story" },
-        { name: "Careers", href: "/careers" },
-        { name: "Press", href: "/press" },
+        { name: "About Us", href: "/about-us" },
+        { name: "Our Story", href: "#" },
+        { name: "Careers", href: "#" },
+        { name: "Press", href: "#" },
       ]
     },
     {
       title: "Support",
       links: [
         { name: "Contact Us", href: "/contact" },
-        { name: "FAQs", href: "/faqs" },
-        { name: "Shipping", href: "/shipping" },
-        { name: "Returns", href: "/returns" },
+        { name: "FAQs", href: "#" },
+        { name: "Shipping", href: "#" },
+        { name: "Returns", href: "#" },
       ]
     }
   ]
