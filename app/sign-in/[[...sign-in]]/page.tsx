@@ -13,6 +13,7 @@ const Page = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
+  const [rememberMe, setRememberMe] = useState(false); // New state for Remember Me
   const [err, setErr] = useState({ email: '', password: '' });
   const { signIn, isLoaded } = useSignIn();
   const [isloading, setIsLoading] = useState(false);
@@ -54,18 +55,23 @@ const Page = () => {
     }  
 
     try {  
-      const attemptSignIn = await signIn?.create({  
-        identifier: email,  
-        password: password,  
-      });  
-      if (attemptSignIn) {  
-        toast.success('Login successful! Redirecting...');  
-        setTimeout(() => {  
-          window.location.pathname = '/';  
-        }, 2000);  
-      } else {  
-        toast.error('Unable to connect to internet.');  
-      }  
+      const result = await signIn?.create({
+        identifier: email,
+        password,
+        // Set session duration based on rememberMe
+        session: {
+          duration: rememberMe ? 60 * 60 * 24 * 30 : 60 * 60 * 24 // 30 days or 1 day
+        }
+      });
+
+      if (result?.status === 'complete') {
+        toast.success('Login successful! Redirecting...');
+        setTimeout(() => {
+          window.location.pathname = '/';
+        }, 2000);
+      } else {
+        toast.error('Unable to connect to internet.');
+      }
     } catch (error: any) {  
       if (error?.errors) {  
         error.errors.forEach((err: any) => {  
@@ -80,7 +86,7 @@ const Page = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-100 to-gray-300 dark:from-gray-800 dark:to-gray-900 p-4">
+    <div className="h-full flex items-center justify-center bg-gradient-to-br from-gray-100 to-gray-300 dark:from-gray-800 dark:to-gray-900 p-4">
       <div className="w-full max-w-md">
         <div className="backdrop-blur-lg bg-white/30 dark:bg-black/30 rounded-2xl shadow-xl overflow-hidden border border-white/20 dark:border-gray-700/50">
           <div className="p-8">
@@ -144,6 +150,8 @@ const Page = () => {
                     id="remember-me"
                     name="remember-me"
                     type="checkbox"
+                    checked={rememberMe}
+                    onChange={(e) => setRememberMe(e.target.checked)}
                     className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
                   />
                   <label htmlFor="remember-me" className="ml-2 block text-sm text-gray-700 dark:text-gray-300">
