@@ -194,7 +194,7 @@ const CheckoutModal = ({ isOpen, onClose }: CheckoutModalProps) => {
 
   const handlePayment = async () => {
     if (!validateForm()) return;
-
+    handleCartClick()
     setLoading(true);
     
     // Temporarily hide our modal while Paystack is open
