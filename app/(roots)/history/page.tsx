@@ -135,7 +135,7 @@ const me = useQuery(api.user.getMe, isAuthenticated ? undefined : "skip");
   };
 
   if (loading) return <Loading />;
-  if (error) return <p className="text-center mt-8 text-red-600">{error}</p>;
+  if (error) return <p className="text-center  mt-8 text-red-600">{error}</p>;
 if(me?.isAdmin) return <AdminPanel />
 
   return (
