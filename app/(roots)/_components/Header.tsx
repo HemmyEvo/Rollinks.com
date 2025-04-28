@@ -112,6 +112,7 @@ const Header = () => {
                 <SignedOut>
                   <SignInButton>
                     <Button 
+                onClick={() => setisToggle(!isToggle)}
                       variant="outline" 
                       className="bg-transparent border-amber-600 text-amber-700 hover:bg-amber-50 hover:text-amber-800"
                     >
