@@ -15,6 +15,7 @@ async function getData() {
     "slug": slug,
     "images": images[].asset->url,
     price,
+discountPrice,
     "categoryName": category->name,
     rating,
     isNew
@@ -277,7 +278,7 @@ const ProductPage = () => {
   price={item.price}
   description={item.description}
   slug={item.slug.current}
-  discount={item.price + 1000}
+  discount={item.discountPrice}
   rating={item.rating ?? 0}
   isNew={item.isNew}
 />
