@@ -341,15 +341,16 @@ export default function AdminPanel() {
                       className="cursor-pointer hover:bg-gray-50"
                       onClick={() => toggleExpandOrder(order._id)}
                     >
-                      <TableCell className="font-medium">#{order.orderId}</TableCell>
-                      <TableCell>
+                      <TableCell
+colSpan={1} className="font-medium">#{order.orderId}</TableCell>
+                      <TableCell colSpan={1}>
                         <div className="font-medium">{order.customer.name}</div>
                         <div className="text-sm text-gray-500">{order.customer.email}</div>
                       </TableCell>
-                      <TableCell>{formatDate(order.createdAt)}</TableCell>
-                      <TableCell>{getStatusBadge(order.status)}</TableCell>
-                      <TableCell>₦{order.total.toLocaleString()}</TableCell>
-                      <TableCell>
+                      <TableCell colSpan={1}>{formatDate(order.createdAt)}</TableCell>
+                      <TableCell colSpan={1}>{getStatusBadge(order.status)}</TableCell>
+                      <TableCell colSpan={1}>₦{order.total.toLocaleString()}</TableCell>
+                      <TableCell colSpan={1}>
                         <div className="capitalize">{order.payment.method}</div>
                         <div className={`text-sm ${
                           order.payment.status === 'completed' ? 'text-green-600' : 
@@ -358,7 +359,7 @@ export default function AdminPanel() {
                           {order.payment.status}
                         </div>
                       </TableCell>
-                      <TableCell>
+                      <TableCell colSpan={1}>
                         <div className="flex space-x-2">
                           <Button
                             variant="outline"
