@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { client } from '../../../lib/sanity';
 import { motion, AnimatePresence } from 'framer-motion';
-import { FiPackage, FiCheckCircle, FiTruck, FiClock, FiXCircle, FiDollarSign, FiSearch, FiFilter, FiChevronDown, FiChevronUp, FiEdit, FiSave, FiTrash2, FiPrinter } from 'react-icons/fi';
+import { FiPackage, FiCheckCircle, FiTruck, FiClock, FiXCircle, FiDollarSign, FiSearch, FiFilter, FiChevronDown, FiChevronUp, FiEdit, FiSave,FiUser, FiTrash2, FiPrinter } from 'react-icons/fi';
 import { toast } from "react-hot-toast";
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
