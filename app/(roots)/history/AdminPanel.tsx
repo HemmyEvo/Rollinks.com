@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import { client } from '../../../lib/sanity';
 import { motion, AnimatePresence } from 'framer-motion';
 import { FiPackage, FiCheckCircle, FiTruck, FiClock, FiXCircle, FiDollarSign, FiSearch, FiFilter, FiChevronDown, FiChevronUp, FiEdit, FiSave, FiTrash2, FiPrinter } from 'react-icons/fi';
-import { useToast } from '@/components/ui/use-toast';
+import { toast } from "react-hot-toast";
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -25,7 +25,7 @@ export default function AdminPanel() {
   const [tempStatus, setTempStatus] = useState('');
   const [tempTracking, setTempTracking] = useState('');
   const [tempCarrier, setTempCarrier] = useState('');
-  const { toast } = useToast();
+ 
 
   const statusOptions = [
     'pending',
@@ -185,17 +185,11 @@ export default function AdminPanel() {
 
       setOrders(orders.map(o => o._id === orderId ? updatedOrder : o));
       setEditingOrder(null);
-      toast({
-        title: 'Success',
-        description: 'Order updated successfully',
-      });
+      toast.success('Order updated successfully');
+      
     } catch (err) {
       console.error('Failed to update order:', err);
-      toast({
-        title: 'Error',
-        description: 'Failed to update order',
-        variant: 'destructive'
-      });
+      toast.error('Failed to update order');
     } finally {
       setLoading(false);
     }
