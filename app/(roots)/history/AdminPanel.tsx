@@ -118,8 +118,7 @@ export default function AdminPanel() {
       result = result.filter(order => 
         order.orderId.toLowerCase().includes(searchTerm.toLowerCase()) ||
         order.customer.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        order.customer.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        (order.shipping?.trackingNumber?.toLowerCase().includes(searchTerm.toLowerCase()) || false
+        order.customer.email.toLowerCase().includes(searchTerm.toLowerCase()) || order.shipping?.trackingNumber?.toLowerCase().includes(searchTerm.toLowerCase()) || false
       )
     }
 
