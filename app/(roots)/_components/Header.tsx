@@ -64,20 +64,7 @@ const Header = () => {
                 </Link>
               </div>
 
-              {/* Search Bar */}
-              <motion.div 
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ delay: 0.2 }}
-                className="relative"
-              >
-                <input
-                  type="text"
-                  placeholder="Search products..."
-                  className="bg-white/70 border border-gray-200 rounded-full py-1.5 px-4 text-sm focus:outline-none focus:ring-2 focus:ring-amber-300 focus:border-transparent w-48"
-                />
-                <Search className="absolute right-3 top-2 text-gray-400 w-4 h-4" />
-              </motion.div>
+             
             </div>
 
             {/* Icons */}
@@ -185,15 +172,7 @@ const Header = () => {
                 </Link>
               </div>
 
-              <div className="mt-6">
-                <div className="relative mb-4">
-                  <input
-                    type="text"
-                    placeholder="Search products..."
-                    className="bg-white border border-gray-200 rounded-full py-2 px-4 text-sm focus:outline-none focus:ring-2 focus:ring-amber-300 focus:border-transparent w-full"
-                  />
-                  <Search className="absolute right-3 top-2.5 text-gray-400 w-4 h-4" />
-                </div>
+           
 
                 <div className="pt-4 border-t border-gray-100">
                   <SignedIn>
