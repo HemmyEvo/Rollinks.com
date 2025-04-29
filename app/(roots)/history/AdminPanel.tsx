@@ -237,33 +237,16 @@ const handleDeleteOrder = async (orderId: string) => {
   
   try {
     // Soft delete approach (recommended)
-    await client
-      .patch(orderId)
-      .set({ 
-        status: 'cancelled',
-        cancelledAt: new Date().toISOString(),
-        isActive: false 
-      })
-      .commit();
-
-    // For hard delete (use cautiously):
-    // await client.delete(orderId);
+    await client.delete(orderId);
 
     // Update local state optimistically
     setOrders(prev => prev.filter(order => order._id !== orderId));
-    
-    toast({
-      title: "Order deleted",
-      description: "The order has been successfully cancelled.",
-      variant: "success",
-    });
+    toast.success('The order has been successfully cancelled.');
+   
   } catch (error) {
     console.error("Delete error:", error);
-    toast({
-      title: "Deletion failed",
-      description: error.message || "Could not delete the order",
-      variant: "destructive",
-    });
+   toast.error('Deletion failed');
+    
   } finally {
     setDeletingId(null);
   }
