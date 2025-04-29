@@ -1,6 +1,6 @@
-import { Heart, ShoppingCart, Star, ChevronRight } from 'lucide-react'
+import { ShoppingCart, Star, ChevronRight } from 'lucide-react'
 import Image from 'next/image'
-import React from 'react'
+import React, { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import Link from 'next/link'
 import { useShoppingCart } from 'use-shopping-cart'
@@ -15,15 +15,17 @@ type Props = {
   slug: string,
   rating: number,
   isNew: boolean,
-  
 }
 
 const ProductCard = ({ id, title, price, description, slug, image, discount, rating, isNew }: Props) => {
-  const [isHovered, setIsHovered] = React.useState(false)
-  const [isLiked, setIsLiked] = React.useState(false)
-  const { addItem } = useShoppingCart();
+  const [isHovered, setIsHovered] = useState(false)
+  const [quantity, setQuantity] = useState(1)
+  const { addItem } = useShoppingCart()
 
-  const handleAddToCart = () => {
+  const discountPercentage = discount ? Math.round(((discount - price) / discount) * 100) : 0
+
+  const handleAddToCart = (e: React.MouseEvent) => {
+    e.preventDefault()
     const product = {
       id: id,
       sku: id,
@@ -31,118 +33,165 @@ const ProductCard = ({ id, title, price, description, slug, image, discount, rat
       price: price,
       currency: "NGN",
       image: image,
-    };
+      quantity: quantity
+    }
     addItem(product)
+    
+    // Animation feedback
+    setIsHovered(false)
+    setQuantity(1)
   }
 
-  const discountPercentage = discount ? Math.round(((discount - price) / discount) * 100) : 0
+  const incrementQuantity = (e: React.MouseEvent) => {
+    e.preventDefault()
+    setQuantity(prev => prev + 1)
+  }
+
+  const decrementQuantity = (e: React.MouseEvent) => {
+    e.preventDefault()
+    setQuantity(prev => (prev > 1 ? prev - 1 : 1))
+  }
 
   return (
     <motion.div 
-      className="w-full"
+      className="w-full h-full"
       initial={{ opacity: 0, y: 20 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: "0px 0px -100px 0px" }}
-      transition={{ duration: 0.3 }}
+      transition={{ duration: 0.4 }}
     >
-      <div 
-        className="relative bg-white rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-shadow duration-200"
-        onMouseEnter={() => setIsHovered(true)}
-        onMouseLeave={() => setIsHovered(false)}
-      >
-        {/* Image Container */}
-        <div className="relative aspect-square w-full overflow-hidden">
-          <Link href={`/product/${slug}`}>
-            <Image
-              src={image}
-              alt={title}
-              fill
-              className="object-cover object-center transition-transform duration-500 group-hover:scale-105"
-              sizes="(max-width: 640px) 100vw, (max-width: 768px) 50vw, (max-width: 1024px) 33vw, 25vw"
-              priority
-            />
-          </Link>
+      <Link href={`/product/${slug}`} passHref>
+        <motion.div 
+          className="relative bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-lg transition-all duration-300 h-full flex flex-col border border-gray-100"
+          onMouseEnter={() => setIsHovered(true)}
+          onMouseLeave={() => setIsHovered(false)}
+          whileHover={{ y: -5 }}
+        >
+          {/* Image Container */}
+          <div className="relative aspect-square w-full overflow-hidden">
+            <motion.div
+              initial={{ scale: 1 }}
+              animate={{ scale: isHovered ? 1.05 : 1 }}
+              transition={{ duration: 0.3 }}
+              className="h-full w-full"
+            >
+              <Image
+                src={image}
+                alt={title}
+                fill
+                className="object-cover object-center"
+                sizes="(max-width: 640px) 100vw, (max-width: 768px) 50vw, (max-width: 1024px) 33vw, 25vw"
+                priority
+              />
+            </motion.div>
 
-          {/* Badges */}
-          <div className="absolute top-2 left-2 flex flex-col space-y-1 z-10">
-            {isNew && (
-              <span className="bg-red-500 text-white text-xs font-bold px-2 py-0.5 rounded">
-                New
-              </span>
-            )}
-            {discountPercentage > 0 && (
-              <span className="bg-red-500 text-white text-xs font-bold px-2 py-0.5 rounded">
-                {discountPercentage}% OFF
-              </span>
-            )}
+            {/* Badges */}
+            <div className="absolute top-3 left-3 flex flex-col space-y-2 z-10">
+              {isNew && (
+                <motion.span 
+                  className="bg-blue-600 text-white text-xs font-bold px-3 py-1 rounded-full shadow-md"
+                  initial={{ scale: 0 }}
+                  animate={{ scale: 1 }}
+                  transition={{ delay: 0.2 }}
+                >
+                  New Formula
+                </motion.span>
+              )}
+              {discountPercentage > 0 && (
+                <motion.span 
+                  className="bg-green-600 text-white text-xs font-bold px-3 py-1 rounded-full shadow-md"
+                  initial={{ scale: 0 }}
+                  animate={{ scale: 1 }}
+                  transition={{ delay: 0.3 }}
+                >
+                  {discountPercentage}% OFF
+                </motion.span>
+              )}
+            </div>
           </div>
 
-          {/* Like Button */}
-          <button 
-            className={`absolute top-2 right-2 p-1.5 rounded-full ${isLiked ? 'text-red-500' : 'text-gray-400 bg-white/80'}`}
-            onClick={() => setIsLiked(!isLiked)}
-          >
-            <Heart 
-              className="w-5 h-5" 
-              fill={isLiked ? 'currentColor' : 'none'}
-            />
-          </button>
-
-          {/* Add to Cart Button - Shows on hover */}
-          <AnimatePresence>
-            {isHovered && (
-              <motion.button
-                onClick={handleAddToCart}
-                className="absolute bottom-2 left-1/2 transform -translate-x-1/2 bg-white text-red-500 flex items-center justify-center px-4 py-1.5 rounded-full shadow-md text-sm font-medium"
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: 10 }}
-                transition={{ duration: 0.2 }}
-              >
-                <ShoppingCart className="w-4 h-4 mr-1" />
-                Add to Cart
-              </motion.button>
-            )}
-          </AnimatePresence>
-        </div>
-
-        {/* Product Info */}
-        <div className="p-3">
-          <Link href={`/product/${slug}`}>
-            <h3 className="text-sm text-gray-800 line-clamp-2 h-10 mb-1 hover:text-red-500 transition-colors">
+          {/* Product Info */}
+          <div className="p-4 flex-grow flex flex-col">
+            <h3 className="text-md font-medium text-gray-800 line-clamp-2 mb-2 hover:text-blue-600 transition-colors">
               {title}
             </h3>
-          </Link>
 
-          {/* Price Section */}
-          <div className="mb-1">
-            <span className="text-lg font-bold text-red-500">
-              ₦{price.toLocaleString('en-US', {minimumFractionDigits: 2})}
-            </span>
-            {discount > 0 && (
-              <span className="text-xs text-gray-500 line-through ml-1">
-                ₦{discount.toLocaleString('en-US', {minimumFractionDigits: 2})}
-              </span>
-            )}
-          </div>
+            
 
-          {/* Rating and Sales */}
-          <div className="flex items-center justify-between text-xs text-gray-500">
-            <div className="flex items-center">
-              <div className="flex items-center bg-yellow-50 px-1 py-0.5 rounded">
-                <Star className="w-3 h-3 fill-yellow-400 text-yellow-400 mr-0.5" />
-                <span>{rating.toFixed(1)}</span>
+            {/* Price Section */}
+            <div className="mt-auto">
+              <div className="mb-3 flex items-center">
+                <span className="text-xl font-bold text-gray-900">
+                  ₦{price.toLocaleString('en-US', {minimumFractionDigits: 2})}
+                </span>
+                {discount > 0 && (
+                  <span className="text-sm text-gray-500 line-through ml-2">
+                    ₦{discount.toLocaleString('en-US', {minimumFractionDigits: 2})}
+                  </span>
+                )}
               </div>
-             
-            </div>
-            <Link href={`/product/${slug}`} className="text-blue-500 hover:text-blue-600 flex items-center">
-              Details <ChevronRight className="w-3 h-3" />
-            </Link>
-          </div>
 
-          
-        </div>
-      </div>
+              {/* Rating */}
+              <div className="flex items-center mb-4">
+                <div className="flex items-center bg-blue-50 px-2 py-1 rounded-full">
+                  <Star className="w-4 h-4 fill-yellow-400 text-yellow-400 mr-1" />
+                  <span className="text-sm font-medium">{rating.toFixed(1)}</span>
+                </div>
+                <span className="text-xs text-gray-500 ml-2">({Math.floor(rating * 10)} reviews)</span>
+              </div>
+
+              {/* Add to Cart Section */}
+              <AnimatePresence>
+                {isHovered ? (
+                  <motion.div
+                    className="flex items-center justify-between"
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: 10 }}
+                    transition={{ duration: 0.2 }}
+                  >
+                    <div className="flex items-center border border-gray-200 rounded-full">
+                      <button 
+                        onClick={decrementQuantity}
+                        className="px-3 py-1 text-gray-600 hover:text-blue-600 transition-colors"
+                        aria-label="Decrease quantity"
+                      >
+                        -
+                      </button>
+                      <span className="px-2 text-sm font-medium">{quantity}</span>
+                      <button 
+                        onClick={incrementQuantity}
+                        className="px-3 py-1 text-gray-600 hover:text-blue-600 transition-colors"
+                        aria-label="Increase quantity"
+                      >
+                        +
+                      </button>
+                    </div>
+                    <button
+                      onClick={handleAddToCart}
+                      className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-full text-sm font-medium flex items-center transition-colors shadow-md"
+                    >
+                      <ShoppingCart className="w-4 h-4 mr-2" />
+                      Add
+                    </button>
+                  </motion.div>
+                ) : (
+                  <motion.div
+                    className="flex items-center text-blue-600 hover:text-blue-700 transition-colors"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    transition={{ duration: 0.2 }}
+                  >
+                    <span className="text-sm font-medium mr-1">View Details</span>
+                    <ChevronRight className="w-4 h-4" />
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </div>
+          </div>
+        </motion.div>
+      </Link>
     </motion.div>
   )
 }
