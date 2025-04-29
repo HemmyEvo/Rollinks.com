@@ -142,41 +142,7 @@ const ProductCard = ({ id, title, price, description, slug, image, discount, rat
 
               {/* Add to Cart Section */}
               <AnimatePresence>
-                {isHovered ? (
-                  <motion.div
-                    className="flex items-center justify-between"
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: 10 }}
-                    transition={{ duration: 0.2 }}
-                  >
-                    <div className="flex items-center border border-gray-200 rounded-full">
-                      <button 
-                        onClick={decrementQuantity}
-                        className="px-3 py-1 text-gray-600 hover:text-blue-600 transition-colors"
-                        aria-label="Decrease quantity"
-                      >
-                        -
-                      </button>
-                      <span className="px-2 text-sm font-medium">{quantity}</span>
-                      <button 
-                        onClick={incrementQuantity}
-                        className="px-3 py-1 text-gray-600 hover:text-blue-600 transition-colors"
-                        aria-label="Increase quantity"
-                      >
-                        +
-                      </button>
-                    </div>
-                    <button
-                      onClick={handleAddToCart}
-                      className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-full text-sm font-medium flex items-center transition-colors shadow-md"
-                    >
-                      <ShoppingCart className="w-4 h-4 mr-2" />
-                      Add
-                    </button>
-                  </motion.div>
-                ) : (
-                  <motion.div
+                 <motion.div
                     className="flex items-center text-blue-600 hover:text-blue-700 transition-colors"
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
@@ -186,7 +152,6 @@ const ProductCard = ({ id, title, price, description, slug, image, discount, rat
                     <span className="text-sm font-medium mr-1">View Details</span>
                     <ChevronRight className="w-4 h-4" />
                   </motion.div>
-                )}
               </AnimatePresence>
             </div>
           </div>
