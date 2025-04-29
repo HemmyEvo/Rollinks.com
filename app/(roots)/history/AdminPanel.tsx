@@ -399,12 +399,7 @@ const handleDeleteOrder = async (orderId: string) => {
     e.stopPropagation();
     
     // Confirmation dialog
-    const confirmed = await confirmDialog(
-      "Delete Order",
-      `Are you sure you want to cancel order #${order.orderId}? This action cannot be undone.`,
-      "Delete",
-      "Cancel"
-    );
+    const confirmed = (window.confirm('Are you sure you want to delete this order?'))
     
     if (confirmed) {
       await handleDeleteOrder(order._id);
