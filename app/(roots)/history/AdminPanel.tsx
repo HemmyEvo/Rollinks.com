@@ -429,7 +429,7 @@ const handleDeleteOrder = async (orderId: string) => {
   }}
 >
   {deletingId === order._id ? (
-    <Loader2 className="mr-1 h-4 w-4 animate-spin" />
+    <FiTrash2 className="mr-1" />
   ) : (
     <FiTrash2 className="mr-1" />
   )}
