@@ -24,7 +24,7 @@ export default function AdminPanel() {
   const [tempStatus, setTempStatus] = useState('');
   const [tempTracking, setTempTracking] = useState('');
   const [tempCarrier, setTempCarrier] = useState('');
- 
+ const [deletingId, setDeletingId] = useState<string | null>(null);
 
   const statusOptions = [
     'pending',
@@ -230,6 +230,45 @@ export default function AdminPanel() {
     setExpandedOrder(expandedOrder === orderId ? null : orderId);
   };
 
+const handleDeleteOrder = async (orderId: string) => {
+  if (!orderId) return;
+  
+  setDeletingId(orderId);
+  
+  try {
+    // Soft delete approach (recommended)
+    await client
+      .patch(orderId)
+      .set({ 
+        status: 'cancelled',
+        cancelledAt: new Date().toISOString(),
+        isActive: false 
+      })
+      .commit();
+
+    // For hard delete (use cautiously):
+    // await client.delete(orderId);
+
+    // Update local state optimistically
+    setOrders(prev => prev.filter(order => order._id !== orderId));
+    
+    toast({
+      title: "Order deleted",
+      description: "The order has been successfully cancelled.",
+      variant: "success",
+    });
+  } catch (error) {
+    console.error("Delete error:", error);
+    toast({
+      title: "Deletion failed",
+      description: error.message || "Could not delete the order",
+      variant: "destructive",
+    });
+  } finally {
+    setDeletingId(null);
+  }
+};
+
   return (
     <div className="container mx-auto px-4 py-8">
   <motion.div
@@ -368,9 +407,34 @@ export default function AdminPanel() {
                         >
                           <FiEdit className="mr-1" /> Edit
                         </Button>
-                        <Button variant="outline" size="sm">
-                          <FiPrinter className="mr-1" /> Print
-                        </Button>
+                       <Button
+  variant="ghost"
+  size="sm"
+  className="text-red-600 hover:text-red-800 hover:bg-red-50"
+  disabled={deletingId === order._id}
+  onClick={async (e) => {
+    e.stopPropagation();
+    
+    // Confirmation dialog
+    const confirmed = await confirmDialog(
+      "Delete Order",
+      `Are you sure you want to cancel order #${order.orderId}? This action cannot be undone.`,
+      "Delete",
+      "Cancel"
+    );
+    
+    if (confirmed) {
+      await handleDeleteOrder(order._id);
+    }
+  }}
+>
+  {deletingId === order._id ? (
+    <Loader2 className="mr-1 h-4 w-4 animate-spin" />
+  ) : (
+    <FiTrash2 className="mr-1" />
+  )}
+  {deletingId === order._id ? "Deleting..." : "Delete"}
+</Button>
                       </div>
                     </TableCell>
                   </TableRow>
