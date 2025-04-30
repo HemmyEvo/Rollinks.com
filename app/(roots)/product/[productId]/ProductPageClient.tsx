@@ -31,52 +31,6 @@ export default function ProductPageClient({ data }: { data: fullProduct }) {
   const [isShareOpen, setIsShareOpen] = React.useState(false);
   const [isCopied, setIsCopied] = React.useState(false);
 
-  // Add structured data to the head
-  React.useEffect(() => {
-    if (!data) return;
-
-    const hasDiscount = data.discountPrice && data.discountPrice < data.price;
-    const finalPrice = hasDiscount ? data.discountPrice! : data.price;
-
-    const productStructuredData = {
-      "@context": "https://schema.org",
-      "@type": "Product",
-      "name": data.name,
-      "description": data.description[0]?.children[0]?.text || data.name,
-      "image": data.images?.map(image => urlFor(image).url()),
-      "sku": data._id,
-      "brand": {
-        "@type": "Brand",
-        "name": "Rollinks Skincare"
-      },
-      "offers": {
-        "@type": "Offer",
-        "url": typeof window !== 'undefined' ? window.location.href : '',
-        "priceCurrency": "NGN",
-        "price": finalPrice,
-        "priceValidUntil": new Date(Date.now() + 1000 * 60 * 60 * 24 * 30).toISOString().split('T')[0],
-        "itemCondition": "https://schema.org/NewCondition",
-        "availability": "https://schema.org/InStock"
-      },
-      ...(data.rating && {
-        "aggregateRating": {
-          "@type": "AggregateRating",
-          "ratingValue": data.rating,
-          "reviewCount": data.reviewCount || 0
-        }
-      })
-    };
-
-    const script = document.createElement('script');
-    script.type = 'application/ld+json';
-    script.text = JSON.stringify(productStructuredData);
-    document.head.appendChild(script);
-
-    return () => {
-      document.head.removeChild(script);
-    };
-  }, [data]);
-
   const handleAddToCart = (item: fullProduct) => {
     setAddMessage('Added');
     const image = urlFor(item.images[0]).url();
@@ -148,6 +102,7 @@ export default function ProductPageClient({ data }: { data: fullProduct }) {
   const finalPrice = hasDiscount ? data.discountPrice! : data.price;
   const discount = hasDiscount ? Math.round(((data.price - data.discountPrice!) / data.price) * 100) : 0;
 
+  
   return (
     <div className="min-h-screen bg-gradient-to-b from-blue-50/30 to-purple-50/30 py-12 px-4 sm:px-6">
       <div className="max-w-7xl mx-auto">
