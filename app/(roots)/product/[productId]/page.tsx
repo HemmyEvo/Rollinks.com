@@ -1,38 +1,46 @@
 // app/(roots)/product/[productId]/page.server.tsx
 import { Metadata } from 'next';
 import { client, urlFor } from '@/lib/sanity';
-import ProductPageClient from './ProductPageClient'
+import ProductPageClient from './ProductPageClient';
+import { notFound } from 'next/navigation';
 
-// Remove custom PageProps interface and use the inferred type
 async function getData(slug: string) {
-  const query = `*[_type == "product" && slug.current == "${slug}"][0]{
-    _id,
-    name,
-    "slug": slug.current,
-    images,
-    "description": description,
-    price,
-    discountPrice,
-    "categoryName": category->name,
-    rating,
-    reviewCount,
-    isNew,
-    ingredients,
-    benefits,
-    skinType,
-    volume,
-    howToUse,
-    seo {
-      metaTitle,
-      metaDescription,
-      keywords
-    }
-  }`;
-  return await client.fetch(query);
+  try {
+    const query = `*[_type == "product" && slug.current == "${slug}"][0]{
+      _id,
+      name,
+      "slug": slug.current,
+      images,
+      "description": description,
+      price,
+      discountPrice,
+      "categoryName": category->name,
+      rating,
+      reviewCount,
+      isNew,
+      ingredients,
+      benefits,
+      skinType,
+      volume,
+      howToUse,
+      seo {
+        metaTitle,
+        metaDescription,
+        keywords
+      }
+    }`;
+    const data = await client.fetch(query);
+    if (!data) throw new Error('Product not found');
+    return data;
+  } catch (error) {
+    console.error('Error fetching product:', error);
+    return null;
+  }
 }
 
-export async function generateMetadata({ params }: { params: { productId: string } }) {
+export async function generateMetadata({ params }: { params: { productId: string } }): Promise<Metadata> {
   const data = await getData(params.productId);
+  if (!data) return {};
 
   const hasDiscount = data.discountPrice && data.discountPrice < data.price;
   const discount = hasDiscount ? Math.round(((data.price - data.discountPrice!) / data.price) * 100) : 0;
@@ -66,5 +74,7 @@ export async function generateMetadata({ params }: { params: { productId: string
 
 export default async function ProductPage({ params }: { params: { productId: string } }) {
   const data = await getData(params.productId);
+  if (!data) return notFound();
+  
   return <ProductPageClient data={data} />;
 }
