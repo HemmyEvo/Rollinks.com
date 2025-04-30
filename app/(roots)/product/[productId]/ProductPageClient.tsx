@@ -202,7 +202,7 @@ export default function ProductPageClient({ data }: { data: fullProduct }) {
               </div>
             )}
 
-            {data.skinType?.length > 0 && (
+            {data?.skinType?.length > 0 && (
               <div className="mb-4">
                 <span className="text-sm text-gray-500">Recommended for: </span>
                 <div className="flex flex-wrap gap-2 mt-1">
