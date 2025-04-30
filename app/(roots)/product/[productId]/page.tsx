@@ -1,9 +1,9 @@
-import {Metadata} from 'next'
-import { client, urlFor } from '@/lib/sanity';
-import ProductPageClient from './ProductPageClient';
-import { notFound } from 'next/navigation';
+import { Metadata } from 'next'
+import { client, urlFor } from '@/lib/sanity'
+import ProductPageClient from './ProductPageClient'
+import { notFound } from 'next/navigation'
+import { fullProduct } from '@/app/interface'
 
-import { fullProduct } from '@/app/interface';
 async function getData(slug: string): Promise<fullProduct | null> {
   try {
     const query = `*[_type == "product" && slug.current == "${slug}"][0]{
@@ -11,7 +11,7 @@ async function getData(slug: string): Promise<fullProduct | null> {
       name,
       "slug": slug.current,
       images,
-      "description": description,
+      description,
       price,
       discountPrice,
       "categoryName": category->name,
@@ -28,41 +28,38 @@ async function getData(slug: string): Promise<fullProduct | null> {
         metaDescription,
         keywords
       }
-    }`;
-    const data = await client.fetch(query);
-    if (!data) throw new Error('Product not found');
-    return data;
+    }`
+    const data = await client.fetch(query)
+    return data || null
   } catch (error) {
-    console.error('Error fetching product:', error);
-    return null;
+    console.error('Error fetching product:', error)
+    return null
   }
 }
 
-   export async function generateMetadata(props: {
-  params: Promise<{ productId: string }>
-}) {
-  const params = await props.params
+export async function generateMetadata({ params }: { params: { productId: string } }): Promise<Metadata> {
   const data = await getData(params.productId)
-  if (!data) return {};
+  if (!data) return {}
 
-  const discountPrice = data.discountPrice ?? data.price;
-  const hasDiscount = data.discountPrice !== undefined && data.discountPrice < data.price;
-  const discount = hasDiscount ? Math.round(((data.price - discountPrice) / data.price) * 100) : 0;
+  const discountPrice = data.discountPrice ?? data.price
+  const hasDiscount = data.discountPrice !== undefined && data.discountPrice < data.price
+  const discount = hasDiscount ? Math.round(((data.price - discountPrice) / data.price) * 100 : 0
+
+  // Safe description extraction
+  const descriptionText = data.description?.[0]?.children?.[0]?.text 
+    ? data.description[0].children[0].text.substring(0, 150) 
+    : ''
 
   return {
     title: data.seo?.metaTitle || `${data.name} | Rollinks Skincare`,
     description: data.seo?.metaDescription || 
-      `Discover ${data.name} - ${data.categoryName} product${hasDiscount ? ` now at ${discount}% off` : ''}. ${
-        data.description ? data.description[0]?.children[0]?.text.substring(0, 150) : ''
-      }...`,
+      `Discover ${data.name} - ${data.categoryName} product${hasDiscount ? ` now at ${discount}% off` : ''}. ${descriptionText}...`,
     keywords: data.seo?.keywords?.join(', ') || 
       `${data.name}, ${data.categoryName}, skincare, beauty, ${data.ingredients?.join(', ') || ''}`,
     openGraph: {
       title: data.seo?.metaTitle || `${data.name} | Rollinks Skincare`,
       description: data.seo?.metaDescription || 
-        `Discover ${data.name} - ${data.categoryName} product${hasDiscount ? ` now at ${discount}% off` : ''}. ${
-          data.description ? data.description[0]?.children[0]?.text.substring(0, 150) : ''
-        }...`,
+        `Discover ${data.name} - ${data.categoryName} product${hasDiscount ? ` now at ${discount}% off` : ''}. ${descriptionText}...`,
       images: data.images?.[0] ? [{ url: urlFor(data.images[0]).url() }] : [],
       type: 'product',
     },
@@ -73,19 +70,12 @@ async function getData(slug: string): Promise<fullProduct | null> {
         'product:sale_price:amount': data.discountPrice!.toString(),
       }),
     },
-  };
+  }
 }
 
-
-
-   export default async function page(props: {
-     params: Promise<{ productId: string }>  }) {
-      const params = await props.params
-      
-
-  
+export default async function ProductPage({ params }: { params: { productId: string } }) {
   const data = await getData(params.productId)
-  if (!data) return notFound();
+  if (!data) return notFound()
 
-  return <ProductPageClient data={data} />;
+  return <ProductPageClient data={data} />
 }
