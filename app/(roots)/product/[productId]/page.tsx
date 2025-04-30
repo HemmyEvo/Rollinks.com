@@ -119,11 +119,11 @@ export default function ProductPage() {
           <nav aria-label="Breadcrumb" className="flex items-center text-sm text-gray-600 mb-6">
             <ol className="flex items-center space-x-2">
               <li>
-                <a href="/" className="hover:text-blue-600">Home</a>
+                <Link href="/" className="hover:text-blue-600">Home</Link>
               </li>
               <ChevronRight className="h-4 w-4" />
               <li>
-                <a href="/products" className="hover:text-blue-600">Products</a>
+                <Link href="/products" className="hover:text-blue-600">Products</Link>
               </li>
               <ChevronRight className="h-4 w-4" />
               <li aria-current="page" className="text-blue-600">
