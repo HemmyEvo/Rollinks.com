@@ -61,13 +61,7 @@ export default function ProductPageClient({ data }: { data: fullProduct }) {
   };
 
   const copyToClipboard = async () => {
-    try {
-      await navigator.clipboard.writeText(window.location.href);
-      setIsCopied(true);
-      setTimeout(() => setIsCopied(false), 2000);
-    } catch (err) {
-      console.error('Failed to copy link:', err);
-    }
+    
   };
 
   const validatePortableText = (content: any) => {
