@@ -284,11 +284,11 @@ export default function ProductPageClient({ data }: { data: fullProduct }) {
               />
             </div>
 
-            {data.ingredients?.length > 0 && (
+            {Array.isArray(data.ingredients) && data.ingredients?.length > 0 && (
               <div className="mb-6">
                 <h2 className="font-medium text-gray-900 mb-2">Key Ingredients</h2>
                 <div className="flex flex-wrap gap-2">
-                  {Array.isArray(data.ingredients) && data.ingredients.map((ingredient, i) => (
+                  { data.ingredients.map((ingredient, i) => (
                     <span key={i} className="px-3 py-1.5 bg-white rounded-full text-sm shadow-sm border border-gray-100">
                       {ingredient}
                     </span>
