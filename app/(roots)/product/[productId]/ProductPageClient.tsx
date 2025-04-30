@@ -77,7 +77,7 @@ export default function ProductPageClient({ data }: { data: fullProduct }) {
     try {
       await navigator.clipboard.writeText(window.location.href);
       setIsCopied(true);
-      setTimeout(() => setIsCopied(false), 2000;
+      setTimeout(() => setIsCopied(false), 2000);
     } catch (error) {
       console.error('Failed to copy:', error);
       const textArea = document.createElement('textarea');
