@@ -2,7 +2,7 @@ import { simplifiedProduct } from '@/app/interface';
 import { client } from '@/lib/sanity';
 import Image from 'next/image';
 import Link from 'next/link';
-import React, { useEffect, useRef,useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 async function getData() {
@@ -34,18 +34,7 @@ export default function Category() {
   }, []);
 
   // Animation variants
-  const container = {
-    hidden: { opacity: 0 },
-    show: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.1,
-        delayChildren: 0.3
-      }
-    }
-  };
-
-  const item = {
+  const cardVariants = {
     hidden: { y: 20, opacity: 0 },
     show: { 
       y: 0, 
@@ -63,7 +52,18 @@ export default function Category() {
     }
   };
 
-  const pulse = {
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    show: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.1,
+        delayChildren: 0.3
+      }
+    }
+  };
+
+  const pulseVariants = {
     initial: { scale: 1 },
     animate: { 
       scale: [1, 1.2, 1],
@@ -119,7 +119,7 @@ export default function Category() {
           >
             <motion.div 
               className="w-3 h-3 bg-red-500 rounded-full"
-              variants={pulse}
+              variants={pulseVariants}
             />
             <motion.p 
               className="text-sm uppercase tracking-wider text-red-500 font-medium"
@@ -146,7 +146,7 @@ export default function Category() {
           className="relative"
           initial="hidden"
           animate="show"
-          variants={container}
+          variants={containerVariants}
         >
           <AnimatePresence>
             {isLoading ? (
@@ -174,7 +174,7 @@ export default function Category() {
                 {data.map((item) => (
                   <motion.div
                     key={item._id}
-                    variants={item}
+                    variants={cardVariants}
                     whileHover="hover"
                     className="flex-shrink-0"
                   >
