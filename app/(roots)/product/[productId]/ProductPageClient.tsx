@@ -31,8 +31,8 @@ export default function ProductPageClient({ data }: { data: fullProduct }) {
       currency: 'NGN',
       image: image,
       quantity: quantity,
-      id: item._id.toString(),
-      sku: item._id.toString()
+      id: item._id,
+      sku: item._id
     };
 
     if (cartDetails && cartDetails[item._id]) {
