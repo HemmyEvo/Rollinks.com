@@ -288,7 +288,7 @@ export default function ProductPageClient({ data }: { data: fullProduct }) {
               <div className="mb-6">
                 <h2 className="font-medium text-gray-900 mb-2">Key Ingredients</h2>
                 <div className="flex flex-wrap gap-2">
-                  {data.ingredients.map((ingredient, i) => (
+                  {Array.isArray(data.ingredients) && data.ingredients.map((ingredient, i) => (
                     <span key={i} className="px-3 py-1.5 bg-white rounded-full text-sm shadow-sm border border-gray-100">
                       {ingredient}
                     </span>
@@ -307,7 +307,7 @@ export default function ProductPageClient({ data }: { data: fullProduct }) {
         </div>
 
         {/* Benefits */}
-        {data.benefits?.length > 0 && (
+        {Array.isArray(data.benefits) && data.benefits?.length > 0 && (
           <section className="mt-12 grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
             <h2 className="sr-only">Product Benefits</h2>
             {data.benefits.map((benefit, i) => (
