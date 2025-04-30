@@ -137,7 +137,7 @@ const ProductCard = ({ id, title, price, description, slug, image, discount, rat
             <div className="flex items-center mb-4">
               <div className="flex items-center bg-blue-50 px-2 py-1 rounded-full">
                 <Star className="w-4 h-4 fill-yellow-400 text-yellow-400 mr-1" />
-                <span className="text-sm font-medium">{rating.toFixed(1)}</span>
+                <span className="text-sm font-medium">{rating && rating.toFixed(1)}</span>
               </div>
               <span className="text-xs text-gray-500 ml-2">({Math.floor(rating * 10)} reviews)</span>
             </div>
