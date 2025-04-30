@@ -12,7 +12,7 @@ import Image from 'next/image';
 import { PortableText } from '@portabletext/react';
 import Head from 'next/head';
 import Link from 'next/link'
-
+import { portableTextComponents } from '@/lib/portableTextComponents';
 async function getData(slug: string) {
   const query = `*[_type == "product" && slug.current == "${slug}"][0]{
     _id,
@@ -60,8 +60,8 @@ export default function ProductPage() {
       currency: 'NGN',
       image: image,
       quantity: quantity,
-      id: item._id,
-      sku: item._id
+      id: item._id.toString(),
+      sku: item._id.toString()
     };
    
 
@@ -74,6 +74,11 @@ export default function ProductPage() {
 
     setTimeout(() => setAddMessage('Add to cart'), 2000);
   };
+function validatePortableText(content: any) {
+  if (!content) return [];
+  if (Array.isArray(content)) return content;
+  return [];
+}
 
   React.useEffect(() => {
     async function fetchData() {
@@ -314,7 +319,10 @@ export default function ProductPage() {
 
               {/* Description */}
               <div className="prose prose-sm text-gray-600 mb-6">
-                <PortableText value={data.description} />
+                <PortableText 
+  value={validatePortableText(data.description)} 
+  components={portableTextComponents}
+/>
               </div>
 
               {/* Ingredients */}
