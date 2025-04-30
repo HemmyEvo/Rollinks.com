@@ -57,37 +57,11 @@ export default function ProductPageClient({ data }: { data: fullProduct }) {
   };
 
   const handleShare = async () => {
-    try {
-      if (navigator.share) {
-        await navigator.share({
-          title: data?.name,
-          text: `Check out this product: ${data?.name}`,
-          url: window.location.href,
-        });
-      } else {
-        setIsShareOpen(true);
-      }
-    } catch (error) {
-      console.error('Error sharing:', error);
-    }
+    
   };
 
   const copyToClipboard = async () => {
-    try {
-      await navigator.clipboard.writeText(window.location.href);
-      setIsCopied(true);
-      setTimeout(() => setIsCopied(false), 2000);
-    } catch (error) {
-      console.error('Failed to copy:', error);
-      const textArea = document.createElement('textarea');
-      textArea.value = window.location.href;
-      document.body.appendChild(textArea);
-      textArea.select();
-      document.execCommand('copy');
-      document.body.removeChild(textArea);
-      setIsCopied(true);
-      setTimeout(() => setIsCopied(false), 2000);
-    }
+    
   };
 
   function validatePortableText(content: any) {
