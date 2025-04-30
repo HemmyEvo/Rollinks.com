@@ -9,7 +9,7 @@ import { motion } from 'framer-motion'
 
 const Header = () => {
   const [isToggle, setisToggle] = React.useState(false)
-  const {cartCount = 0, handleCartClick,clearCart} = useShoppingCart()
+  const {cartCount = 0, handleCartClick} = useShoppingCart()
 
   return (
     <header className="fixed inset-x-0 top-0 z-50">
@@ -71,7 +71,7 @@ const Header = () => {
               <motion.button  
                 whileHover={{ scale: 1.05 }}  
                 whileTap={{ scale: 0.95 }}  
-                onClick={() => {handleCartClick();clearCart()}}  
+                onClick={() => handleCartClick()}  
                 className="relative p-2 rounded-full hover:bg-amber-50 transition-colors"  
               >  
                 <ShoppingCart className="w-5 h-5 text-gray-700" />  
