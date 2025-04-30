@@ -11,7 +11,7 @@ import Loading from '@/components/ui/Loading';
 import Image from 'next/image';
 import { PortableText } from '@portabletext/react';
 import Head from 'next/head';
-import Link from next/link''
+import Link from 'next/link'
 
 async function getData(slug: string) {
   const query = `*[_type == "product" && slug.current == "${slug}"][0]{
