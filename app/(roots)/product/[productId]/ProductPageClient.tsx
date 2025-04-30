@@ -37,16 +37,16 @@ export default function ProductPageClient({ data }: { data: fullProduct }) {
 
     const product: CartProduct = {
       name: item.name,
-      description: item.description[0]?.children[0]?.text || item.name,
+      description: item.description?.[0]?.children?.[0]?.text || item.name,
       price: item.discountPrice ?? item.price,
       currency: 'NGN',
-      image: image,
-      quantity: quantity,
+      image,
+      quantity,
       id: item._id,
-      sku: item._id
+      sku: item._id,
     };
 
-    if (cartDetails && cartDetails[item._id]) {
+    if (cartDetails?.[item._id]) {
       incrementItem(item._id, { count: quantity });
     } else {
       addItem(product);
@@ -56,53 +56,54 @@ export default function ProductPageClient({ data }: { data: fullProduct }) {
     setTimeout(() => setAddMessage('Add to cart'), 2000);
   };
 
-  const handleShare = async () => {
-    
+  const handleShare = () => {
+    setIsShareOpen((prev) => !prev);
   };
 
   const copyToClipboard = async () => {
-    
+    try {
+      await navigator.clipboard.writeText(window.location.href);
+      setIsCopied(true);
+      setTimeout(() => setIsCopied(false), 2000);
+    } catch (err) {
+      console.error('Failed to copy link:', err);
+    }
   };
 
-  function validatePortableText(content: any) {
-    if (!content) return [];
-    if (Array.isArray(content)) return content;
-    return [];
-  }
+  const validatePortableText = (content: any) => {
+    return Array.isArray(content) ? content : [];
+  };
 
   if (!data) return <Loading />;
 
   const hasDiscount = data.discountPrice && data.discountPrice < data.price;
-  const finalPrice = hasDiscount ? data.discountPrice! : data.price;
-  const discount = hasDiscount ? Math.round(((data.price - data.discountPrice!) / data.price) * 100) : 0;
+  const finalPrice = hasDiscount ? data.discountPrice : data.price;
+  const discount = hasDiscount
+    ? Math.round(((data.price - data.discountPrice!) / data.price) * 100)
+    : 0;
 
-  
   return (
     <div className="min-h-screen bg-gradient-to-b from-blue-50/30 to-purple-50/30 py-12 px-4 sm:px-6">
       <div className="max-w-7xl mx-auto">
+        {/* Breadcrumb */}
         <nav aria-label="Breadcrumb" className="flex items-center text-sm text-gray-600 mb-6">
           <ol className="flex items-center space-x-2">
-            <li>
-              <Link href="/" className="hover:text-blue-600">Home</Link>
-            </li>
+            <li><Link href="/" className="hover:text-blue-600">Home</Link></li>
             <ChevronRight className="h-4 w-4" />
-            <li>
-              <Link href="/products" className="hover:text-blue-600">Products</Link>
-            </li>
+            <li><Link href="/products" className="hover:text-blue-600">Products</Link></li>
             <ChevronRight className="h-4 w-4" />
-            <li aria-current="page" className="text-blue-600">
-              {data.name}
-            </li>
+            <li aria-current="page" className="text-blue-600">{data.name}</li>
           </ol>
         </nav>
 
         <div className="grid md:grid-cols-2 gap-8 md:gap-12">
+          {/* Image Section */}
           <div className="bg-white/80 backdrop-blur-sm rounded-2xl overflow-hidden border border-white/20 shadow-lg">
             <div className="relative aspect-square w-full">
               {data.images?.[activeImage] && (
                 <Image
                   src={urlFor(data.images[activeImage]).url()}
-                  alt={data.name}
+                  alt={data.name || `Product image`}
                   fill
                   className="object-contain p-4"
                   priority
@@ -111,17 +112,18 @@ export default function ProductPageClient({ data }: { data: fullProduct }) {
               )}
             </div>
             <div className="grid grid-cols-4 gap-2 p-4 border-t border-white/20">
-              {data.images?.map((image: any, index: number) => (
+              {data.images?.map((img, i) => (
                 <button
-                  key={index}
-                  onClick={() => setActiveImage(index)}
+                  key={i}
+                  onClick={() => setActiveImage(i)}
                   className={`aspect-square rounded-lg overflow-hidden border-2 transition-all ${
-                    activeImage === index ? 'border-blue-500' : 'border-transparent'
+                    activeImage === i ? 'border-blue-500' : 'border-transparent'
                   }`}
+                  aria-label={`Select image ${i + 1}`}
                 >
                   <Image
-                    src={urlFor(image).url()}
-                    alt={`${data.name} thumbnail ${index + 1}`}
+                    src={urlFor(img).url()}
+                    alt={`Thumbnail ${i + 1}`}
                     width={100}
                     height={100}
                     className="object-cover w-full h-full"
@@ -131,7 +133,9 @@ export default function ProductPageClient({ data }: { data: fullProduct }) {
             </div>
           </div>
 
+          {/* Product Details */}
           <article className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 border border-white/20 shadow-lg flex flex-col">
+            {/* Share Button */}
             <div className="flex justify-end mb-2 relative">
               <button 
                 onClick={handleShare}
@@ -154,19 +158,12 @@ export default function ProductPageClient({ data }: { data: fullProduct }) {
               )}
             </div>
 
+            {/* Product Info */}
             <div className="flex items-center justify-between mb-4">
               <span className="text-sm text-blue-600">{data.categoryName}</span>
               <div className="flex gap-2">
-                {data.isNew && (
-                  <span className="px-2 py-1 text-xs bg-green-100 text-green-800 rounded-full">
-                    New
-                  </span>
-                )}
-                {discount > 0 && (
-                  <span className="px-2 py-1 text-xs bg-red-100 text-red-800 rounded-full">
-                    -{discount}%
-                  </span>
-                )}
+                {data.isNew && <span className="px-2 py-1 text-xs bg-green-100 text-green-800 rounded-full">New</span>}
+                {discount > 0 && <span className="px-2 py-1 text-xs bg-red-100 text-red-800 rounded-full">-{discount}%</span>}
               </div>
             </div>
 
@@ -179,20 +176,15 @@ export default function ProductPageClient({ data }: { data: fullProduct }) {
                   {data.rating?.toFixed(1) || '4.5'}
                 </span>
               </div>
-              <span className="text-sm text-gray-500">
-                {data.reviewCount || '24'} reviews
-              </span>
+              <span className="text-sm text-gray-500">{data.reviewCount || 24} reviews</span>
             </div>
 
-            <div className="my-4" itemScope itemType="http://schema.org/Offer" itemProp="offers">
+            {/* Price */}
+            <div className="my-4">
               <div className="flex items-end gap-3">
-                <span className="text-3xl font-bold text-gray-900" itemProp="price">
-                  ₦{finalPrice.toLocaleString()}
-                </span>
+                <span className="text-3xl font-bold text-gray-900">₦{finalPrice.toLocaleString()}</span>
                 {hasDiscount && (
-                  <span className="text-lg text-gray-500 line-through">
-                    ₦{data.price.toLocaleString()}
-                  </span>
+                  <span className="text-lg text-gray-500 line-through">₦{data.price.toLocaleString()}</span>
                 )}
               </div>
               {discount > 0 && (
@@ -200,18 +192,17 @@ export default function ProductPageClient({ data }: { data: fullProduct }) {
                   You save ₦{(data.price - finalPrice).toLocaleString()} ({discount}%)
                 </span>
               )}
-              <meta itemProp="priceCurrency" content="NGN" />
-              <link itemProp="availability" href="http://schema.org/InStock" />
             </div>
 
+            {/* Volume and Skin Type */}
             {data.volume && (
-              <div className="mb-4">
-                <span className="text-sm text-gray-500">Size: </span>
-                <span className="text-sm font-medium">{data.volume}</span>
+              <div className="mb-4 text-sm">
+                <span className="text-gray-500">Size: </span>
+                <span className="font-medium">{data.volume}</span>
               </div>
             )}
 
-            {data.skinType && data.skinType.length > 0 && (
+            {data.skinType?.length > 0 && (
               <div className="mb-4">
                 <span className="text-sm text-gray-500">Recommended for: </span>
                 <div className="flex flex-wrap gap-2 mt-1">
@@ -224,31 +215,31 @@ export default function ProductPageClient({ data }: { data: fullProduct }) {
               </div>
             )}
 
+            {/* Quantity & Cart */}
             <div className="mt-4 mb-6">
               <div className="flex items-center gap-4">
                 <div className="flex items-center bg-white rounded-full border border-gray-200 overflow-hidden">
                   <button
-                    onClick={() => setQuantity(prev => Math.max(1, prev - 1))}
-                    className="px-3 py-2 text-gray-600 hover:bg-gray-50 transition-colors"
+                    onClick={() => setQuantity((prev) => Math.max(1, prev - 1))}
+                    className="px-3 py-2 text-gray-600 hover:bg-gray-50"
                     aria-label="Decrease quantity"
                   >
                     -
                   </button>
                   <input
                     type="number"
-                    min="1"
-                    max="100"
+                    min={1}
+                    max={100}
                     value={quantity}
                     onChange={(e) => {
-                      const value = parseInt(e.target.value);
-                      if (!isNaN(value)) setQuantity(Math.max(1, Math.min(100, value)));
+                      const val = parseInt(e.target.value);
+                      if (!isNaN(val)) setQuantity(Math.max(1, Math.min(100, val)));
                     }}
                     className="w-12 text-center border-x border-gray-200 py-2 outline-none"
-                    aria-label="Quantity"
                   />
                   <button
-                    onClick={() => setQuantity(prev => Math.min(100, prev + 1))}
-                    className="px-3 py-2 text-gray-600 hover:bg-gray-50 transition-colors"
+                    onClick={() => setQuantity((prev) => Math.min(100, prev + 1))}
+                    className="px-3 py-2 text-gray-600 hover:bg-gray-50"
                     aria-label="Increase quantity"
                   >
                     +
@@ -291,7 +282,7 @@ export default function ProductPageClient({ data }: { data: fullProduct }) {
               />
             </div>
 
-            {data.ingredients && data.ingredients.length > 0 && (
+            {data.ingredients?.length > 0 && (
               <div className="mb-6">
                 <h2 className="font-medium text-gray-900 mb-2">Key Ingredients</h2>
                 <div className="flex flex-wrap gap-2">
@@ -313,7 +304,8 @@ export default function ProductPageClient({ data }: { data: fullProduct }) {
           </article>
         </div>
 
-        {data.benefits && data.benefits.length > 0 && (
+        {/* Benefits */}
+        {data.benefits?.length > 0 && (
           <section className="mt-12 grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
             <h2 className="sr-only">Product Benefits</h2>
             {data.benefits.map((benefit, i) => (
@@ -335,4 +327,4 @@ export default function ProductPageClient({ data }: { data: fullProduct }) {
       </div>
     </div>
   );
-                  }
+}
