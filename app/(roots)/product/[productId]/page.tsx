@@ -81,11 +81,11 @@ async function getData(slug: string): Promise<fullProduct | null> {
    export default async function page(props: {
      params: Promise<{ productId: string }>  }) {
       const params = await props.params
-      console.log(params)
+      
 
   
   const data = await getData(params.productId)
-  if (!data) return console.log(params.productId);
+  if (!data) return notFound();
 
   return <ProductPageClient data={data} />;
 }
