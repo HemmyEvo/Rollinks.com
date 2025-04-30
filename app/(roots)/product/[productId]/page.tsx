@@ -60,6 +60,7 @@ export default function ProductPage() {
       image: image,
       quantity: quantity,
       id: item._id,
+      sku: item._id
     };
 
     if (cartDetails && cartDetails[item._id]) {
