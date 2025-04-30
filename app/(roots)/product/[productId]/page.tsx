@@ -49,6 +49,7 @@ export default function ProductPage() {
   const [activeImage, setActiveImage] = React.useState(0);
 
   const handleAddToCart = (item: any) => {
+    console.log(item._id)
     setAddMessage('Added');
     const image = urlFor(item.images[0]).url();
 
@@ -62,6 +63,7 @@ export default function ProductPage() {
       id: item._id,
       sku: item._id
     };
+   
 
     if (cartDetails && cartDetails[item._id]) {
       incrementItem(item._id, { count: quantity });
