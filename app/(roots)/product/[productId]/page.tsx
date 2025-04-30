@@ -1,86 +1,21 @@
 'use client';
 
 import { fullProduct } from '@/app/interface';
-import { client, urlFor } from '@/lib/sanity';
+import { urlFor } from '@/lib/sanity';
 import React from 'react';
-import { useParams } from 'next/navigation';
 import { CheckCircle, Star, Truck, ChevronRight, Leaf, Share2, Copy } from 'lucide-react';
 import { useShoppingCart } from 'use-shopping-cart';
 import { motion } from 'framer-motion';
 import Loading from '@/components/ui/Loading';
 import Image from 'next/image';
 import { PortableText } from '@portabletext/react';
-import Head from 'next/head';
 import Link from 'next/link';
 import { portableTextComponents } from '@/lib/portableTextComponent';
-import { Metadata } from 'next';
 
-async function getData(slug: string) {
-  const query = `*[_type == "product" && slug.current == "${slug}"][0]{
-    _id,
-    name,
-    "slug": slug.current,
-    images,
-    "description": description,
-    price,
-    discountPrice,
-    "categoryName": category->name,
-    rating,
-    reviewCount,
-    isNew,
-    ingredients,
-    benefits,
-    skinType,
-    volume,
-    howToUse,
-    seo {
-      metaTitle,
-      metaDescription,
-      keywords
-    }
-  }`;
-  return await client.fetch(query);
-}
-
-export async function generateMetadata({ params }: { params: { productId: string } }): Promise<Metadata> {
-  const data = await getData(params.productId);
-  
-  const hasDiscount = data.discountPrice && data.discountPrice < data.price;
-  const discount = hasDiscount ? Math.round(((data.price - data.discountPrice!) / data.price) * 100) : 0;
-
-  return {
-    title: data.seo?.metaTitle || `${data.name} | Rollinks Skincare`,
-    description: data.seo?.metaDescription || 
-      `Discover ${data.name} - ${data.categoryName} product${hasDiscount ? ` now at ${discount}% off` : ''}. ${
-        data.description ? data.description[0]?.children[0]?.text.substring(0, 150) : ''
-      }...`,
-    keywords: data.seo?.keywords?.join(', ') || 
-      `${data.name}, ${data.categoryName}, skincare, beauty, ${data.ingredients?.join(', ') || ''}`,
-    openGraph: {
-      title: data.seo?.metaTitle || `${data.name} | Rollinks Skincare`,
-      description: data.seo?.metaDescription || 
-        `Discover ${data.name} - ${data.categoryName} product${hasDiscount ? ` now at ${discount}% off` : ''}. ${
-          data.description ? data.description[0]?.children[0]?.text.substring(0, 150) : ''
-        }...`,
-      images: data.images?.[0] ? [{ url: urlFor(data.images[0]).url() }] : [],
-      type: 'product',
-    },
-    other: {
-      'product:price:amount': (data.discountPrice ?? data.price).toString(),
-      'product:price:currency': 'NGN',
-      ...(hasDiscount && {
-        'product:sale_price:amount': data.discountPrice!.toString(),
-      }),
-    },
-  };
-}
-
-export default function ProductPage() {
-  const params = useParams();
+export default function ProductPageClient({ data }: { data: fullProduct }) {
   const [quantity, setQuantity] = React.useState(1);
   const [addMessage, setAddMessage] = React.useState('Add to cart');
   const { addItem, incrementItem, setItemQuantity, cartDetails } = useShoppingCart();
-  const [data, setData] = React.useState<fullProduct | null>(null);
   const [activeImage, setActiveImage] = React.useState(0);
   const [isShareOpen, setIsShareOpen] = React.useState(false);
   const [isCopied, setIsCopied] = React.useState(false);
@@ -133,14 +68,6 @@ export default function ProductPage() {
     if (Array.isArray(content)) return content;
     return [];
   }
-
-  React.useEffect(() => {
-    async function fetchData() {
-      const productData = await getData(params.productId as string);
-      setData(productData);
-    }
-    fetchData();
-  }, [params.productId]);
 
   if (!data) return <Loading />;
 
