@@ -5,18 +5,18 @@ import ProductCard from './ProductCard';
 import { motion } from "framer-motion";
 // Fetch data from Sanity
 async function getData() {
-  const query = `*[_type == "product" && isNew == true][0...4] | order(createdAt desc) {
-    _id,
-    name,
-    description,
-    "slug": slug.current,
-    "images": images[].asset->url,
-    price,
-    discountPrice,
-    "categoryName": category->name,
-    rating,
-    isNew
-  }`;
+  const query = `*[_type == "product" && isNew == true && !(_id in path("drafts.**"))] | order(_createdAt desc)[0...4] {
+  _id,
+  name,
+  description,
+  "slug": slug.current,
+  "images": images[].asset->url,
+  price,
+  discountPrice,
+  "categoryName": category->name,
+  rating,
+  isNew
+}`;
   const data = await client.fetch(query);
   return data;
 }
