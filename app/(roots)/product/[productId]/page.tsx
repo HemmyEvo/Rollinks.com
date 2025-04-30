@@ -62,7 +62,7 @@ async function getData(slug: string): Promise<ProductData | null> {
   }
 }
 
-export async function generateMetadata({ params }: { params: { productId: any } }) {
+export async function generateMetadata({ params }: { params: Promise<{ productId: string }>}) {
   const data = await getData(params.productId);
   if (!data) return {};
 
