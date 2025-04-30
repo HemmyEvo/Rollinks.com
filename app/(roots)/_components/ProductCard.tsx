@@ -26,7 +26,7 @@ const ProductCard = ({ id, title, price, description, slug, image, discount, rat
   const safeDiscount = discount || 0; // Fallback to 0 if discount is null/undefined
   
   const discountPercentage = discount && price 
-    ? Math.round(((safeDiscount - safePrice) / safeDiscount) * 100 
+    ? Math.round(((safeDiscount - safePrice) / safeDiscount) * 100) 
     : 0
 
   const handleAddToCart = (e: React.MouseEvent) => {
