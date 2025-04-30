@@ -37,44 +37,7 @@ async function getData(slug: string): Promise<fullProduct | null> {
   }
 }
 
-   export async function generateMetadata(props: {
-     params: Promise<{ productId: string }>
-   }) {
-     const params = await props.params;
-  const data = await getData(params.productId)
-  if (!data) return {}
-
-  const discountPrice = data.discountPrice ?? data.price
-  const hasDiscount = data.discountPrice !== undefined && data.discountPrice < data.price
-  const discount = hasDiscount ? Math.round(((data.price - discountPrice) / data.price) * 100 ): 0
-
-  // Safe description extraction
-  const descriptionText = data.description?.[0]?.children?.[0]?.text 
-    ? data.description[0].children[0].text.substring(0, 150) 
-    : ''
-
-  return {
-    title: data.seo?.metaTitle || `${data.name} | Rollinks Skincare`,
-    description: data.seo?.metaDescription || 
-      `Discover ${data.name} - ${data.categoryName} product${hasDiscount ? ` now at ${discount}% off` : ''}. ${descriptionText}...`,
-    keywords: data.seo?.keywords?.join(', ') || 
-      `${data.name}, ${data.categoryName}, skincare, beauty, ${data.ingredients?.join(', ') || ''}`,
-    openGraph: {
-      title: data.seo?.metaTitle || `${data.name} | Rollinks Skincare`,
-      description: data.seo?.metaDescription || 
-        `Discover ${data.name} - ${data.categoryName} product${hasDiscount ? ` now at ${discount}% off` : ''}. ${descriptionText}...`,
-      images: data.images?.[0] ? [{ url: urlFor(data.images[0]).url() }] : [],
-      type: 'product',
-    },
-    other: {
-      'product:price:amount': discountPrice.toString(),
-      'product:price:currency': 'NGN',
-      ...(hasDiscount && {
-        'product:sale_price:amount': data.discountPrice!.toString(),
-      }),
-    },
-  }
-}
+   
 
    export default async function page(props: {
      params: Promise<{ productId: string }>
