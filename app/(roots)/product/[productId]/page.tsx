@@ -3,12 +3,7 @@ import { Metadata } from 'next';
 import { client, urlFor } from '@/lib/sanity';
 import ProductPageClient from './ProductPageClient'
 
-interface PageProps {
-  params: {
-    productId: string;
-  };
-}
-
+// Remove custom PageProps interface and use the inferred type
 async function getData(slug: string) {
   const query = `*[_type == "product" && slug.current == "${slug}"][0]{
     _id,
@@ -36,7 +31,7 @@ async function getData(slug: string) {
   return await client.fetch(query);
 }
 
-export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
+export async function generateMetadata({ params }: { params: { productId: string } }) {
   const data = await getData(params.productId);
 
   const hasDiscount = data.discountPrice && data.discountPrice < data.price;
@@ -69,7 +64,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   };
 }
 
-export default async function ProductPage({ params }: PageProps) {
+export default async function ProductPage({ params }: { params: { productId: string } }) {
   const data = await getData(params.productId);
   return <ProductPageClient data={data} />;
 }
