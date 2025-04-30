@@ -60,7 +60,7 @@ const ProductCard = ({ id, title, price, description, slug, image, discount, rat
       viewport={{ once: true, margin: "0px 0px -100px 0px" }}
       transition={{ duration: 0.4 }}
     >
-      <Link href={`/product/${slug}`} passHref>
+     
         <motion.div 
           className="relative bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-lg transition-all duration-300 h-full flex flex-col border border-gray-100"
           onMouseEnter={() => setIsHovered(true)}
@@ -141,6 +141,7 @@ const ProductCard = ({ id, title, price, description, slug, image, discount, rat
               </div>
 
               {/* Add to Cart Section */}
+ <Link href={`/product/${slug}`} passHref>
               <AnimatePresence>
                  <motion.div
                     className="flex items-center text-blue-600 hover:text-blue-700 transition-colors"
@@ -153,10 +154,11 @@ const ProductCard = ({ id, title, price, description, slug, image, discount, rat
                     <ChevronRight className="w-4 h-4" />
                   </motion.div>
               </AnimatePresence>
+ </Link>
             </div>
           </div>
         </motion.div>
-      </Link>
+     
     </motion.div>
   )
 }
