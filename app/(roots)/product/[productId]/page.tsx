@@ -1,5 +1,4 @@
 
-import { Metadata } from 'next';
 import { client, urlFor } from '@/lib/sanity';
 import ProductPageClient from './ProductPageClient';
 import { notFound } from 'next/navigation';
@@ -63,14 +62,15 @@ async function getData(slug: string): Promise<ProductData | null> {
 }
 
    export async function generateMetadata(props: {
-     params: Promise<{ slug: string }>
-   }) {
-     const params = await props.params
-     const data = await getData(params.slug)
+  params: Promise<{ slug: string }>
+}) {
+  const params = await props.params
+  const data = await getData(params.slug)
   if (!data) return {};
 
-  const hasDiscount = data.discountPrice && data.discountPrice < data.price;
-  const discount = hasDiscount ? Math.round(((data.price - data.discountPrice) / data.price) * 100) : 0;
+  const discountPrice = data.discountPrice ?? data.price;
+  const hasDiscount = data.discountPrice !== undefined && data.discountPrice < data.price;
+  const discount = hasDiscount ? Math.round(((data.price - discountPrice) / data.price) * 100) : 0;
 
   return {
     title: data.seo?.metaTitle || `${data.name} | Rollinks Skincare`,
@@ -90,14 +90,14 @@ async function getData(slug: string): Promise<ProductData | null> {
       type: 'product',
     },
     other: {
-      'product:price:amount': (data.discountPrice ?? data.price).toString(),
+      'product:price:amount': discountPrice.toString(),
       'product:price:currency': 'NGN',
       ...(hasDiscount && {
         'product:sale_price:amount': data.discountPrice!.toString(),
       }),
     },
   };
-   }
+}
 
 
 
