@@ -11,6 +11,18 @@ import Image from 'next/image';
 import { PortableText } from '@portabletext/react';
 import Link from 'next/link';
 import { portableTextComponents } from '@/lib/portableTextComponent';
+import Script from 'next/script';
+
+type CartProduct = {
+  name: string;
+  description: string;
+  price: number;
+  currency: string;
+  image: string;
+  quantity: number;
+  id: string;
+  sku: string;
+};
 
 export default function ProductPageClient({ data }: { data: fullProduct }) {
   const [quantity, setQuantity] = React.useState(1);
@@ -20,13 +32,13 @@ export default function ProductPageClient({ data }: { data: fullProduct }) {
   const [isShareOpen, setIsShareOpen] = React.useState(false);
   const [isCopied, setIsCopied] = React.useState(false);
 
-  const handleAddToCart = (item: any) => {
+  const handleAddToCart = (item: fullProduct) => {
     setAddMessage('Added');
     const image = urlFor(item.images[0]).url();
 
-    const product = {
+    const product: CartProduct = {
       name: item.name,
-      description: item.description,
+      description: item.description[0]?.children[0]?.text || item.name,
       price: item.discountPrice ?? item.price,
       currency: 'NGN',
       image: image,
@@ -45,22 +57,38 @@ export default function ProductPageClient({ data }: { data: fullProduct }) {
     setTimeout(() => setAddMessage('Add to cart'), 2000);
   };
 
-  const handleShare = () => {
-    if (navigator.share) {
-      navigator.share({
-        title: data?.name,
-        text: `Check out this product: ${data?.name}`,
-        url: window.location.href,
-      }).catch(console.error);
-    } else {
-      setIsShareOpen(true);
+  const handleShare = async () => {
+    try {
+      if (navigator.share) {
+        await navigator.share({
+          title: data?.name,
+          text: `Check out this product: ${data?.name}`,
+          url: window.location.href,
+        });
+      } else {
+        setIsShareOpen(true);
+      }
+    } catch (error) {
+      console.error('Error sharing:', error);
     }
   };
 
-  const copyToClipboard = () => {
-    navigator.clipboard.writeText(window.location.href);
-    setIsCopied(true);
-    setTimeout(() => setIsCopied(false), 2000);
+  const copyToClipboard = async () => {
+    try {
+      await navigator.clipboard.writeText(window.location.href);
+      setIsCopied(true);
+      setTimeout(() => setIsCopied(false), 2000;
+    } catch (error) {
+      console.error('Failed to copy:', error);
+      const textArea = document.createElement('textarea');
+      textArea.value = window.location.href;
+      document.body.appendChild(textArea);
+      textArea.select();
+      document.execCommand('copy');
+      document.body.removeChild(textArea);
+      setIsCopied(true);
+      setTimeout(() => setIsCopied(false), 2000);
+    }
   };
 
   function validatePortableText(content: any) {
@@ -75,10 +103,44 @@ export default function ProductPageClient({ data }: { data: fullProduct }) {
   const finalPrice = hasDiscount ? data.discountPrice! : data.price;
   const discount = hasDiscount ? Math.round(((data.price - data.discountPrice!) / data.price) * 100) : 0;
 
+  const productStructuredData = {
+    "@context": "https://schema.org",
+    "@type": "Product",
+    "name": data.name,
+    "description": data.description[0]?.children[0]?.text || data.name,
+    "image": data.images?.map(image => urlFor(image).url()),
+    "sku": data._id,
+    "brand": {
+      "@type": "Brand",
+      "name": "Rollinks Skincare"
+    },
+    "offers": {
+      "@type": "Offer",
+      "url": typeof window !== 'undefined' ? window.location.href : '',
+      "priceCurrency": "NGN",
+      "price": finalPrice,
+      "priceValidUntil": new Date(Date.now() + 1000 * 60 * 60 * 24 * 30).toISOString().split('T')[0],
+      "itemCondition": "https://schema.org/NewCondition",
+      "availability": "https://schema.org/InStock"
+    },
+    ...(data.rating && {
+      "aggregateRating": {
+        "@type": "AggregateRating",
+        "ratingValue": data.rating,
+        "reviewCount": data.reviewCount || 0
+      }
+    })
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-b from-blue-50/30 to-purple-50/30 py-12 px-4 sm:px-6">
+      <Script
+        id="product-structured-data"
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(productStructuredData) }}
+      />
+
       <div className="max-w-7xl mx-auto">
-        {/* Breadcrumbs with structured data */}
         <nav aria-label="Breadcrumb" className="flex items-center text-sm text-gray-600 mb-6">
           <ol className="flex items-center space-x-2">
             <li>
@@ -96,7 +158,6 @@ export default function ProductPageClient({ data }: { data: fullProduct }) {
         </nav>
 
         <div className="grid md:grid-cols-2 gap-8 md:gap-12">
-          {/* Image Gallery */}
           <div className="bg-white/80 backdrop-blur-sm rounded-2xl overflow-hidden border border-white/20 shadow-lg">
             <div className="relative aspect-square w-full">
               {data.images?.[activeImage] && (
@@ -131,9 +192,7 @@ export default function ProductPageClient({ data }: { data: fullProduct }) {
             </div>
           </div>
 
-          {/* Product Info */}
           <article className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 border border-white/20 shadow-lg flex flex-col">
-            {/* Share button */}
             <div className="flex justify-end mb-2 relative">
               <button 
                 onClick={handleShare}
@@ -142,7 +201,7 @@ export default function ProductPageClient({ data }: { data: fullProduct }) {
               >
                 <Share2 className="w-5 h-5" />
               </button>
-              
+
               {isShareOpen && (
                 <div className="absolute top-10 right-0 bg-white rounded-lg shadow-lg p-2 z-10 border border-gray-200">
                   <button
@@ -156,7 +215,6 @@ export default function ProductPageClient({ data }: { data: fullProduct }) {
               )}
             </div>
 
-            {/* Category and Badges */}
             <div className="flex items-center justify-between mb-4">
               <span className="text-sm text-blue-600">{data.categoryName}</span>
               <div className="flex gap-2">
@@ -173,10 +231,8 @@ export default function ProductPageClient({ data }: { data: fullProduct }) {
               </div>
             </div>
 
-            {/* Product Name */}
             <h1 className="text-3xl font-bold text-gray-900 mb-2">{data.name}</h1>
 
-            {/* Rating */}
             <div className="flex items-center gap-2 mb-4">
               <div className="flex items-center bg-amber-100 text-amber-800 px-2 py-1 rounded-full">
                 <Star className="w-4 h-4 fill-current" />
@@ -189,7 +245,6 @@ export default function ProductPageClient({ data }: { data: fullProduct }) {
               </span>
             </div>
 
-            {/* Price */}
             <div className="my-4" itemScope itemType="http://schema.org/Offer" itemProp="offers">
               <div className="flex items-end gap-3">
                 <span className="text-3xl font-bold text-gray-900" itemProp="price">
@@ -210,7 +265,6 @@ export default function ProductPageClient({ data }: { data: fullProduct }) {
               <link itemProp="availability" href="http://schema.org/InStock" />
             </div>
 
-            {/* Volume */}
             {data.volume && (
               <div className="mb-4">
                 <span className="text-sm text-gray-500">Size: </span>
@@ -218,7 +272,6 @@ export default function ProductPageClient({ data }: { data: fullProduct }) {
               </div>
             )}
 
-            {/* Skin Types */}
             {data.skinType && data.skinType.length > 0 && (
               <div className="mb-4">
                 <span className="text-sm text-gray-500">Recommended for: </span>
@@ -232,7 +285,6 @@ export default function ProductPageClient({ data }: { data: fullProduct }) {
               </div>
             )}
 
-            {/* Quantity and Add to Cart */}
             <div className="mt-4 mb-6">
               <div className="flex items-center gap-4">
                 <div className="flex items-center bg-white rounded-full border border-gray-200 overflow-hidden">
@@ -285,7 +337,6 @@ export default function ProductPageClient({ data }: { data: fullProduct }) {
               </div>
             </div>
 
-            {/* Delivery Info */}
             <div className="flex items-center gap-3 p-4 bg-blue-50/50 rounded-lg mb-6">
               <Truck className="text-blue-500" />
               <div>
@@ -294,7 +345,6 @@ export default function ProductPageClient({ data }: { data: fullProduct }) {
               </div>
             </div>
 
-            {/* Description */}
             <div className="prose prose-sm text-gray-600 mb-6">
               <PortableText
                 value={validatePortableText(data.description)}
@@ -302,7 +352,6 @@ export default function ProductPageClient({ data }: { data: fullProduct }) {
               />
             </div>
 
-            {/* Ingredients */}
             {data.ingredients && data.ingredients.length > 0 && (
               <div className="mb-6">
                 <h2 className="font-medium text-gray-900 mb-2">Key Ingredients</h2>
@@ -316,7 +365,6 @@ export default function ProductPageClient({ data }: { data: fullProduct }) {
               </div>
             )}
 
-            {/* How to Use */}
             {data.howToUse && (
               <div className="mt-auto pt-4 border-t border-gray-100">
                 <h2 className="font-medium text-gray-900 mb-2">How To Use</h2>
@@ -326,7 +374,6 @@ export default function ProductPageClient({ data }: { data: fullProduct }) {
           </article>
         </div>
 
-        {/* Benefits */}
         {data.benefits && data.benefits.length > 0 && (
           <section className="mt-12 grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
             <h2 className="sr-only">Product Benefits</h2>
