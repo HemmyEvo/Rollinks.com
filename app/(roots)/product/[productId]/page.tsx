@@ -96,15 +96,10 @@ export async function generateMetadata({ params }: { params: { productId: any } 
   };
 }
 
-interface ProductPageProps {
-  params: {
-    productId: any;
-  };
-}
 
-export default async function Page({ params }: ProductPageProps) {
-  console.log(params)
-  const data = await getData(params.productId);
+export default async function Page() {
+  
+  const data = await getData('');
   if (!data) return notFound();
 
   return <ProductPageClient data={data} />;
