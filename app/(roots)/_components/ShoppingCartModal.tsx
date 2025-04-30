@@ -108,8 +108,12 @@ export default function ShoppingCartModal() {
                             <h3 className="font-medium text-green-900">{entry.name}</h3>
                             <p className="font-semibold text-green-800">₦{entry.price}</p>
                           </div>
-                         <div className="text-sm text-green-600 mt-1 line-clamp-1">
-  <PortableText value={entry.description} components={portableTextComponents} />
+                        <div className="text-sm text-green-600 mt-1 line-clamp-1">
+  {Array.isArray(entry.description) ? (
+    <PortableText value={entry.description} components={portableTextComponents} />
+  ) : (
+    entry.description || 'No description'
+  )}
 </div>
                           
                           <div className="mt-auto flex justify-between items-center">
