@@ -1,4 +1,4 @@
-import { Metadata } from 'next'
+
 import { client, urlFor } from '@/lib/sanity'
 import ProductPageClient from './ProductPageClient'
 import { notFound } from 'next/navigation'
