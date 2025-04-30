@@ -5,8 +5,8 @@ import ProductCard from './ProductCard';
 import { motion } from "framer-motion";
 // Fetch data from Sanity
 async function getData() {
-  const query = `*[_type == "product"][0...4] | order(createdAt desc) {
-        _id,
+  const query = `*[_type == "product" && isNew == true][0...4] | order(createdAt desc) {
+    _id,
     name,
     description,
     "slug": slug.current,
@@ -20,7 +20,6 @@ async function getData() {
   const data = await client.fetch(query);
   return data;
 }
-
 import { useState, useEffect } from 'react';
 
 export default function NewArrival() {
