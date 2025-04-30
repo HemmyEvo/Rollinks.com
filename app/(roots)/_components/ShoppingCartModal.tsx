@@ -13,6 +13,8 @@ import dynamic from 'next/dynamic'
 import { X } from "lucide-react"
 import { motion, AnimatePresence } from "framer-motion"
 import { Leaf, Droplet } from 'lucide-react'
+import { PortableText } from '@portabletext/react';
+import { portableTextComponents } from '@/lib/portableTextComponent'; // Your custom serializers
 
 const CheckoutButton = dynamic(() => import('./CheckoutButton'), { ssr: false })
 
@@ -106,7 +108,9 @@ export default function ShoppingCartModal() {
                             <h3 className="font-medium text-green-900">{entry.name}</h3>
                             <p className="font-semibold text-green-800">₦{entry.price}</p>
                           </div>
-                          <p className="text-sm text-green-600 mt-1 line-clamp-1">{entry.description}</p>
+                         <div className="text-sm text-green-600 mt-1 line-clamp-1">
+  <PortableText value={entry.description} components={portableTextComponents} />
+</div>
                           
                           <div className="mt-auto flex justify-between items-center">
                             <span className="text-sm text-green-500">Qty: {entry.quantity}</span>
