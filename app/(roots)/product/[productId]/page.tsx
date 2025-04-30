@@ -62,8 +62,11 @@ async function getData(slug: string): Promise<ProductData | null> {
   }
 }
 
-export async function generateMetadata({ params }: { params: Promise<{ productId: string }>}) {
-  const data = await getData(params.productId);
+   export async function generateMetadata(props: {
+     params: Promise<{ slug: string }>
+   }) {
+     const params = await props.params
+     const data = await getData(params.slug)
   if (!data) return {};
 
   const hasDiscount = data.discountPrice && data.discountPrice < data.price;
@@ -94,12 +97,15 @@ export async function generateMetadata({ params }: { params: Promise<{ productId
       }),
     },
   };
-}
+   }
 
 
-export default async function Page() {
+
+   export default async function ProductDetails(props: {
+     params: Promise<{ slug: string }>  }) {
+      const { slug } = params
   
-  const data = await getData('');
+  const data = await getData(slug);
   if (!data) return notFound();
 
   return <ProductPageClient data={data} />;
