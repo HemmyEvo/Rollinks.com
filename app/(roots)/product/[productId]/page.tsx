@@ -3,31 +3,8 @@ import { client, urlFor } from '@/lib/sanity';
 import ProductPageClient from './ProductPageClient';
 import { notFound } from 'next/navigation';
 
-interface ProductData {
-  _id: string;
-  name: string;
-  slug: string;
-  images: any[];
-  description: any;
-  price: number;
-  discountPrice?: number;
-  categoryName: string;
-  rating?: number;
-  reviewCount?: number;
-  isNew?: boolean;
-  ingredients?: string[];
-  benefits?: string[];
-  skinType?: string;
-  volume?: string;
-  howToUse?: string;
-  seo?: {
-    metaTitle?: string;
-    metaDescription?: string;
-    keywords?: string[];
-  };
-}
-
-async function getData(slug: string): Promise<ProductData | null> {
+import { fullProduct } from '@/app/interface';
+async function getData(slug: string): Promise<fullProduct | null> {
   try {
     const query = `*[_type == "product" && slug.current == "${slug}"][0]{
       _id,
