@@ -62,7 +62,7 @@ async function getData(slug: string): Promise<ProductData | null> {
   }
 }
 
-export async function generateMetadata({ params }: { params: { productId: string } }): Promise<Metadata> {
+export async function generateMetadata({ params }: { params: { productId: any } }) {
   const data = await getData(params.productId);
   if (!data) return {};
 
@@ -98,11 +98,12 @@ export async function generateMetadata({ params }: { params: { productId: string
 
 interface ProductPageProps {
   params: {
-    productId: string;
+    productId: any;
   };
 }
 
-export default async function ProductPage({ params }: ProductPageProps) {
+export default async function Page({ params }: ProductPageProps) {
+  console.log(params)
   const data = await getData(params.productId);
   if (!data) return notFound();
 
