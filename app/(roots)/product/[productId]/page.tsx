@@ -101,11 +101,11 @@ async function getData(slug: string): Promise<ProductData | null> {
 
 
 
-   export default async function ProductDetails(props: {
+   export default async function page(props: {
      params: Promise<{ slug: string }>  }) {
-      const { slug } = params
+      const params = await props.params
   
-  const data = await getData(slug);
+  const data = await getData(params.slug)
   if (!data) return notFound();
 
   return <ProductPageClient data={data} />;
