@@ -5,18 +5,18 @@ import ProductCard from './ProductCard';
 import { motion } from "framer-motion";
 // Fetch data from Sanity
 async function getData() {
-    const query = `*[_type == "product"] {
-           _id,
-    name,
-    description,
-    "slug": slug.current,
-    "images": images[].asset->url,
-    price,
-    discountPrice,
-    "categoryName": category->name,
-    rating,
-    isNew
-    }`;
+    const query = `*[_type == "product" && !(_id in path("drafts.**"))] {
+  _id,
+  name,
+  description,
+  "slug": slug.current,
+  "images": images[].asset->url,
+  price,
+  discountPrice,
+  "categoryName": category->name,
+  rating,
+  isNew
+}`;
     function shuffleArray(array: any[]) {
         for (let i = array.length - 1; i > 0; i--) {
             const j = Math.floor(Math.random() * (i + 1));
