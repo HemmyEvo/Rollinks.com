@@ -226,10 +226,10 @@ export default function Home() {
               Our plant-based formulas work in harmony with your skin's natural biology
             </p>
             <Link 
-              href="/natural" 
+              href="/product" 
               className="inline-block bg-amber-600 hover:bg-amber-700 text-white font-medium px-8 py-3 rounded-full transition-all duration-300 shadow-md hover:shadow-lg"
             >
-              Explore Naturals
+              Explore
             </Link>
           </motion.div>
         </div>
