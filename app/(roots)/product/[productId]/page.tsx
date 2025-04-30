@@ -1,10 +1,34 @@
-// app/(roots)/product/[productId]/page.server.tsx
+
 import { Metadata } from 'next';
 import { client, urlFor } from '@/lib/sanity';
 import ProductPageClient from './ProductPageClient';
 import { notFound } from 'next/navigation';
 
-async function getData(slug: string) {
+interface ProductData {
+  _id: string;
+  name: string;
+  slug: string;
+  images: any[];
+  description: any;
+  price: number;
+  discountPrice?: number;
+  categoryName: string;
+  rating?: number;
+  reviewCount?: number;
+  isNew?: boolean;
+  ingredients?: string[];
+  benefits?: string[];
+  skinType?: string;
+  volume?: string;
+  howToUse?: string;
+  seo?: {
+    metaTitle?: string;
+    metaDescription?: string;
+    keywords?: string[];
+  };
+}
+
+async function getData(slug: string): Promise<ProductData | null> {
   try {
     const query = `*[_type == "product" && slug.current == "${slug}"][0]{
       _id,
@@ -43,7 +67,7 @@ export async function generateMetadata({ params }: { params: { productId: string
   if (!data) return {};
 
   const hasDiscount = data.discountPrice && data.discountPrice < data.price;
-  const discount = hasDiscount ? Math.round(((data.price - data.discountPrice!) / data.price) * 100) : 0;
+  const discount = hasDiscount ? Math.round(((data.price - data.discountPrice) / data.price) * 100) : 0;
 
   return {
     title: data.seo?.metaTitle || `${data.name} | Rollinks Skincare`,
@@ -72,9 +96,15 @@ export async function generateMetadata({ params }: { params: { productId: string
   };
 }
 
-export default async function ProductPage({ params }: { params: { productId: string } }) {
+interface ProductPageProps {
+  params: {
+    productId: string;
+  };
+}
+
+export default async function ProductPage({ params }: ProductPageProps) {
   const data = await getData(params.productId);
   if (!data) return notFound();
-  
+
   return <ProductPageClient data={data} />;
 }
