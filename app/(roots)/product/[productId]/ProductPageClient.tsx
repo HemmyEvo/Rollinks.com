@@ -202,19 +202,21 @@ export default function ProductPageClient({ data }: { data: fullProduct }) {
               </div>
             )}
 
-            {data?.skinType?.length > 0 && (
-              <div className="mb-4">
-                <span className="text-sm text-gray-500">Recommended for: </span>
-                <div className="flex flex-wrap gap-2 mt-1">
-                  {data.skinType.map((type, i) => (
-                    <span key={i} className="px-2 py-1 text-xs bg-blue-100 text-blue-800 rounded-full">
-                      {type}
-                    </span>
-                  ))}
-                </div>
-              </div>
-            )}
-
+          {Array.isArray(data.skinType) && data.skinType.length > 0 && (
+  <div className="mb-4">
+    <span className="text-sm text-gray-500">Recommended for: </span>
+    <div className="flex flex-wrap gap-2 mt-1">
+      {data.skinType.map((type, i) => (
+        <span
+          key={type + i}
+          className="bg-amber-100 text-amber-800 text-xs font-medium px-2.5 py-0.5 rounded"
+        >
+          {type}
+        </span>
+      ))}
+    </div>
+  </div>
+)}
             {/* Quantity & Cart */}
             <div className="mt-4 mb-6">
               <div className="flex items-center gap-4">
