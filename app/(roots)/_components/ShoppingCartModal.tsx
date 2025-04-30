@@ -79,9 +79,9 @@ export default function ShoppingCartModal() {
                   transition={{ staggerChildren: 0.1 }}
                 >
                   <AnimatePresence>
-                    {Object.values(cartDetails ?? {}).map((entry) => (
+                    {Object.values(cartDetails ?? {}).map((entry,i) => (
                       <motion.li 
-                        key={entry.id}
+                        key={i}
                         layout
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
