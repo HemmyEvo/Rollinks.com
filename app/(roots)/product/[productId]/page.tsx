@@ -43,7 +43,7 @@ export async function generateMetadata({ params }: { params: { productId: string
 
   const discountPrice = data.discountPrice ?? data.price
   const hasDiscount = data.discountPrice !== undefined && data.discountPrice < data.price
-  const discount = hasDiscount ? Math.round(((data.price - discountPrice) / data.price) * 100 : 0
+  const discount = hasDiscount ? Math.round(((data.price - discountPrice) / data.price) * 100 ): 0
 
   // Safe description extraction
   const descriptionText = data.description?.[0]?.children?.[0]?.text 
