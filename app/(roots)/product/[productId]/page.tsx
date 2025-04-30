@@ -38,7 +38,7 @@ async function getData(slug: string): Promise<fullProduct | null> {
 }
 
    export async function generateMetadata(props: {
-     params: Promise<{ slug: string }>
+     params: Promise<{ productId: string }>
    }) {
      const params = props.params;
   const data = await getData(params.productId)
@@ -77,7 +77,7 @@ async function getData(slug: string): Promise<fullProduct | null> {
 }
 
    export default async function page(props: {
-     params: Promise<{ slug: string }>
+     params: Promise<{ productId: string }>
    }) { 
   const params = props.params;
   const data = await getData(params.productId)
