@@ -2,6 +2,13 @@
 import { Metadata } from 'next';
 import { client, urlFor } from '@/lib/sanity';
 import ProductPageClient from './ProductPageClient'
+
+interface PageProps {
+  params: {
+    productId: string;
+  };
+}
+
 async function getData(slug: string) {
   const query = `*[_type == "product" && slug.current == "${slug}"][0]{
     _id,
@@ -29,9 +36,9 @@ async function getData(slug: string) {
   return await client.fetch(query);
 }
 
-export async function generateMetadata({ params }: { params: { productId: string } }): Promise<Metadata> {
+export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const data = await getData(params.productId);
-  
+
   const hasDiscount = data.discountPrice && data.discountPrice < data.price;
   const discount = hasDiscount ? Math.round(((data.price - data.discountPrice!) / data.price) * 100) : 0;
 
@@ -62,8 +69,7 @@ export async function generateMetadata({ params }: { params: { productId: string
   };
 }
 
-// This is now a server component that renders the client component
-export default async function ProductPage({ params }: { params: { productId: string } }) {
+export default async function ProductPage({ params }: PageProps) {
   const data = await getData(params.productId);
   return <ProductPageClient data={data} />;
 }
