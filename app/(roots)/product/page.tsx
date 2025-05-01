@@ -114,10 +114,10 @@ useEffect(() => {
       <div className="max-w-7xl mx-auto mb-6">
         {selectedCategory ? (
           <div className="flex flex-col space-y-4">
-            <Link href="/product" className="flex items-center text-blue-600 hover:text-blue-800 w-fit">
+            <div onClick={resetFilters} className="flex items-center text-blue-600 hover:text-blue-800 w-fit">
               <ArrowLeft className="mr-2" size={18} />
               Back to Products
-            </Link>
+            </div>
             <h1 className="text-3xl font-bold text-gray-800">
               {selectedCategory} Products
             </h1>
