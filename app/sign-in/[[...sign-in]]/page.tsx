@@ -23,7 +23,7 @@ const Page = () => {
 
   useEffect(() => {
     if (isSignedIn) {
-      router.push('/');
+      router.replace('/');
     }
   }, [isSignedIn, router]);
 
@@ -87,7 +87,7 @@ const Page = () => {
         }
 
         setTimeout(() => {
-          router.push('/');
+          router.replace('/');
         }, 1500);
       } else {
         toast.error('Unable to connect to internet.');
