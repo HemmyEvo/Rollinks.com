@@ -387,8 +387,7 @@ export default function ProductPageClient({ data }: { data: fullProduct }) {
         </div>
       </div>
     </div>
-  );
-}
+ 
 
           {/* Product Details */}
           <article className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 border border-white/20 shadow-lg flex flex-col">
