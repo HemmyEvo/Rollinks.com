@@ -1,16 +1,16 @@
 'use client'
 import { Button } from '@/components/ui/button'
 import { motion } from 'framer-motion'
-import 'tailwindcss/tailwind.css'
+import { Leaf, Mail, User, MessageSquare, Send } from 'lucide-react'
 import { useState } from 'react'
-import emailjs from 'emailjs-com' // Import emailjs
+import emailjs from 'emailjs-com'
 
-const page = () => {
+const ContactPage = () => {
   const [isSending, setIsSending] = useState(false)
   const [name, setName] = useState('')
   const [email, setEmail] = useState('')
   const [message, setMessage] = useState('')
-  const [contactMessage, setContactMessage] = useState('') // State for success/error message
+  const [contactMessage, setContactMessage] = useState('')
 
   const sendEmail = (e: React.FormEvent) => {
     e.preventDefault()
@@ -19,100 +19,146 @@ const page = () => {
     emailjs.sendForm('service_2gxwh09', 'template_aez9vka', e.target as HTMLFormElement, '683gBDmEpVhIeg7ET')
       .then(() => {
         setContactMessage('Message sent successfully ✅')
-        setTimeout(() => {
-          setContactMessage('')
-        }, 5000)
+        setTimeout(() => setContactMessage(''), 5000)
         setName('')
         setEmail('')
         setMessage('')
       }, () => {
         setContactMessage('Message not sent (service error) ❌')
       })
-      .finally(() => {
-        setIsSending(false)
-      })
+      .finally(() => setIsSending(false))
   }
 
   return (
     <motion.div 
-      className="flex flex-col items-center justify-center min-h-screen bg-gray-100 p-4"
+      className="min-h-screen bg-gradient-to-br from-emerald-50 to-amber-50 p-4 flex items-center justify-center"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 0.5 }}
     >
-      <h1 className="text-4xl font-bold mb-4 text-gray-800">Contact Us</h1>
-      <form className="w-full max-w-lg bg-white p-8 rounded-lg shadow-md" onSubmit={sendEmail}>
-        <div className="mb-4">
-          <label className="block text-gray-700 text-sm font-semibold mb-2" htmlFor="name">
-            Name
-          </label>
-          <input
-            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-            id="name"
-            name="name"
-            onChange={(e) => setName(e.target.value)}
-            value={name}
-            type="text"
-            placeholder="Your name"
-            required
-          />
-        </div>
-        <div className="mb-4">
-          <label className="block text-gray-700 text-sm font-semibold mb-2" htmlFor="email">
-            Email
-          </label>
-          <input
-            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-            id="email"
-            name="email"
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            placeholder="Your email"
-            required
-          />
-        </div>
-        <div className="mb-4">
-          <label className="block text-gray-700 text-sm font-semibold mb-2" htmlFor="message">
-            Message
-          </label>
-          <textarea
-            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-            id="message"
-            name="message"
-            value={message}
-            onChange={(e) => setMessage(e.target.value)}
-            placeholder="Your message"
-            rows={4}
-            required
-          />
-        </div>
-        <div className="flex items-center justify-between">
-          <motion.div
-            initial={{ scale: 1 }}
-            whileHover={{ scale: 1.1 }}
-            whileTap={{ scale: 0.9 }}
-            transition={{ type: "spring", stiffness: 300 }}
-          >
-            <Button
-              className="bg-[#e09d22dc] hover:bg-[#d08c1fdc] text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-              type="submit"
-              disabled={isSending}
-            >
-              {isSending ? 'Sending...' : 'Send'}
-            </Button>
-          </motion.div>
-        </div>
-        {contactMessage && (
-          <div className="mt-4 text-center">
-            <p className={contactMessage.includes('✅') ? 'text-green-600' : 'text-red-600'}>
-              {contactMessage}
-            </p>
+      <div className="w-full max-w-2xl">
+        {/* Glass Card Container */}
+        <div className="backdrop-blur-lg bg-white/80 rounded-3xl shadow-lg overflow-hidden border border-white/20">
+          {/* Decorative Header */}
+          <div className="bg-emerald-500/10 p-6 text-center border-b border-white/20">
+            <div className="flex justify-center space-x-3 mb-3">
+              <Leaf className="w-6 h-6 text-emerald-600" />
+              <MessageSquare className="w-6 h-6 text-emerald-700" />
+              <Leaf className="w-6 h-6 text-emerald-600" />
+            </div>
+            <h1 className="text-3xl font-bold text-gray-800">
+              Contact <span className="text-emerald-600">Rollinks</span>
+            </h1>
+            <p className="text-emerald-700 mt-1">We'd love to hear from you</p>
           </div>
-        )}
-      </form>
+
+          {/* Form Content */}
+          <form onSubmit={sendEmail} className="p-6 md:p-8 space-y-6">
+            {/* Name Field */}
+            <div className="backdrop-blur-sm bg-white/60 p-4 rounded-xl border border-white/30 shadow-sm">
+              <label className="block text-gray-700 text-sm font-semibold mb-2 flex items-center gap-2">
+                <User className="w-4 h-4 text-emerald-600" />
+                Your Name
+              </label>
+              <input
+                className="w-full bg-white/50 border border-white/50 rounded-lg py-2 px-4 text-gray-700 focus:outline-none focus:ring-2 focus:ring-emerald-200 focus:border-emerald-300"
+                name="name"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                type="text"
+                placeholder="Enter your name"
+                required
+              />
+            </div>
+
+            {/* Email Field */}
+            <div className="backdrop-blur-sm bg-white/60 p-4 rounded-xl border border-white/30 shadow-sm">
+              <label className="block text-gray-700 text-sm font-semibold mb-2 flex items-center gap-2">
+                <Mail className="w-4 h-4 text-emerald-600" />
+                Email Address
+              </label>
+              <input
+                className="w-full bg-white/50 border border-white/50 rounded-lg py-2 px-4 text-gray-700 focus:outline-none focus:ring-2 focus:ring-emerald-200 focus:border-emerald-300"
+                name="email"
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="your.email@example.com"
+                required
+              />
+            </div>
+
+            {/* Message Field */}
+            <div className="backdrop-blur-sm bg-white/60 p-4 rounded-xl border border-white/30 shadow-sm">
+              <label className="block text-gray-700 text-sm font-semibold mb-2 flex items-center gap-2">
+                <MessageSquare className="w-4 h-4 text-emerald-600" />
+                Your Message
+              </label>
+              <textarea
+                className="w-full bg-white/50 border border-white/50 rounded-lg py-2 px-4 text-gray-700 focus:outline-none focus:ring-2 focus:ring-emerald-200 focus:border-emerald-300 min-h-[120px]"
+                name="message"
+                value={message}
+                onChange={(e) => setMessage(e.target.value)}
+                placeholder="How can we help you?"
+                required
+              />
+            </div>
+
+            {/* Submit Button */}
+            <motion.div
+              className="flex justify-center"
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+            >
+              <Button
+                className="bg-emerald-600 hover:bg-emerald-700 text-white font-medium py-3 px-6 rounded-full shadow-md transition-all flex items-center gap-2"
+                type="submit"
+                disabled={isSending}
+              >
+                {isSending ? (
+                  <>
+                    <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                    Sending...
+                  </>
+                ) : (
+                  <>
+                    <Send className="w-4 h-4" />
+                    Send Message
+                  </>
+                )}
+              </Button>
+            </motion.div>
+
+            {/* Status Message */}
+            {contactMessage && (
+              <motion.div
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                className={`text-center p-3 rounded-lg ${contactMessage.includes('✅') ? 'bg-green-50 text-green-700' : 'bg-red-50 text-red-700'}`}
+              >
+                {contactMessage}
+              </motion.div>
+            )}
+
+            {/* Footer */}
+            <div className="text-center pt-4 border-t border-white/30">
+              <p className="text-sm text-gray-600">
+                Or reach us directly at <span className="font-medium text-emerald-700">07010331943</span>
+              </p>
+              <div className="flex justify-center mt-3 space-x-1">
+                <Leaf className="w-4 h-4 text-emerald-600" />
+                <LeafyGreen className="w-4 h-4 text-emerald-700" />
+                <Leaf className="w-4 h-4 text-emerald-600" />
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
     </motion.div>
   )
 }
 
-export default page
+export default ContactPage
