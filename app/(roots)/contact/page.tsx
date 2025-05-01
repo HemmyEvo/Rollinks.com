@@ -16,7 +16,7 @@ const ContactPage = () => {
     e.preventDefault()
     setIsSending(true)
 
-    emailjs.sendForm('service_2gxwh09', 'template_aez9vka', e.target as HTMLFormElement, '683gBDmEpVhIeg7ET')
+    emailjs.sendForm('service_2gxwh09', 'template_lcap4pf', e.target as HTMLFormElement, '_A7yErceDiU4I-Ppb')
       .then(() => {
         setContactMessage('Message sent successfully ✅')
         setTimeout(() => setContactMessage(''), 5000)
