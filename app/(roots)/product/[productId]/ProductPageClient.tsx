@@ -90,7 +90,7 @@ export default function ProductPageClient({ data }: { data: fullProduct }) {
           <ol className="flex items-center space-x-2">
             <li><Link href="/" className="hover:text-blue-600">Home</Link></li>
             <ChevronRight className="h-4 w-4" />
-            <li><Link href="/products" className="hover:text-blue-600">Products</Link></li>
+            <li><Link href="/product" className="hover:text-blue-600">Products</Link></li>
             <ChevronRight className="h-4 w-4" />
             <li aria-current="page" className="text-blue-600">{data.name}</li>
           </ol>
