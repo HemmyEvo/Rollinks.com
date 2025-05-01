@@ -272,37 +272,7 @@ export default function ProductPageClient({ data }: { data: fullProduct }) {
     }));
   };
 
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-      document.removeEventListener('mousemove', handleDragMove);
-      document.removeEventListener('mouseup', handleDragEnd);
-    };
-  }, [zoomState.isActive, zoomState.isDragging]);
-
-  // Zoom controls
-  const zoomIn = () => {
-    setZoomState(prev => ({
-      ...prev,
-      scale: Math.min(prev.scale + 0.5, 4)
-    }));
-  };
-
-  const zoomOut = () => {
-    setZoomState(prev => ({
-      ...prev,
-      scale: Math.max(prev.scale - 0.5, 1)
-    }));
-  };
-
-  const resetZoom = () => {
-    setZoomState(prev => ({
-      ...prev,
-      scale: 2,
-      position: { x: 50, y: 50 }
-    }));
-  };
-
-
+    
   return (
     <div className="min-h-screen bg-gradient-to-b from-blue-50/30 to-purple-50/30 py-12 px-4 sm:px-6">
       <div className="max-w-7xl mx-auto">
