@@ -173,18 +173,43 @@ const predefinedLocations = [
 
   // Detect location from user input
   useEffect(() => {
-    if (selectedLocation?.value !== 'custom' || !customCity.trim()) return;
+  if (selectedLocation?.value !== 'custom' || !customCity.trim()) return;
 
-    const city = customCity.toLowerCase();
-    if (city.includes('lautech') || city.includes('university')) {
-      setShippingFee(deliveryPrices.lautech);
-    } else if (city.includes('ogbomoso')) {
-      setShippingFee(deliveryPrices.ogbomoso);
-    } else {
-      setShippingFee(deliveryPrices.outside.nearby);
-    }
-  }, [customCity, selectedLocation]);
+  const city = customCity.toLowerCase();
 
+  if (city.includes('lautech') || city.includes('university')) {
+    setShippingFee(deliveryPrices.lautech);
+  } else if (city.includes('ogbomoso')) {
+    // Assume central for generic "Ogbomoso"
+    setShippingFee(deliveryPrices.ogbomoso.central);
+  } else if (
+    city.includes('ilorin') ||
+    city.includes('ibadan') ||
+    city.includes('osogbo') ||
+    city.includes('oshogbo')
+  ) {
+    setShippingFee(deliveryPrices.intercity.nearby);
+  } else if (
+    city.includes('lagos') ||
+    city.includes('abuja') ||
+    city.includes('abeokuta') ||
+    city.includes('akure')
+  ) {
+    setShippingFee(deliveryPrices.intercity.mid);
+  } else if (
+    city.includes('port harcourt') ||
+    city.includes('kano') ||
+    city.includes('maiduguri') ||
+    city.includes('uyo') ||
+    city.includes('calabar') ||
+    city.includes('yola')
+  ) {
+    setShippingFee(deliveryPrices.intercity.far);
+  } else {
+    // Default if city not matched — e.g. unknown
+    setShippingFee(0);
+  }
+}, [customCity, selectedLocation]);
   const totalAmount = useMemo(() => {
     return (totalPrice || 0) + shippingFee;
   }, [totalPrice, shippingFee]);
