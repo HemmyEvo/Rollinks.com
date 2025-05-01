@@ -159,7 +159,7 @@ useEffect(() => {
                   value={sortOption}
                 >
                   <option value="featured">Featured</option>
-<option value="isBestSeller">isBestSeller</option>
+<option value="isBestSeller">BestSeller</option>
                   <option value="newest">New Arrivals</option>
                   <option value="price-low">Price: Low to High</option>
                   <option value="price-high">Price: High to Low</option>
