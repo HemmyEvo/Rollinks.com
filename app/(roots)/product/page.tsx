@@ -18,7 +18,7 @@ async function getData() {
   discountPrice,
   "categoryName": category->name,
   rating,
- isBestSeller
+ isBestSeller,
   isNew
 }`;
   const data = await client.fetch(query);
