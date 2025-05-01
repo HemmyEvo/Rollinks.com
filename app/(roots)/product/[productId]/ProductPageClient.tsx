@@ -2,7 +2,7 @@
 
 import { fullProduct } from '@/app/interface';
 import { urlFor } from '@/lib/sanity';
-import React from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { CheckCircle, Star, Truck, ChevronRight, Leaf, Share2, Copy } from 'lucide-react';
 import { useShoppingCart } from 'use-shopping-cart';
 import { motion } from 'framer-motion';
@@ -82,6 +82,146 @@ export default function ProductPageClient({ data }: { data: fullProduct }) {
     ? Math.round(((data.price - data.discountPrice!) / data.price) * 100)
     : 0;
 
+const [activeImage, setActiveImage] = useState(0);
+  const [zoomState, setZoomState] = useState({
+    isActive: false,
+    position: { x: 50, y: 50 },
+    scale: 2,
+    isDragging: false,
+    dragStart: { x: 0, y: 0 }
+  });
+  
+  const imageRef = useRef<HTMLDivElement>(null);
+  const zoomRef = useRef<HTMLDivElement>(null);
+  const thumbnailsRef = useRef<HTMLDivElement>(null);
+  const zoomLensRef = useRef<HTMLDivElement>(null);
+
+  // Handle mouse enter/leave
+  const handleMouseEnter = () => {
+    setZoomState(prev => ({ ...prev, isActive: true }));
+  };
+
+  const handleMouseLeave = () => {
+    setZoomState(prev => ({ ...prev, isActive: false }));
+  };
+
+  // Handle mouse movement for zoom effect
+  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (!imageRef.current || !zoomLensRef.current) return;
+
+    const { left, top, width, height } = imageRef.current.getBoundingClientRect();
+    let x = ((e.clientX - left) / width) * 100;
+    let y = ((e.clientY - top) / height) * 100;
+
+    // Boundary checks
+    x = Math.max(0, Math.min(100, x));
+    y = Math.max(0, Math.min(100, y));
+
+    setZoomState(prev => ({
+      ...prev,
+      position: { x, y }
+    }));
+  };
+
+  // Handle touch movement for mobile zoom
+  const handleTouchMove = (e: React.TouchEvent<HTMLDivElement>) => {
+    if (!imageRef.current || !zoomLensRef.current || !e.touches[0]) return;
+
+    const { left, top, width, height } = imageRef.current.getBoundingClientRect();
+    let x = ((e.touches[0].clientX - left) / width) * 100;
+    let y = ((e.touches[0].clientY - top) / height) * 100;
+
+    // Boundary checks
+    x = Math.max(0, Math.min(100, x));
+    y = Math.max(0, Math.min(100, y));
+
+    setZoomState(prev => ({
+      ...prev,
+      position: { x, y }
+    }));
+  };
+
+  // Handle zoom lens dragging
+  const handleDragStart = (e: React.MouseEvent<HTMLDivElement>) => {
+    setZoomState(prev => ({
+      ...prev,
+      isDragging: true,
+      dragStart: { x: e.clientX, y: e.clientY }
+    }));
+  };
+
+  const handleDragMove = (e: MouseEvent) => {
+    if (!zoomState.isDragging || !imageRef.current || !zoomLensRef.current) return;
+
+    const { width, height } = imageRef.current.getBoundingClientRect();
+    const dx = ((e.clientX - zoomState.dragStart.x) / width) * 100;
+    const dy = ((e.clientY - zoomState.dragStart.y) / height) * 100;
+
+    setZoomState(prev => {
+      let newX = prev.position.x - dx;
+      let newY = prev.position.y - dy;
+
+      // Boundary checks
+      newX = Math.max(0, Math.min(100, newX));
+      newY = Math.max(0, Math.min(100, newY));
+
+      return {
+        ...prev,
+        position: { x: newX, y: newY },
+        dragStart: { x: e.clientX, y: e.clientY }
+      };
+    });
+  };
+
+  const handleDragEnd = () => {
+    setZoomState(prev => ({ ...prev, isDragging: false }));
+  };
+
+  // Close zoom when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (zoomRef.current && !zoomRef.current.contains(e.target as Node)) {
+        setZoomState(prev => ({ ...prev, isActive: false }));
+      }
+    };
+
+    if (zoomState.isActive) {
+      document.addEventListener('mousedown', handleClickOutside);
+      document.addEventListener('mousemove', handleDragMove);
+      document.addEventListener('mouseup', handleDragEnd);
+    }
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener('mousemove', handleDragMove);
+      document.removeEventListener('mouseup', handleDragEnd);
+    };
+  }, [zoomState.isActive, zoomState.isDragging]);
+
+  // Zoom controls
+  const zoomIn = () => {
+    setZoomState(prev => ({
+      ...prev,
+      scale: Math.min(prev.scale + 0.5, 4)
+    }));
+  };
+
+  const zoomOut = () => {
+    setZoomState(prev => ({
+      ...prev,
+      scale: Math.max(prev.scale - 0.5, 1)
+    }));
+  };
+
+  const resetZoom = () => {
+    setZoomState(prev => ({
+      ...prev,
+      scale: 2,
+      position: { x: 50, y: 50 }
+    }));
+  };
+
+
   return (
     <div className="min-h-screen bg-gradient-to-b from-blue-50/30 to-purple-50/30 py-12 px-4 sm:px-6">
       <div className="max-w-7xl mx-auto">
@@ -92,46 +232,163 @@ export default function ProductPageClient({ data }: { data: fullProduct }) {
             <ChevronRight className="h-4 w-4" />
             <li><Link href="/product" className="hover:text-blue-600">Products</Link></li>
             <ChevronRight className="h-4 w-4" />
-            <li aria-current="page" className="text-blue-600">{data.name}</li>
+            <li aria-current="page" className="text-blue-600 line-clamp-1">{data.name}</li>
           </ol>
         </nav>
 
         <div className="grid md:grid-cols-2 gap-8 md:gap-12">
           {/* Image Section */}
           <div className="bg-white/80 backdrop-blur-sm rounded-2xl overflow-hidden border border-white/20 shadow-lg">
-            <div className="relative aspect-square w-full">
-              {data.images?.[activeImage] && (
-                <Image
-                  src={urlFor(data.images[activeImage]).url()}
-                  alt={data.name || `Product image`}
-                  fill
-                  className="object-contain p-4"
-                  priority
-                  sizes="(max-width: 768px) 100vw, 50vw"
-                />
-              )}
+      {/* Main Image with Zoom Lens */}
+      <div 
+        className="relative aspect-square w-full cursor-zoom-in"
+        onMouseEnter={handleMouseEnter}
+        onMouseLeave={handleMouseLeave}
+        onMouseMove={handleMouseMove}
+        onTouchStart={handleMouseEnter}
+        onTouchMove={handleTouchMove}
+        onTouchEnd={handleMouseLeave}
+        ref={imageRef}
+      >
+        {data.images?.[activeImage] && (
+          <>
+            <Image
+              src={urlFor(data.images[activeImage]).url()}
+              alt={data.name || `Product image`}
+              fill
+              className="object-contain p-4"
+              priority
+              sizes="(max-width: 768px) 100vw, 50vw"
+            />
+            
+            {/* Zoom Lens */}
+            {zoomState.isActive && (
+              <div
+                ref={zoomLensRef}
+                className="absolute border-2 border-white/50 bg-white/20 pointer-events-none"
+                style={{
+                  width: '100px',
+                  height: '100px',
+                  left: `calc(${zoomState.position.x}% - 50px)`,
+                  top: `calc(${zoomState.position.y}% - 50px)`,
+                  transform: 'translateZ(0)',
+                  boxShadow: '0 0 0 1px rgba(0,0,0,0.1) inset',
+                  backdropFilter: 'blur(2px)',
+                  display: zoomState.isActive ? 'block' : 'none'
+                }}
+                onMouseDown={handleDragStart}
+              />
+            )}
+          </>
+        )}
+      </div>
+
+      {/* Zoomed View */}
+      {zoomState.isActive && (
+        <div 
+          className="fixed inset-0 z-50 bg-black bg-opacity-50 flex items-center justify-center p-4 md:p-8"
+          ref={zoomRef}
+        >
+          <div className="relative w-full h-full max-w-4xl max-h-[90vh] overflow-hidden">
+            <div 
+              className="absolute inset-0 bg-white"
+              style={{
+                backgroundImage: `url(${urlFor(data.images[activeImage]).url()})`,
+                backgroundRepeat: 'no-repeat',
+                backgroundPosition: `${zoomState.position.x}% ${zoomState.position.y}%`,
+                backgroundSize: `${zoomState.scale * 100}%`,
+                transform: 'translateZ(0)'
+              }}
+            />
+            
+            {/* Zoom Controls */}
+            <div className="absolute bottom-4 left-4 right-4 flex justify-center gap-4">
+              <button
+                onClick={zoomOut}
+                className="bg-white rounded-full p-2 shadow-lg hover:bg-gray-100 transition-colors"
+                aria-label="Zoom out"
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 12H4" />
+                </svg>
+              </button>
+              <button
+                onClick={resetZoom}
+                className="bg-white rounded-full p-2 shadow-lg hover:bg-gray-100 transition-colors"
+                aria-label="Reset zoom"
+              >
+                <span className="text-sm font-medium">100%</span>
+              </button>
+              <button
+                onClick={zoomIn}
+                className="bg-white rounded-full p-2 shadow-lg hover:bg-gray-100 transition-colors"
+                aria-label="Zoom in"
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+                </svg>
+              </button>
             </div>
-            <div className="grid grid-cols-4 gap-2 p-4 border-t border-white/20">
-              {data.images?.map((img, i) => (
-                <button
-                  key={i}
-                  onClick={() => setActiveImage(i)}
-                  className={`aspect-square rounded-lg overflow-hidden border-2 transition-all ${
-                    activeImage === i ? 'border-blue-500' : 'border-transparent'
-                  }`}
-                  aria-label={`Select image ${i + 1}`}
-                >
-                  <Image
-                    src={urlFor(img).url()}
-                    alt={`Thumbnail ${i + 1}`}
-                    width={100}
-                    height={100}
-                    className="object-cover w-full h-full"
-                  />
-                </button>
-              ))}
+            
+            <button
+              onClick={() => setZoomState(prev => ({ ...prev, isActive: false }))}
+              className="absolute top-4 right-4 bg-white rounded-full p-2 shadow-lg hover:bg-gray-100 transition-colors"
+              aria-label="Close zoom"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+            
+            {/* Zoom Level Indicator */}
+            <div className="absolute top-4 left-4 bg-white rounded-full px-3 py-1 shadow-lg text-sm font-medium">
+              {Math.round(zoomState.scale * 100)}%
             </div>
           </div>
+        </div>
+      )}
+
+      {/* Thumbnails with hidden scrollbar */}
+      <div className="relative pb-2 px-4 border-t border-white/20">
+        <div 
+          ref={thumbnailsRef}
+          className="flex gap-2 overflow-x-auto scroll-smooth py-2"
+          style={{
+            scrollbarWidth: 'none',
+            msOverflowStyle: 'none',
+          }}
+        >
+          <style jsx>{`
+            .thumbnails::-webkit-scrollbar {
+              display: none;
+            }
+          `}</style>
+          
+          {data.images?.map((img, i) => (
+            <button
+              key={i}
+              onClick={() => setActiveImage(i)}
+              className={`flex-shrink-0 aspect-square w-16 sm:w-20 md:w-16 rounded-lg overflow-hidden border-2 transition-all ${
+                activeImage === i ? 'border-blue-500' : 'border-transparent hover:border-gray-300'
+              }`}
+              aria-label={`Select image ${i + 1}`}
+            >
+              <div className="relative w-full h-full">
+                <Image
+                  src={urlFor(img).url()}
+                  alt={`Thumbnail ${i + 1}`}
+                  fill
+                  className="object-cover"
+                  sizes="(max-width: 640px) 20vw, (max-width: 768px) 15vw, 10vw"
+                />
+              </div>
+            </button>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
 
           {/* Product Details */}
           <article className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 border border-white/20 shadow-lg flex flex-col">
