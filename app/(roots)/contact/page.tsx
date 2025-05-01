@@ -1,7 +1,7 @@
 'use client'
 import { Button } from '@/components/ui/button'
 import { motion } from 'framer-motion'
-import { Leaf, Mail, User, MessageSquare, Send } from 'lucide-react'
+import { Leaf,LeafyGreen, Mail, User, MessageSquare, Send } from 'lucide-react'
 import { useState } from 'react'
 import emailjs from 'emailjs-com'
 
