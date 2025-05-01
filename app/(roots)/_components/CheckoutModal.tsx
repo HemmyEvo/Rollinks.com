@@ -54,26 +54,30 @@ const CheckoutModal = ({ isOpen, onClose }: CheckoutModalProps) => {
   const { isAuthenticated } = useConvexAuth();
   const me = useQuery(api.user.getMe, isAuthenticated ? undefined : "skip");
 
-  // Delivery pricing
-  const deliveryPrices = {
-    lautech: 200,
-    ogbomoso: 500,
-    outside: {
-      nearby: 1500,
-      mid: 3000,
-      far: 5000,
-    },
-  };
 
-  const predefinedLocations = [
-    { value: 'lautech', label: 'LAUTECH Campus' },
-    { value: 'ogbomoso', label: 'Inside Ogbomoso' },
-    { value: 'outside-nearby', label: 'Nearby States (Ibadan, Ilorin)' },
-    { value: 'outside-mid', label: 'Mid-distance (Lagos, Abuja)' },
-    { value: 'outside-far', label: 'Far States (Port Harcourt, Kano)' },
-    { value: 'custom', label: 'Other (Enter Manually)' },
-  ];
+  // Delivery pricing configuration for skincare orders from Adenike, Ogbomoso
 
+const deliveryPrices = {
+  lautech: 300, // LAUTECH Campus (short-distance bike delivery)
+  ogbomoso: {
+    central: 500,   // Central Ogbomoso (e.g., Adenike, Takie, Under G)
+    outskirts: 800, // Outskirts of Ogbomoso (e.g., Aroje, Iresaadu axis)
+  },
+  intercity: {
+    nearby: 1500,   // Nearby cities (e.g., Ilorin, Ibadan) via waybill or bus
+    mid: 3500,      // Mid-distance cities (e.g., Lagos, Abuja) via intercity buses
+    far: 6000,      // Far cities (e.g., Port Harcourt, Kano) via long-distance logistics
+  },
+};
+
+const predefinedLocations = [
+  { value: 'lautech', label: 'LAUTECH Campus' },
+  { value: 'ogbomoso-central', label: 'Ogbomoso Central (Adenike, Takie, Under G)' },
+  { value: 'ogbomoso-outskirts', label: 'Ogbomoso Outskirts (Aroje, Iresaadu)' },
+  { value: 'intercity-nearby', label: 'Nearby Cities (Ibadan, Ilorin)' },
+  { value: 'intercity-mid', label: 'Mid-Distance Cities (Lagos, Abuja)' },
+  { value: 'intercity-far', label: 'Far Cities (Port Harcourt, Kano)' },
+];
   // Build the country list
   const countries = useMemo(() => {
     return data.map((country: any) => ({
