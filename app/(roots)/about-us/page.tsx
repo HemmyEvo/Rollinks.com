@@ -127,7 +127,7 @@ const AboutUsPage = () => {
           <a 
             href="tel:07010331943" 
             className="px-6 py-3 bg-indigo-600 text-white font-medium rounded-lg hover:bg-indigo-700 transition flex items-center gap-2"
-            whileHover={{ scale: 1.05 }}
+          
           >
             <PhoneIcon className="w-5 h-5" />
             +234 701 033 1943
@@ -135,7 +135,7 @@ const AboutUsPage = () => {
           <a 
             href="mailto:info@rollinks.com" 
             className="px-6 py-3 border border-gray-300 font-medium rounded-lg hover:bg-gray-50 transition flex items-center gap-2"
-            whileHover={{ scale: 1.05 }}
+            
           >
             <MailIcon className="w-5 h-5" />
             atilolaemmanuel22@gmail.com
