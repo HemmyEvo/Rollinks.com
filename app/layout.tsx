@@ -61,7 +61,7 @@ export default function RootLayout({
             <CartProvider>
               <Header />
               <ShoppingCartModal />
-              <main className="py-16">{children}</main>
+              <main className="pt-16">{children}</main>
               <Footer />
             </CartProvider>
             <Toaster />
