@@ -1,5 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
+import { Phone, Mail } from 'lucide-react';
 
 const AboutUsPage = () => {
   // Animation variants
@@ -134,17 +135,17 @@ const AboutUsPage = () => {
             whileTap={{ scale: 0.95 }}
             className="px-6 py-3 bg-indigo-600 text-white font-medium rounded-lg hover:bg-indigo-700 transition flex items-center gap-2"
           >
-            <PhoneIcon className="w-5 h-5" />
+            <Phone className="w-5 h-5" />
             +234 701 033 1943
           </motion.a>
           <motion.a 
-            href="mailto:info@rollinks.com" 
+            href="mailto: atilolaemmanuel22@gmail.com" 
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
             className="px-6 py-3 border border-gray-300 font-medium rounded-lg hover:bg-gray-50 transition flex items-center gap-2"
           >
-            <MailIcon className="w-5 h-5" />
-            info@rollinks.com
+            <Mail className="w-5 h-5" />
+            atilolaemmanuel22@gmail.com
           </motion.a>
         </motion.div>
 
@@ -160,18 +161,5 @@ const AboutUsPage = () => {
     </motion.div>
   );
 };
-
-// Simple icon components
-const PhoneIcon = ({ className }: { className?: string }) => (
-  <svg xmlns="http://www.w3.org/2000/svg" className={className} viewBox="0 0 24 24" fill="currentColor">
-    <path d="M3 2h18a1 1 0 011 1v18a1 1 0 01-1 1H3a1 1 0 01-1-1V3a1 1 0 011-1zm17 8.67V4H4v6.67l5-3 5 3 5-3 3 1.67z"/>
-  </svg>
-);
-
-const MailIcon = ({ className }: { className?: string }) => (
-  <svg xmlns="http://www.w3.org/2000/svg" className={className} viewBox="0 0 24 24" fill="currentColor">
-    <path d="M3 3h18a1 1 0 011 1v16a1 1 0 01-1 1H3a1 1 0 01-1-1V4a1 1 0 011-1zm9 12l-7-5v10h14V10l-7 5zm0-2l7-5H5l7 5z"/>
-  </svg>
-);
 
 export default AboutUsPage;
