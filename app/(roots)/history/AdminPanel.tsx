@@ -36,10 +36,7 @@ export default function AdminPanel() {
   ];
 
   const carrierOptions = [
-    'DHL',
-    'FedEx',
-    'UPS',
-    'USPS',
+    
     'Local Delivery',
     'Pickup'
   ];
