@@ -120,7 +120,7 @@ useEffect(() => {
               <ArrowLeft className="mr-2" size={18} />
               Back to Products
             </div>
-            <Link>
+            </Link>
             <h1 className="text-3xl font-bold text-gray-800">
               {selectedCategory} Products
             </h1>
