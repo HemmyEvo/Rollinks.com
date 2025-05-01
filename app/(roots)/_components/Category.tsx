@@ -2,8 +2,7 @@ import { simplifiedProduct } from '@/app/interface';
 import { client } from '@/lib/sanity';
 import Image from 'next/image';
 import Link from 'next/link';
-import React, { useEffect, useRef, useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import React, { useEffect, useState, useRef } from 'react';
 
 async function getData() {
   const query = `*[_type == "category"]{
@@ -18,200 +17,158 @@ async function getData() {
 
 export default function Category() {
   const [data, setData] = useState<simplifiedProduct[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const constraintsRef = useRef(null);
+  const [isDragging, setIsDragging] = useState(false);
+  const [startX, setStartX] = useState(0);
+  const [scrollLeft, setScrollLeft] = useState(0);
+  const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     async function fetchData() {
-      try {
-        const result = await getData();
-        setData(result);
-      } finally {
-        setIsLoading(false);
-      }
+      const result = await getData();
+      setData(result);
     }
     fetchData();
   }, []);
 
-  // Animation variants
-  const cardVariants = {
-    hidden: { y: 20, opacity: 0 },
-    show: { 
-      y: 0, 
-      opacity: 1,
-      transition: {
-        type: "spring",
-        stiffness: 100,
-        damping: 10
-      }
-    },
-    hover: {
-      y: -10,
-      scale: 1.05,
-      transition: { duration: 0.3 }
+  // Swipe handling functions
+  const handleMouseDown = (e: React.MouseEvent) => {
+    setIsDragging(true);
+    if (containerRef.current) {
+      setStartX(e.pageX - containerRef.current.offsetLeft);
+      setScrollLeft(containerRef.current.scrollLeft);
     }
   };
 
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    show: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.1,
-        delayChildren: 0.3
-      }
+  const handleMouseMove = (e: React.MouseEvent) => {
+    if (!isDragging || !containerRef.current) return;
+    e.preventDefault();
+    const x = e.pageX - containerRef.current.offsetLeft;
+    const walk = (x - startX) * 1.5; // Adjust scroll speed
+    containerRef.current.scrollLeft = scrollLeft - walk;
+  };
+
+  const handleMouseUp = () => {
+    setIsDragging(false);
+  };
+
+  const handleMouseLeave = () => {
+    setIsDragging(false);
+  };
+
+  // Touch event handlers for mobile
+  const handleTouchStart = (e: React.TouchEvent) => {
+    setIsDragging(true);
+    if (containerRef.current) {
+      setStartX(e.touches[0].pageX - containerRef.current.offsetLeft);
+      setScrollLeft(containerRef.current.scrollLeft);
     }
   };
 
-  const pulseVariants = {
-    initial: { scale: 1 },
-    animate: { 
-      scale: [1, 1.2, 1],
-      transition: { 
-        duration: 2,
-        repeat: Infinity,
-        ease: "easeInOut"
-      }
-    }
+  const handleTouchMove = (e: React.TouchEvent) => {
+    if (!isDragging || !containerRef.current) return;
+    const x = e.touches[0].pageX - containerRef.current.offsetLeft;
+    const walk = (x - startX) * 1.5;
+    containerRef.current.scrollLeft = scrollLeft - walk;
   };
 
   return (
-    <section className="pb-[80px] pt-[100px] px-4 sm:px-12 bg-gradient-to-br from-gray-50 to-gray-100 relative overflow-hidden">
-      {/* Glass morphism background elements */}
-      <motion.div 
-        className="absolute top-20 left-1/4 w-40 h-40 rounded-full bg-blue-100 opacity-30 blur-xl"
-        animate={{
-          x: [0, 20, 0],
-          y: [0, 30, 0],
-        }}
-        transition={{
-          duration: 15,
-          repeat: Infinity,
-          repeatType: "reverse"
-        }}
-      />
-      <motion.div 
-        className="absolute bottom-10 right-1/4 w-60 h-60 rounded-full bg-pink-100 opacity-20 blur-xl"
-        animate={{
-          x: [0, -30, 0],
-          y: [0, -20, 0],
-        }}
-        transition={{
-          duration: 20,
-          repeat: Infinity,
-          repeatType: "reverse"
-        }}
-      />
+    <section className="pb-[50px] pt-[80px] px-4 sm:px-12 bg-white">
+      <header className="w-full max-w-7xl mx-auto space-y-5 text-center">
+        <div className="label flex items-center justify-center space-x-4">
+          <div className="w-3 h-3 bg-red-500 rounded-full animate-pulse" />
+          <p className="text-sm uppercase tracking-wider text-red-500 font-medium">
+            Categories
+          </p>
+        </div>
+        <h2 className="text-3xl md:text-4xl font-bold text-gray-900">
+          Browse By Category
+        </h2>
+      </header>
 
-      <div className="max-w-7xl mx-auto relative z-10">
-        <header className="w-full space-y-5 text-center mb-16">
-          <motion.div 
-            className="label flex items-center justify-center space-x-4"
-            initial="hidden"
-            animate="show"
-            variants={{
-              hidden: { opacity: 0 },
-              show: { 
-                opacity: 1,
-                transition: { staggerChildren: 0.1 }
-              }
-            }}
-          >
-            <motion.div 
-              className="w-3 h-3 bg-red-500 rounded-full"
-              variants={pulseVariants}
-            />
-            <motion.p 
-              className="text-sm uppercase tracking-wider text-red-500 font-medium"
-              initial={{ x: -10 }}
-              animate={{ x: 0 }}
-              transition={{ type: "spring" }}
-            >
-              Categories
-            </motion.p>
-          </motion.div>
-          
-          <motion.h2 
-            className="text-3xl md:text-4xl font-bold text-gray-900"
-            initial={{ y: 20, opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            transition={{ delay: 0.2 }}
-          >
-            Browse By Category
-          </motion.h2>
-        </header>
-
-        <motion.div 
-          ref={constraintsRef}
-          className="relative"
-          initial="hidden"
-          animate="show"
-          variants={containerVariants}
+      <div className="mt-16 max-w-7xl mx-auto relative">
+        {/* Custom navigation arrows */}
+        <button 
+          className="absolute left-0 top-1/2 -translate-y-1/2 z-10 w-10 h-10 bg-white rounded-full shadow-md flex items-center justify-center hover:scale-110 transition-transform hidden md:flex"
+          onClick={() => {
+            if (containerRef.current) {
+              containerRef.current.scrollBy({ left: -200, behavior: 'smooth' });
+            }
+          }}
+          aria-label="Scroll left"
         >
-          <AnimatePresence>
-            {isLoading ? (
-              <motion.div 
-                className="flex gap-6 justify-center"
-                exit={{ opacity: 0 }}
+          &larr;
+        </button>
+        
+        <div
+          ref={containerRef}
+          className="flex overflow-x-auto scrollbar-hide pb-8 gap-6 px-2 cursor-grab active:cursor-grabbing"
+          onMouseDown={handleMouseDown}
+          onMouseMove={handleMouseMove}
+          onMouseUp={handleMouseUp}
+          onMouseLeave={handleMouseLeave}
+          onTouchStart={handleTouchStart}
+          onTouchMove={handleTouchMove}
+          onTouchEnd={handleMouseUp}
+          style={{ scrollBehavior: isDragging ? 'unset' : 'smooth' }}
+        >
+          {data.map((item, index) => (
+            <Link 
+              key={item._id}
+              href={`/product?category=${encodeURIComponent(item.name)}`}
+              passHref
+            >
+              <div 
+                className="flex-shrink-0 w-40 h-40 flex flex-col items-center justify-center bg-white rounded-xl shadow-sm hover:shadow-lg transition-all duration-300 hover:-translate-y-2 group"
+                style={{
+                  animation: `fadeInUp 0.5s ease-out ${index * 0.1}s forwards`,
+                  opacity: 0 // Start invisible for animation
+                }}
               >
-                {[...Array(5)].map((_, i) => (
-                  <motion.div
-                    key={i}
-                    className="w-40 h-40 rounded-xl bg-white/50 backdrop-blur-sm border border-white/30 shadow-sm flex-shrink-0"
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: i * 0.1 }}
-                  />
-                ))}
-              </motion.div>
-            ) : (
-              <motion.div 
-                className="flex gap-6 pb-8 px-2 overflow-x-auto scrollbar-hide"
-                drag="x"
-                dragConstraints={constraintsRef}
-                whileTap={{ cursor: "grabbing" }}
-              >
-                {data.map((item) => (
-                  <motion.div
-                    key={item._id}
-                    variants={cardVariants}
-                    whileHover="hover"
-                    className="flex-shrink-0"
-                  >
-                    <Link href={`/product?category=${encodeURIComponent(item.name)}`} passHref>
-                      <motion.div 
-                        className="w-40 h-40 flex flex-col items-center justify-center rounded-xl backdrop-blur-sm bg-white/50 border border-white/30 shadow-sm hover:shadow-lg"
-                        whileTap={{ scale: 0.95 }}
-                      >
-                        <motion.div 
-                          className="w-20 h-20 flex items-center justify-center mb-3"
-                          whileHover={{ scale: 1.1 }}
-                        >
-                          {item.imageUrl && (
-                            <Image 
-                              src={item.imageUrl} 
-                              width={80} 
-                              height={80} 
-                              className="object-contain"
-                              alt={item.name}
-                              loading="lazy"
-                            />
-                          )}
-                        </motion.div>
-                        <motion.p className="text-base font-medium text-gray-700">
-                          {item.name}
-                        </motion.p>
-                      </motion.div>
-                    </Link>
-                  </motion.div>
-                ))}
-              </motion.div>
-            )}
-          </AnimatePresence>
-        </motion.div>
+                <div className="w-20 h-20 flex items-center justify-center mb-3 transition-transform duration-300 group-hover:scale-110">
+                  {item.imageUrl && (
+                    <Image 
+                      src={item.imageUrl} 
+                      width={80} 
+                      height={80} 
+                      className="object-contain transition-all duration-300 group-hover:opacity-90"
+                      alt={item.name}
+                      loading="lazy"
+                    />
+                  )}
+                </div>
+                <p className="text-base font-medium text-gray-700 group-hover:text-gray-900 transition-colors">
+                  {item.name}
+                </p>
+              </div>
+            </Link>
+          ))}
+        </div>
+
+        <button 
+          className="absolute right-0 top-1/2 -translate-y-1/2 z-10 w-10 h-10 bg-white rounded-full shadow-md flex items-center justify-center hover:scale-110 transition-transform hidden md:flex"
+          onClick={() => {
+            if (containerRef.current) {
+              containerRef.current.scrollBy({ left: 200, behavior: 'smooth' });
+            }
+          }}
+          aria-label="Scroll right"
+        >
+          &rarr;
+        </button>
       </div>
 
+      {/* Add global styles for the animations */}
       <style jsx global>{`
+        @keyframes fadeInUp {
+          from {
+            opacity: 0;
+            transform: translateY(20px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
         .scrollbar-hide::-webkit-scrollbar {
           display: none;
         }
