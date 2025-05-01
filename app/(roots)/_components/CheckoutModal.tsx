@@ -147,25 +147,28 @@ const predefinedLocations = [
     if (!selectedOption) return;
     
     switch (selectedOption.value) {
-      case 'lautech':
-        setShippingFee(deliveryPrices.lautech);
-        break;
-      case 'ogbomoso':
-        setShippingFee(deliveryPrices.ogbomoso);
-        break;
-      case 'outside-nearby':
-        setShippingFee(deliveryPrices.outside.nearby);
-        break;
-      case 'outside-mid':
-        setShippingFee(deliveryPrices.outside.mid);
-        break;
-      case 'outside-far':
-        setShippingFee(deliveryPrices.outside.far);
-        break;
-      case 'custom':
-        setShippingFee(0);
-        break;
-    }
+  case 'lautech':
+    setShippingFee(deliveryPrices.lautech);
+    break;
+  case 'ogbomoso-central':
+    setShippingFee(deliveryPrices.ogbomoso.central);
+    break;
+  case 'ogbomoso-outskirts':
+    setShippingFee(deliveryPrices.ogbomoso.outskirts);
+    break;
+  case 'intercity-nearby':
+    setShippingFee(deliveryPrices.intercity.nearby);
+    break;
+  case 'intercity-mid':
+    setShippingFee(deliveryPrices.intercity.mid);
+    break;
+  case 'intercity-far':
+    setShippingFee(deliveryPrices.intercity.far);
+    break;
+  case 'custom':
+    setShippingFee(0);
+    break;
+}
   };
 
   // Detect location from user input
