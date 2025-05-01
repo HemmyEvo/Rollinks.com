@@ -64,6 +64,17 @@ const ProductPage = () => {
     }
     fetchData();
   }, []);
+useEffect(() => {
+  // Extract category from URL
+  const urlParams = new URLSearchParams(window.location.search);
+  const urlCategory = urlParams.get('category');
+  
+  if (urlCategory) {
+    setSelectedCategory(urlCategory);
+  }
+
+  
+}, []); // Empty dependency array means this runs once on mount
 
   const filteredProducts = data.filter(product => {
     return (
@@ -75,7 +86,9 @@ const ProductPage = () => {
     switch (sortOption) {
       case 'price-low': return a.price - b.price;
       case 'price-high': return b.price - a.price;
+
       case 'rating': return (b.rating || 0) - (a.rating || 0);
+      case 'isBestSeller': return (b.isBestSeller ? 1 : 0) - (a.isBestSeller ? 1 : 0)
       case 'newest': return (b.isNew ? 1 : 0) - (a.isNew ? 1 : 0);
       default: return 0; // featured - no sorting
     }
@@ -146,6 +159,7 @@ const ProductPage = () => {
                   value={sortOption}
                 >
                   <option value="featured">Featured</option>
+<option value="isBestSeller">isBestSeller</option>
                   <option value="newest">New Arrivals</option>
                   <option value="price-low">Price: Low to High</option>
                   <option value="price-high">Price: High to Low</option>
