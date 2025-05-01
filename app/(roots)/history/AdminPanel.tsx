@@ -55,7 +55,8 @@ export default function AdminPanel() {
         customer {
           name,
           email,
-          phone
+          phone,
+          userId
         },
         shippingAddress,
         items[]{
