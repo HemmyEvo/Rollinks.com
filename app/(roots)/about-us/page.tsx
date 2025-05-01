@@ -1,137 +1,156 @@
 import React from 'react';
-import { motion, Variants } from 'framer-motion';
-import { Phone, Mail } from 'lucide-react';
+import { Leaf, LeafyGreen, Gem, HeartHandshake, Globe, FlaskConical, Sparkles } from 'lucide-react';
 
-interface AboutUsPageProps {
-  // Add any props you need here
-}
+type Props = {};
 
-const AboutUsPage: React.FC<AboutUsPageProps> = () => {
-  // Animation variants with proper typing
-  const containerVariants: Variants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.1,
-        delayChildren: 0.3
-      }
-    }
-  };
-
-  const itemVariants: Variants = {
-    hidden: { y: 20, opacity: 0 },
-    visible: {
-      y: 0,
-      opacity: 1,
-      transition: {
-        duration: 0.5,
-        ease: "easeOut"
-      }
-    }
-  };
-
-  const headingVariants: Variants = {
-    hidden: { scale: 0.95, opacity: 0 },
-    visible: {
-      scale: 1,
-      opacity: 1,
-      transition: {
-        duration: 0.6,
-        ease: [0.175, 0.885, 0.32, 1.275] // backOut easing
-      }
-    }
-  };
-
+const AboutUsPage = (props: Props) => {
   return (
-    <motion.div
-      initial="hidden"
-      animate="visible"
-      variants={containerVariants}
-      className="font-sans p-8 max-w-4xl mx-auto"
-    >
-      <motion.h1 
-        variants={headingVariants}
-        className="text-center text-4xl font-extrabold text-gray-900 mb-12"
-      >
-        About <span className="text-indigo-600">Rollinks</span> Skincare
-      </motion.h1>
-
-      <motion.div className="space-y-8" variants={containerVariants}>
-        {/* Section 1 */}
-        <motion.p variants={itemVariants} className="text-lg leading-relaxed text-gray-700">
-          Welcome to Rollinks Skincare, your premier destination for exceptional skincare solutions. 
-          We're committed to delivering premium, eco-conscious products that combine scientific 
-          innovation with nature's finest ingredients.
-        </motion.p>
-
-        {/* Section 2 */}
-        <motion.div variants={itemVariants} className="bg-indigo-50 p-6 rounded-lg border-l-4 border-indigo-500">
-          <h3 className="text-xl font-bold text-indigo-700 mb-3">Our Origin Story</h3>
-          <p className="text-lg leading-relaxed text-gray-700">
-            Founded in 2025 by Rolake, Rollinks began as a passion project 
-            dedicated to solving complex skin concerns through clean formulations.
-          </p>
-        </motion.div>
-
-        {/* Cards Section */}
-        <motion.div variants={itemVariants} className="grid md:grid-cols-2 gap-6">
-          <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-100">
-            <h3 className="text-xl font-bold text-gray-800 mb-3">Our Commitment</h3>
-            <p className="text-gray-700">
-              We source ingredients from ethical suppliers who meet our sustainability criteria.
-            </p>
+    <div className="min-h-screen bg-gradient-to-br from-emerald-50 to-amber-50 py-12 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-4xl mx-auto">
+        {/* Main Glass Card */}
+        <div className="backdrop-blur-lg bg-white/80 rounded-3xl shadow-lg overflow-hidden border border-white/20">
+          {/* Header with decorative elements */}
+          <div className="bg-emerald-500/10 p-8 text-center border-b border-white/20">
+            <div className="flex justify-center space-x-2 mb-4">
+              <Leaf className="w-8 h-8 text-emerald-600" />
+              <LeafyGreen className="w-8 h-8 text-emerald-700" />
+              <Leaf className="w-8 h-8 text-emerald-600" />
+            </div>
+            <h1 className="text-4xl font-bold text-gray-800 mb-2">
+              About <span className="text-emerald-600">Rollinks</span> Skincare
+            </h1>
+            <p className="text-emerald-700 font-medium">Nature's Wisdom, Scientific Precision</p>
           </div>
-          <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-100">
-            <h3 className="text-xl font-bold text-gray-800 mb-3">Our Promise</h3>
-            <p className="text-gray-700">
-              Your skin's health is our priority with dermatologist-approved formulas.
-            </p>
+
+          <div className="p-8 md:p-10 space-y-8">
+            {/* Mission Section */}
+            <div className="backdrop-blur-sm bg-white/60 p-6 rounded-xl border border-white/30 shadow-sm flex flex-col md:flex-row gap-6">
+              <div className="flex-shrink-0">
+                <div className="bg-emerald-100/80 p-4 rounded-full w-16 h-16 flex items-center justify-center">
+                  <Sparkles className="w-8 h-8 text-emerald-600" />
+                </div>
+              </div>
+              <div>
+                <h2 className="text-xl font-semibold text-gray-800 mb-3 flex items-center gap-2">
+                  Our Holistic Approach
+                </h2>
+                <p className="text-gray-700 leading-relaxed">
+                  At Rollinks Skincare, we harmonize nature's purest botanicals with cutting-edge 
+                  dermatological science. Our eco-conscious formulations deliver transformative 
+                  results while respecting your skin's natural balance and our planet's wellbeing.
+                </p>
+              </div>
+            </div>
+
+            {/* Founder Story */}
+            <div className="backdrop-blur-sm bg-white/60 p-6 rounded-xl border border-white/30 shadow-sm flex flex-col md:flex-row gap-6">
+              <div className="flex-shrink-0">
+                <div className="bg-amber-100/80 p-4 rounded-full w-16 h-16 flex items-center justify-center">
+                  <Gem className="w-8 h-8 text-amber-600" />
+                </div>
+              </div>
+              <div>
+                <h2 className="text-xl font-semibold text-gray-800 mb-3 flex items-center gap-2">
+                  The Rollinks Genesis
+                </h2>
+                <p className="text-gray-700 leading-relaxed">
+                  Founded in 2025 by Rolake, a skincare formulator and environmental advocate, 
+                  Rollinks emerged from years of meticulous research into bioactive plant compounds. 
+                  What began as a personal quest for clean, effective skincare evolved into a 
+                  mission to redefine beauty standards through sustainable innovation.
+                </p>
+              </div>
+            </div>
+
+            {/* Quality Section */}
+            <div className="backdrop-blur-sm bg-white/60 p-6 rounded-xl border border-white/30 shadow-sm flex flex-col md:flex-row gap-6">
+              <div className="flex-shrink-0">
+                <div className="bg-rose-100/80 p-4 rounded-full w-16 h-16 flex items-center justify-center">
+                  <FlaskConical className="w-8 h-8 text-rose-600" />
+                </div>
+              </div>
+              <div>
+                <h2 className="text-xl font-semibold text-gray-800 mb-3 flex items-center gap-2">
+                  Scientific Purity
+                </h2>
+                <p className="text-gray-700 leading-relaxed">
+                  Each formulation undergoes 27 rigorous quality checks from seed to serum. 
+                  We partner with ethical growers worldwide to source organic, wildcrafted 
+                  ingredients, then enhance their potency through advanced extraction 
+                  technologies. Our cruelty-free certifications reflect our respect for 
+                  all life.
+                </p>
+              </div>
+            </div>
+
+            {/* Customer Commitment */}
+            <div className="backdrop-blur-sm bg-white/60 p-6 rounded-xl border border-white/30 shadow-sm flex flex-col md:flex-row gap-6">
+              <div className="flex-shrink-0">
+                <div className="bg-sky-100/80 p-4 rounded-full w-16 h-16 flex items-center justify-center">
+                  <HeartHandshake className="w-8 h-8 text-sky-600" />
+                </div>
+              </div>
+              <div>
+                <h2 className="text-xl font-semibold text-gray-800 mb-3 flex items-center gap-2">
+                  Your Skin Journey
+                </h2>
+                <p className="text-gray-700 leading-relaxed">
+                  We consider skincare a sacred ritual. Our aestheticians provide personalized 
+                  consultations to create regimens addressing your unique concerns. From acne 
+                  to aging, we formulate solutions that work with your skin's biology, not 
+                  against it.
+                </p>
+              </div>
+            </div>
+
+            {/* Sustainability */}
+            <div className="backdrop-blur-sm bg-white/60 p-6 rounded-xl border border-white/30 shadow-sm flex flex-col md:flex-row gap-6">
+              <div className="flex-shrink-0">
+                <div className="bg-teal-100/80 p-4 rounded-full w-16 h-16 flex items-center justify-center">
+                  <Globe className="w-8 h-8 text-teal-600" />
+                </div>
+              </div>
+              <div>
+                <h2 className="text-xl font-semibold text-gray-800 mb-3 flex items-center gap-2">
+                  Green Philosophy
+                </h2>
+                <p className="text-gray-700 leading-relaxed">
+                  Beyond clean ingredients, we've implemented a carbon-negative production 
+                  process and 100% biodegradable packaging. Our refill program reduces waste 
+                  by 76%, and every purchase helps protect endangered botanical habitats 
+                  through our conservation partnerships.
+                </p>
+              </div>
+            </div>
+
+            {/* Closing */}
+            <div className="text-center mt-8">
+              <div className="inline-flex bg-emerald-100/70 px-6 py-3 rounded-full border border-emerald-200/50">
+                <p className="text-emerald-800 font-medium">
+                  Begin your transformation today
+                </p>
+              </div>
+              <p className="mt-6 text-gray-700">
+                Connect with our skincare specialists at <span className="font-semibold text-emerald-700">07010331943</span>
+              </p>
+              <div className="mt-8 pt-6 border-t border-white/30">
+                <p className="text-gray-700 italic">
+                  "Beautiful skin begins with respect—for yourself and the earth."
+                </p>
+                <p className="mt-2 font-medium text-gray-800">
+                  Rolake, Founder & Formulator
+                </p>
+                <div className="flex justify-center mt-4 space-x-2">
+                  <Leaf className="w-5 h-5 text-emerald-600" />
+                  <LeafyGreen className="w-5 h-5 text-emerald-700" />
+                  <Leaf className="w-5 h-5 text-emerald-600" />
+                </div>
+              </div>
+            </div>
           </div>
-        </motion.div>
-
-        {/* CTA Section */}
-        <motion.div 
-          variants={itemVariants}
-          whileHover={{ scale: 1.02 }}
-          className="bg-gradient-to-r from-indigo-500 to-purple-600 p-8 rounded-xl text-white"
-        >
-          <h3 className="text-2xl font-bold mb-4">Join Our Skincare Revolution</h3>
-          <motion.button 
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            className="px-6 py-2 bg-white text-indigo-600 font-medium rounded-lg hover:bg-gray-50 transition-colors"
-          >
-            Meet Our Team
-          </motion.button>
-        </motion.div>
-
-        {/* Contact Section */}
-        <motion.div 
-          variants={itemVariants}
-          className="flex flex-col sm:flex-row gap-4 items-center"
-        >
-          <motion.a 
-            href="tel:07010331943" 
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            className="px-6 py-3 bg-indigo-600 text-white font-medium rounded-lg hover:bg-indigo-700 transition-colors flex items-center gap-2"
-          >
-            <Phone className="w-5 h-5" />
-            +234 701 033 1943
-          </motion.a>
-          <motion.a 
-            href="mailto:info@rollinks.com" 
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            className="px-6 py-3 border border-gray-300 font-medium rounded-lg hover:bg-gray-50 transition-colors flex items-center gap-2"
-          >
-            <Mail className="w-5 h-5" />
-            info@rollinks.com
-          </motion.a>
-        </motion.div>
-      </motion.div>
-    </motion.div>
+        </div>
+      </div>
+    </div>
   );
 };
 
