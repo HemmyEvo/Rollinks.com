@@ -168,7 +168,7 @@ export default function Home() {
               Embrace a radiant, youthful glow with our carefully crafted formulas
             </p>
             <Link 
-              href="/shop" 
+              href="/product" 
               className="inline-block bg-white/20 hover:bg-white/30 text-white font-medium px-8 py-3 rounded-full transition-all duration-300 border border-white/30 backdrop-blur-md hover:shadow-lg"
             >
               Discover More
