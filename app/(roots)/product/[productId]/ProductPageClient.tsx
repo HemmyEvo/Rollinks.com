@@ -88,13 +88,15 @@ export default function ProductPageClient({ data }: { data: fullProduct }) {
     position: { x: 50, y: 50 },
     scale: 2,
     isDragging: false,
-    dragStart: { x: 0, y: 0 }
+    dragStart: { x: 0, y: 0 },
+    touchDistance: null as number | null
   });
-  
+
   const imageRef = useRef<HTMLDivElement>(null);
   const zoomRef = useRef<HTMLDivElement>(null);
-  const thumbnailsRef = useRef<HTMLDivElement>(null);
   const zoomLensRef = useRef<HTMLDivElement>(null);
+  const zoomableRef = useRef<HTMLDivElement>(null);
+  const thumbnailsRef = useRef<HTMLDivElement>(null);
 
   // Handle mouse enter/leave
   const handleMouseEnter = () => {
@@ -113,7 +115,6 @@ export default function ProductPageClient({ data }: { data: fullProduct }) {
     let x = ((e.clientX - left) / width) * 100;
     let y = ((e.clientY - top) / height) * 100;
 
-    // Boundary checks
     x = Math.max(0, Math.min(100, x));
     y = Math.max(0, Math.min(100, y));
 
@@ -123,23 +124,55 @@ export default function ProductPageClient({ data }: { data: fullProduct }) {
     }));
   };
 
-  // Handle touch movement for mobile zoom
+  // Touch event handlers
+  const handleTouchStart = (e: React.TouchEvent<HTMLDivElement>) => {
+    if (e.touches.length === 2) {
+      setZoomState(prev => ({
+        ...prev,
+        isActive: true,
+        touchDistance: getDistance(e.touches[0], e.touches[1])
+      }));
+    } else if (e.touches.length === 1) {
+      handleMouseEnter();
+      const touch = e.touches[0];
+      const fakeMouseEvent = {
+        clientX: touch.clientX,
+        clientY: touch.clientY
+      } as React.MouseEvent<HTMLDivElement>;
+      handleMouseMove(fakeMouseEvent);
+    }
+  };
+
   const handleTouchMove = (e: React.TouchEvent<HTMLDivElement>) => {
-    if (!imageRef.current || !zoomLensRef.current || !e.touches[0]) return;
-
-    const { left, top, width, height } = imageRef.current.getBoundingClientRect();
-    let x = ((e.touches[0].clientX - left) / width) * 100;
-    let y = ((e.touches[0].clientY - top) / height) * 100;
-
-    // Boundary checks
-    x = Math.max(0, Math.min(100, x));
-    y = Math.max(0, Math.min(100, y));
-
-    setZoomState(prev => ({
-      ...prev,
-      position: { x, y }
-    }));
+    if (e.touches.length === 2 && zoomState.touchDistance) {
+      const newDistance = getDistance(e.touches[0], e.touches[1]);
+      const scale = newDistance / zoomState.touchDistance;
+      
+      setZoomState(prev => ({
+        ...prev,
+        scale: Math.max(1, Math.min(4, prev.scale * scale)),
+        touchDistance: newDistance
+      }));
+    } else if (e.touches.length === 1) {
+      const touch = e.touches[0];
+      const fakeMouseEvent = {
+        clientX: touch.clientX,
+        clientY: touch.clientY
+      } as React.MouseEvent<HTMLDivElement>;
+      handleMouseMove(fakeMouseEvent);
+    }
   };
+
+  const handleTouchEnd = () => {
+    setZoomState(prev => ({ ...prev, touchDistance: null }));
+  };
+
+  function getDistance(touch1: Touch, touch2: Touch) {
+    return Math.hypot(
+      touch2.clientX - touch1.clientX,
+      touch2.clientY - touch1.clientY
+    );
+  }
 
   // Handle zoom lens dragging
   const handleDragStart = (e: React.MouseEvent<HTMLDivElement>) => {
@@ -161,7 +194,6 @@ export default function ProductPageClient({ data }: { data: fullProduct }) {
       let newX = prev.position.x - dx;
       let newY = prev.position.y - dy;
 
-      // Boundary checks
       newX = Math.max(0, Math.min(100, newX));
       newY = Math.max(0, Math.min(100, newY));
 
@@ -238,16 +270,16 @@ export default function ProductPageClient({ data }: { data: fullProduct }) {
 
         <div className="grid md:grid-cols-2 gap-8 md:gap-12">
           {/* Image Section */}
-          <div className="bg-white/80 backdrop-blur-sm rounded-2xl overflow-hidden border border-white/20 shadow-lg">
+         <div className="bg-white/80 backdrop-blur-sm rounded-2xl overflow-hidden border border-white/20 shadow-lg">
       {/* Main Image with Zoom Lens */}
       <div 
-        className="relative aspect-square w-full cursor-zoom-in"
+        className="relative aspect-square w-full cursor-zoom-in touch-none select-none"
         onMouseEnter={handleMouseEnter}
         onMouseLeave={handleMouseLeave}
         onMouseMove={handleMouseMove}
-        onTouchStart={handleMouseEnter}
+        onTouchStart={handleTouchStart}
         onTouchMove={handleTouchMove}
-        onTouchEnd={handleMouseLeave}
+        onTouchEnd={handleTouchEnd}
         ref={imageRef}
       >
         {data.images?.[activeImage] && (
@@ -256,16 +288,17 @@ export default function ProductPageClient({ data }: { data: fullProduct }) {
               src={urlFor(data.images[activeImage]).url()}
               alt={data.name || `Product image`}
               fill
-              className="object-contain p-4"
+              className="object-contain p-4 select-none pointer-events-none"
               priority
               sizes="(max-width: 768px) 100vw, 50vw"
+              draggable={false}
             />
             
             {/* Zoom Lens */}
             {zoomState.isActive && (
               <div
                 ref={zoomLensRef}
-                className="absolute border-2 border-white/50 bg-white/20 pointer-events-none"
+                className="absolute border-2 border-white/50 bg-white/20 pointer-events-none touch-none select-none"
                 style={{
                   width: '100px',
                   height: '100px',
@@ -273,8 +306,7 @@ export default function ProductPageClient({ data }: { data: fullProduct }) {
                   top: `calc(${zoomState.position.y}% - 50px)`,
                   transform: 'translateZ(0)',
                   boxShadow: '0 0 0 1px rgba(0,0,0,0.1) inset',
-                  backdropFilter: 'blur(2px)',
-                  display: zoomState.isActive ? 'block' : 'none'
+                  backdropFilter: 'blur(2px)'
                 }}
                 onMouseDown={handleDragStart}
               />
@@ -286,12 +318,12 @@ export default function ProductPageClient({ data }: { data: fullProduct }) {
       {/* Zoomed View */}
       {zoomState.isActive && (
         <div 
-          className="fixed inset-0 z-50 bg-black bg-opacity-50 flex items-center justify-center p-4 md:p-8"
+          className="fixed inset-0 z-50 bg-black bg-opacity-50 flex items-center justify-center p-4 md:p-8 touch-none"
           ref={zoomRef}
         >
           <div className="relative w-full h-full max-w-4xl max-h-[90vh] overflow-hidden">
             <div 
-              className="absolute inset-0 bg-white"
+              className="absolute inset-0 bg-white touch-none will-change-transform"
               style={{
                 backgroundImage: `url(${urlFor(data.images[activeImage]).url()})`,
                 backgroundRepeat: 'no-repeat',
@@ -299,57 +331,58 @@ export default function ProductPageClient({ data }: { data: fullProduct }) {
                 backgroundSize: `${zoomState.scale * 100}%`,
                 transform: 'translateZ(0)'
               }}
+              ref={zoomableRef}
             />
             
-            {/* Zoom Controls */}
-            <div className="absolute bottom-4 left-4 right-4 flex justify-center gap-4">
-              <button
-                onClick={zoomOut}
-                className="bg-white rounded-full p-2 shadow-lg hover:bg-gray-100 transition-colors"
-                aria-label="Zoom out"
-              >
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 12H4" />
-                </svg>
-              </button>
-              <button
-                onClick={resetZoom}
-                className="bg-white rounded-full p-2 shadow-lg hover:bg-gray-100 transition-colors"
-                aria-label="Reset zoom"
-              >
-                <span className="text-sm font-medium">100%</span>
-              </button>
-              <button
-                onClick={zoomIn}
-                className="bg-white rounded-full p-2 shadow-lg hover:bg-gray-100 transition-colors"
-                aria-label="Zoom in"
-              >
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
-                </svg>
-              </button>
+            {/* Mobile-friendly controls */}
+            <div className="absolute bottom-4 left-0 right-0 flex justify-center touch-none">
+              <div className="flex items-center gap-1 bg-white/90 backdrop-blur-sm rounded-full px-4 py-2 shadow-lg">
+                <button
+                  onClick={zoomOut}
+                  className="p-2 hover:bg-gray-100 rounded-full transition-colors touch-auto"
+                  aria-label="Zoom out"
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 12H4" />
+                  </svg>
+                </button>
+                <span className="text-sm font-medium min-w-[40px] text-center touch-none select-none">
+                  {Math.round(zoomState.scale * 100)}%
+                </span>
+                <button
+                  onClick={zoomIn}
+                  className="p-2 hover:bg-gray-100 rounded-full transition-colors touch-auto"
+                  aria-label="Zoom in"
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+                  </svg>
+                </button>
+                <button
+                  onClick={resetZoom}
+                  className="p-2 hover:bg-gray-100 rounded-full transition-colors touch-auto text-xs font-medium"
+                  aria-label="Reset zoom"
+                >
+                  Reset
+                </button>
+              </div>
             </div>
             
             <button
               onClick={() => setZoomState(prev => ({ ...prev, isActive: false }))}
-              className="absolute top-4 right-4 bg-white rounded-full p-2 shadow-lg hover:bg-gray-100 transition-colors"
+              className="absolute top-4 right-4 bg-white rounded-full p-2 shadow-lg hover:bg-gray-100 transition-colors touch-auto"
               aria-label="Close zoom"
             >
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
               </svg>
             </button>
-            
-            {/* Zoom Level Indicator */}
-            <div className="absolute top-4 left-4 bg-white rounded-full px-3 py-1 shadow-lg text-sm font-medium">
-              {Math.round(zoomState.scale * 100)}%
-            </div>
           </div>
         </div>
       )}
 
-      {/* Thumbnails with hidden scrollbar */}
-      <div className="relative pb-2 px-4 border-t border-white/20">
+      {/* Thumbnails */}
+      <div className="relative pb-2 px-4 border-t border-white/20 touch-none">
         <div 
           ref={thumbnailsRef}
           className="flex gap-2 overflow-x-auto scroll-smooth py-2"
@@ -359,7 +392,7 @@ export default function ProductPageClient({ data }: { data: fullProduct }) {
           }}
         >
           <style jsx>{`
-            .thumbnails::-webkit-scrollbar {
+            [ref="thumbnailsRef"]::-webkit-scrollbar {
               display: none;
             }
           `}</style>
@@ -368,7 +401,7 @@ export default function ProductPageClient({ data }: { data: fullProduct }) {
             <button
               key={i}
               onClick={() => setActiveImage(i)}
-              className={`flex-shrink-0 aspect-square w-16 sm:w-20 md:w-16 rounded-lg overflow-hidden border-2 transition-all ${
+              className={`flex-shrink-0 aspect-square w-16 sm:w-20 md:w-16 rounded-lg overflow-hidden border-2 transition-all touch-auto ${
                 activeImage === i ? 'border-blue-500' : 'border-transparent hover:border-gray-300'
               }`}
               aria-label={`Select image ${i + 1}`}
@@ -380,6 +413,7 @@ export default function ProductPageClient({ data }: { data: fullProduct }) {
                   fill
                   className="object-cover"
                   sizes="(max-width: 640px) 20vw, (max-width: 768px) 15vw, 10vw"
+                  draggable={false}
                 />
               </div>
             </button>
@@ -540,18 +574,22 @@ export default function ProductPageClient({ data }: { data: fullProduct }) {
               />
             </div>
 
-            {Array.isArray(data.ingredients) && data.ingredients?.length > 0 && (
-              <div className="mb-6">
-                <h2 className="font-medium text-gray-900 mb-2">Key Ingredients</h2>
-                <div className="flex flex-wrap gap-2">
-                  { data.ingredients.map((ingredient, i) => (
-                    <span key={i} className="px-3 py-1.5 bg-white rounded-full text-sm shadow-sm border border-gray-100">
-                      {ingredient}
-                    </span>
-                  ))}
-                </div>
-              </div>
-            )}
+            {typeof data.ingredients === 'string' && data.ingredients.trim().length > 0 && (
+  <div className="mb-6">
+    <h2 className="font-medium text-gray-900 mb-2">Key Ingredients</h2>
+    <div className="flex flex-wrap gap-2">
+      {data.ingredients
+        .split(',') // Split into array by commas
+        .map(ingredient => ingredient.trim()) // Trim whitespace
+        .filter(ingredient => ingredient.length > 0) // Remove empty strings
+        .map((ingredient, i) => (
+          <span key={i} className="px-3 py-1.5 bg-white rounded-full text-sm shadow-sm border border-gray-100">
+            {ingredient}
+          </span>
+        ))}
+    </div>
+  </div>
+)}
 
             {data.howToUse && (
               <div className="mt-auto pt-4 border-t border-gray-100">
@@ -563,25 +601,29 @@ export default function ProductPageClient({ data }: { data: fullProduct }) {
         </div>
 
         {/* Benefits */}
-        {Array.isArray(data.benefits) && data.benefits?.length > 0 && (
-          <section className="mt-12 grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
-            <h2 className="sr-only">Product Benefits</h2>
-            {data.benefits.map((benefit, i) => (
-              <motion.div
-                key={i}
-                whileHover={{ y: -5 }}
-                className="bg-white/80 backdrop-blur-sm p-6 rounded-xl border border-white/20 shadow-sm hover:shadow-md transition-all"
-              >
-                <div className="flex items-center gap-3">
-                  <div className="p-2 bg-blue-100/50 rounded-full">
-                    <Leaf className="h-5 w-5 text-blue-600" />
-                  </div>
-                  <h3 className="font-medium text-gray-900">{benefit}</h3>
-                </div>
-              </motion.div>
-            ))}
-          </section>
-        )}
+        {typeof data.benefits === 'string' && data.benefits.trim().length > 0 && (
+  <section className="mt-12 grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
+    <h2 className="sr-only">Product Benefits</h2>
+    {data.benefits
+      .split(',') // Split into array by commas
+      .map(benefit => benefit.trim()) // Trim whitespace
+      .filter(benefit => benefit.length > 0) // Remove empty entries
+      .map((benefit, i) => (
+        <motion.div
+          key={i}
+          whileHover={{ y: -5 }}
+          className="bg-white/80 backdrop-blur-sm p-6 rounded-xl border border-white/20 shadow-sm hover:shadow-md transition-all"
+        >
+          <div className="flex items-center gap-3">
+            <div className="p-2 bg-blue-100/50 rounded-full">
+              <Leaf className="h-5 w-5 text-blue-600" />
+            </div>
+            <h3 className="font-medium text-gray-900">{benefit}</h3>
+          </div>
+        </motion.div>
+      ))}
+  </section>
+)}
       </div>
     </div>
   );
