@@ -77,6 +77,7 @@ const predefinedLocations = [
   { value: 'intercity-nearby', label: 'Nearby Cities (Ibadan, Ilorin)' },
   { value: 'intercity-mid', label: 'Mid-Distance Cities (Lagos, Abuja)' },
   { value: 'intercity-far', label: 'Far Cities (Port Harcourt, Kano)' },
+{ value: 'custom', label: 'Others' },
 ];
   // Build the country list
   const countries = useMemo(() => {
