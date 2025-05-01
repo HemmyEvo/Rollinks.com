@@ -82,7 +82,7 @@ export default function ProductPageClient({ data }: { data: fullProduct }) {
     ? Math.round(((data.price - data.discountPrice!) / data.price) * 100)
     : 0;
 
-const [activeImage, setActiveImage] = useState(0);
+
   const [zoomState, setZoomState] = useState({
     isActive: false,
     position: { x: 50, y: 50 },
