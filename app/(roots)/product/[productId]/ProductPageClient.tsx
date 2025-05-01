@@ -22,6 +22,19 @@ type CartProduct = {
   id: string;
   sku: string;
 };
+type TouchPosition = {
+  clientX: number;
+  clientY: number;
+};
+
+type ZoomState = {
+  isActive: boolean;
+  position: { x: number; y: number };
+  scale: number;
+  isDragging: boolean;
+  dragStart: { x: number; y: number };
+  touchDistance: number | null;
+};
 
 export default function ProductPageClient({ data }: { data: fullProduct }) {
   const [quantity, setQuantity] = React.useState(1);
@@ -83,13 +96,13 @@ export default function ProductPageClient({ data }: { data: fullProduct }) {
     : 0;
 
 
-  const [zoomState, setZoomState] = useState({
+  const [zoomState, setZoomState] = useState<ZoomState>({
     isActive: false,
     position: { x: 50, y: 50 },
     scale: 2,
     isDragging: false,
     dragStart: { x: 0, y: 0 },
-    touchDistance: null as number | null
+    touchDistance: null
   });
 
   const imageRef = useRef<HTMLDivElement>(null);
@@ -97,6 +110,14 @@ export default function ProductPageClient({ data }: { data: fullProduct }) {
   const zoomLensRef = useRef<HTMLDivElement>(null);
   const zoomableRef = useRef<HTMLDivElement>(null);
   const thumbnailsRef = useRef<HTMLDivElement>(null);
+
+  // Calculate distance between two touch points
+  const getDistance = (touch1: TouchPosition, touch2: TouchPosition) => {
+    return Math.hypot(
+      touch2.clientX - touch1.clientX,
+      touch2.clientY - touch1.clientY
+    );
+  };
 
   // Handle mouse enter/leave
   const handleMouseEnter = () => {
@@ -127,14 +148,17 @@ export default function ProductPageClient({ data }: { data: fullProduct }) {
   // Touch event handlers
   const handleTouchStart = (e: React.TouchEvent<HTMLDivElement>) => {
     if (e.touches.length === 2) {
+      const touch1 = { clientX: e.touches[0].clientX, clientY: e.touches[0].clientY };
+      const touch2 = { clientX: e.touches[1].clientX, clientY: e.touches[1].clientY };
+      
       setZoomState(prev => ({
         ...prev,
         isActive: true,
-        touchDistance: getDistance(e.touches[0], e.touches[1])
+        touchDistance: getDistance(touch1, touch2)
       }));
     } else if (e.touches.length === 1) {
       handleMouseEnter();
-      const touch = e.touches[0];
+      const touch = { clientX: e.touches[0].clientX, clientY: e.touches[0].clientY };
       const fakeMouseEvent = {
         clientX: touch.clientX,
         clientY: touch.clientY
@@ -145,7 +169,9 @@ export default function ProductPageClient({ data }: { data: fullProduct }) {
 
   const handleTouchMove = (e: React.TouchEvent<HTMLDivElement>) => {
     if (e.touches.length === 2 && zoomState.touchDistance) {
-      const newDistance = getDistance(e.touches[0], e.touches[1]);
+      const touch1 = { clientX: e.touches[0].clientX, clientY: e.touches[0].clientY };
+      const touch2 = { clientX: e.touches[1].clientX, clientY: e.touches[1].clientY };
+      const newDistance = getDistance(touch1, touch2);
       const scale = newDistance / zoomState.touchDistance;
       
       setZoomState(prev => ({
@@ -154,7 +180,7 @@ export default function ProductPageClient({ data }: { data: fullProduct }) {
         touchDistance: newDistance
       }));
     } else if (e.touches.length === 1) {
-      const touch = e.touches[0];
+      const touch = { clientX: e.touches[0].clientX, clientY: e.touches[0].clientY };
       const fakeMouseEvent = {
         clientX: touch.clientX,
         clientY: touch.clientY
@@ -166,13 +192,6 @@ export default function ProductPageClient({ data }: { data: fullProduct }) {
   const handleTouchEnd = () => {
     setZoomState(prev => ({ ...prev, touchDistance: null }));
   };
-
-  function getDistance(touch1: Touch, touch2: Touch) {
-    return Math.hypot(
-      touch2.clientX - touch1.clientX,
-      touch2.clientY - touch1.clientY
-    );
-  }
 
   // Handle zoom lens dragging
   const handleDragStart = (e: React.MouseEvent<HTMLDivElement>) => {
@@ -222,6 +241,36 @@ export default function ProductPageClient({ data }: { data: fullProduct }) {
       document.addEventListener('mousemove', handleDragMove);
       document.addEventListener('mouseup', handleDragEnd);
     }
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener('mousemove', handleDragMove);
+      document.removeEventListener('mouseup', handleDragEnd);
+    };
+  }, [zoomState.isActive, zoomState.isDragging]);
+
+  // Zoom controls
+  const zoomIn = () => {
+    setZoomState(prev => ({
+      ...prev,
+      scale: Math.min(prev.scale + 0.5, 4)
+    }));
+  };
+
+  const zoomOut = () => {
+    setZoomState(prev => ({
+      ...prev,
+      scale: Math.max(prev.scale - 0.5, 1)
+    }));
+  };
+
+  const resetZoom = () => {
+    setZoomState(prev => ({
+      ...prev,
+      scale: 2,
+      position: { x: 50, y: 50 }
+    }));
+  };
 
     return () => {
       document.removeEventListener('mousedown', handleClickOutside);
