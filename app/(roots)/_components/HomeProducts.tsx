@@ -5,7 +5,7 @@ import ProductCard from './ProductCard';
 import { motion } from "framer-motion";
 // Fetch data from Sanity
 async function getData() {
-    const query = `*[_type == "product" && !(_id in path("drafts.**"))] {
+    const query = `*[_type == "product" && isBestseller == true  && !(_id in path("drafts.**"))] {
   _id,
   name,
   description,
@@ -72,10 +72,10 @@ export default function HomeProducts() {
             <header className="w-full md:max-w-4xl mx-auto space-y-5 text-center">
             <div className="label flex items-center space-x-4">
             <Image src="/Rectangle 18.png" width={12} height={12} alt="" />
-            <p className="text-sm text-[#DB4444] capitalize">our products</p>
+            <p className="text-sm text-[#DB4444] capitalize">Shop our Best Sellers</p>
             </div>
             <div className="title text-xl text-left font-semibold">
-            <p>Explore Our Products</p>
+            <p>Best-Selling Products</p>
             </div>
             </header>
                 {/* Wrap the product grid in a motion container for staggering */}
