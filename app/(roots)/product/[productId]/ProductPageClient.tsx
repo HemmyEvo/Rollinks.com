@@ -593,7 +593,7 @@ export default function ProductPageClient({ data }: { data: fullProduct }) {
               />
             </div>
 
-            {typeof data.ingredients === 'string' && data.ingredients.trim().length > 0 && (
+            {data.ingredients && typeof data.ingredients === 'string' && data.ingredients.trim().length > 0 && (
   <div className="mb-6">
     <h2 className="font-medium text-gray-900 mb-2">Key Ingredients</h2>
     <div className="flex flex-wrap gap-2">
@@ -620,7 +620,7 @@ export default function ProductPageClient({ data }: { data: fullProduct }) {
         </div>
 
         {/* Benefits */}
-        {typeof data.benefits === 'string' && data.benefits.trim().length > 0 && (
+        {data.benefits && typeof data.benefits === 'string' && data.benefits.trim().length > 0 && (
   <section className="mt-12 grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
     <h2 className="sr-only">Product Benefits</h2>
     {data.benefits
