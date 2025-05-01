@@ -44,8 +44,8 @@ export interface fullProduct {
   category: CategoryReference;
   categoryName?: string; // This would be populated when joining data
   description: any[]; // Array of block content or images
-  ingredients?: string | string[];
-  benefits?:string | string[];
+  ingredients?: string;
+  benefits?:string;
   rating?: number;
   isNew: boolean;
   reviewCount: number;
