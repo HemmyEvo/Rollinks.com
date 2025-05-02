@@ -460,7 +460,7 @@ if(me?.isAdmin) return <AdminPanel />
                           </p>
                           {item.product?.slug && (
                             <Link 
-                              href={`/product/${item.product.slug}`}
+                              href={`/product/${item.product.item.slug}`}
                               className="text-sm text-blue-600 hover:text-blue-800 mt-1 inline-block"
                               onClick={closeModal}
                             >
