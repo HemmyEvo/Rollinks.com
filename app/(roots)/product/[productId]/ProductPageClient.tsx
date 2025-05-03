@@ -614,7 +614,7 @@ export default function ProductPageClient({ data }: { data: fullProduct }) {
             {data.howToUse && (
               <div className="mt-auto pt-4 border-t border-gray-100">
                 <h2 className="font-medium text-gray-900 mb-2">How To Use</h2>
-                <p className="text-sm text-gray-600">{data.howToUse}</p>
+                <p className="text-sm text-gray-600 whitespace-pre-line">{data.howToUse}</p>
               </div>
             )}
           </article>
