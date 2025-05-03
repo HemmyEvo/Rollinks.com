@@ -587,7 +587,7 @@ export default function ProductPageClient({ data }: { data: fullProduct }) {
             </div>
 
             <div className="prose prose-sm text-gray-600 mb-6">
-              <h2 className="font-medium text-2xl text-gray-900 mb-2">Description s</h2>
+              <h2 className="font-bold text-xl text-gray-900 mb-2">Descriptions:</h2>
               <PortableText
                 value={validatePortableText(data.description)}
                 components={portableTextComponents}
