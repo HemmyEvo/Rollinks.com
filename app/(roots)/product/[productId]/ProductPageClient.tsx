@@ -594,19 +594,15 @@ export default function ProductPageClient({ data }: { data: fullProduct }) {
               />
             </div>
 
-            {data.ingredients && data.ingredients?.trim().length > 0 && (
+         {data.ingredients && data.ingredients.length > 0 && (
   <div className="mb-6">
     <h2 className="font-medium text-gray-900 mb-2">Key Ingredients</h2>
     <div className="flex flex-wrap gap-2">
-      {data.ingredients
-        .split(',') // Split into array by commas
-        .map(ingredient => ingredient.trim()) // Trim whitespace
-        .filter(ingredient => ingredient.length > 0) // Remove empty strings
-        .map((ingredient, i) => (
-          <span key={i} className="px-3 py-1.5 bg-white rounded-full text-sm shadow-sm border border-gray-100">
-            {ingredient}
-          </span>
-        ))}
+      {data.ingredients.map((ingredient, i) => (
+        <span key={i} className="px-3 py-1.5 bg-white rounded-full text-sm shadow-sm border border-gray-100">
+          {ingredient}
+        </span>
+      ))}
     </div>
   </div>
 )}
@@ -621,27 +617,23 @@ export default function ProductPageClient({ data }: { data: fullProduct }) {
         </div>
 
         {/* Benefits */}
-        {data.benefits  && data.benefits?.trim().length > 0 && (
+ {data.benefits && data.benefits.length > 0 && (
   <section className="mt-12 grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
     <h2 className="sr-only">Product Benefits</h2>
-    {data.benefits
-      .split(',') // Split into array by commas
-      .map(benefit => benefit.trim()) // Trim whitespace
-      .filter(benefit => benefit.length > 0) // Remove empty entries
-      .map((benefit, i) => (
-        <motion.div
-          key={i}
-          whileHover={{ y: -5 }}
-          className="bg-white/80 backdrop-blur-sm p-6 rounded-xl border border-white/20 shadow-sm hover:shadow-md transition-all"
-        >
-          <div className="flex items-center gap-3">
-            <div className="p-2 bg-blue-100/50 rounded-full">
-              <Leaf className="h-5 w-5 text-blue-600" />
-            </div>
-            <h3 className="font-medium text-gray-900">{benefit}</h3>
+    {data.benefits.map((benefit, i) => (
+      <motion.div
+        key={i}
+        whileHover={{ y: -5 }}
+        className="bg-white/80 backdrop-blur-sm p-6 rounded-xl border border-white/20 shadow-sm hover:shadow-md transition-all"
+      >
+        <div className="flex items-center gap-3">
+          <div className="p-2 bg-blue-100/50 rounded-full">
+            <Leaf className="h-5 w-5 text-blue-600" />
           </div>
-        </motion.div>
-      ))}
+          <h3 className="font-medium text-gray-900">{benefit}</h3>
+        </div>
+      </motion.div>
+    ))}
   </section>
 )}
       </div>
