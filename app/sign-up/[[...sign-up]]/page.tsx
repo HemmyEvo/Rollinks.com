@@ -33,9 +33,9 @@ const Page = () => {
 
   React.useEffect(() => {
     if (isSignedIn) {
-      router.push('/chat');
+      window.location.href = '/';
     }
-  }, [isSignedIn, router]);
+  }, [isSignedIn]);
 
   if (!isLoaded) {
     return null;
