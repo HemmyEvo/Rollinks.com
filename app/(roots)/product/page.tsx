@@ -68,9 +68,13 @@ const ProductPage = () => {
   useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search);
     const urlCategory = urlParams.get('category');
+    const urlSearch = urlParam.get('search')
     if (urlCategory) {
       setSelectedCategory(urlCategory);
     }
+  if(urlSearch){
+ setSearchQuery(urlSearch)
+}
   }, []);
 
   const filteredProducts = data.filter(product => {
