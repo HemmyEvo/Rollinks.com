@@ -146,9 +146,7 @@ export default function ShoppingCartModal() {
                   <span>Subtotal</span>
                   <span>₦{totalPrice?.toFixed(2)}</span>
                 </div>
-                <p className="text-sm text-green-600 mb-4">
-                  Free shipping on orders over ₦50,000
-                </p>
+               
                 
                 <div className="space-y-3">
                   <CheckoutButton />
