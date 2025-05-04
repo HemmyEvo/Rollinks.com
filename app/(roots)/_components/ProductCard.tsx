@@ -89,31 +89,55 @@ const ProductCard = ({ id, title, price, description, slug, image, discount, rat
             />
           </motion.div>
 
-          {/* Badges */}
-          <div className="absolute top-3 left-3 flex flex-col space-y-2 z-10">
-            {isNew && (
-              <motion.span 
-                className="bg-blue-600 text-white text-xs font-bold px-3 py-1 rounded-full shadow-md"
-                initial={{ scale: 0 }}
-                animate={{ scale: 1 }}
-                transition={{ delay: 0.2 }}
-              >
-                New Formula
-              </motion.span>
-            )}
-            {discountPercentage > 0 && (
-              <motion.span 
-                className="bg-green-600 text-white text-xs font-bold px-3 py-1 rounded-full shadow-md"
-                initial={{ scale: 0 }}
-                animate={{ scale: 1 }}
-                transition={{ delay: 0.3 }}
-              >
-                {discountPercentage}% OFF
-              </motion.span>
-            )}
-          </div>
-        </div>
-
+          {/* Glassmorphism Badges */}
+<div className="absolute top-3 left-3 flex flex-col space-y-2 z-10">
+  {isNew && (
+    <motion.span 
+      className="backdrop-blur-md bg-white/30 border border-white/20 text-white text-xs font-bold px-3 py-1 rounded-full shadow-lg"
+      initial={{ scale: 0, opacity: 0 }}
+      animate={{ 
+        scale: 1, 
+        opacity: 1,
+        background: [
+          'linear-gradient(90deg, rgba(255,255,255,0.1) 0%, rgba(37,99,235,0.6) 50%, rgba(255,255,255,0.1) 100%)',
+          'linear-gradient(90deg, rgba(255,255,255,0.3) 0%, rgba(37,99,235,0.6) 50%, rgba(255,255,255,0.3) 100%)',
+          'linear-gradient(90deg, rgba(255,255,255,0.1) 0%, rgba(37,99,235,0.6) 50%, rgba(255,255,255,0.1) 100%)'
+        ]
+      }}
+      transition={{ 
+        delay: 0.2,
+        duration: 2,
+        repeat: Infinity,
+        repeatType: "reverse"
+      }}
+    >
+      New Formula
+    </motion.span>
+  )}
+  {discountPercentage > 0 && (
+    <motion.span 
+      className="backdrop-blur-md bg-white/30 border border-white/20 text-white text-xs font-bold px-3 py-1 rounded-full shadow-lg"
+      initial={{ scale: 0, opacity: 0 }}
+      animate={{ 
+        scale: 1, 
+        opacity: 1,
+        background: [
+          'linear-gradient(90deg, rgba(255,255,255,0.1) 0%, rgba(22,163,74,0.6) 50%, rgba(255,255,255,0.1) 100%)',
+          'linear-gradient(90deg, rgba(255,255,255,0.3) 0%, rgba(22,163,74,0.6) 50%, rgba(255,255,255,0.3) 100%)',
+          'linear-gradient(90deg, rgba(255,255,255,0.1) 0%, rgba(22,163,74,0.6) 50%, rgba(255,255,255,0.1) 100%)'
+        ]
+      }}
+      transition={{ 
+        delay: 0.3,
+        duration: 2,
+        repeat: Infinity,
+        repeatType: "reverse"
+      }}
+    >
+      {discountPercentage}% OFF
+    </motion.span>
+  )}
+</div>
         {/* Product Info */}
         <div className="p-4 flex-grow flex flex-col">
           <h3 className="text-md font-medium text-gray-800 line-clamp-2 mb-2 hover:text-blue-600 transition-colors">
@@ -124,11 +148,11 @@ const ProductCard = ({ id, title, price, description, slug, image, discount, rat
           <div className="mt-auto">
             <div className="mb-3 flex items-center">
               <span className="text-xl font-bold text-gray-900">
-                ₦{safePrice.toLocaleString('en-US', {minimumFractionDigits: 2})}
+                ₦{safePrice.toLocaleString('en-NGN', {minimumFractionDigits: 2})}
               </span>
               {safeDiscount > 0 && (
-                <span className="text-sm text-gray-500 line-through ml-2">
-                  ₦{safeDiscount.toLocaleString('en-US', {minimumFractionDigits: 2})}
+                <span className="text-sm text-red-500 line-through ml-2">
+                  ₦{safeDiscount.toLocaleString('en-NGN', {minimumFractionDigits: 2})}
                 </span>
               )}
             </div>
