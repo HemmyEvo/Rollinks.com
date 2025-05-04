@@ -88,6 +88,7 @@ const ProductCard = ({ id, title, price, description, slug, image, discount, rat
               priority
             />
           </motion.div>
+</div>
 
           {/* Glassmorphism Badges */}
 <div className="absolute top-3 left-3 flex flex-col space-y-2 z-10">
