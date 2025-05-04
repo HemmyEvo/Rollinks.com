@@ -18,7 +18,7 @@ const Header = () => {
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault()
     if (searchQuery.trim()) {
-     window.location.pathname=`/product?search=${encodeURIComponent(searchQuery)}`
+     window.location.href=`/product?search=${encodeURIComponent(searchQuery)}`
       setSearchQuery('')
       setIsToggle(false)
       setShowMobileSearch(false)
