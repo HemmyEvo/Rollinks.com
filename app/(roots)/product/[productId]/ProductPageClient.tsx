@@ -51,7 +51,7 @@ export default function ProductPageClient({ data }: { data: fullProduct }) {
     const product: CartProduct = {
       name: item.name,
       description: item.description?.[0]?.children?.[0]?.text || item.name,
-      price: item.discountPrice ?? item.price,
+      price: item.price,
       currency: 'NGN',
       image,
       quantity,
