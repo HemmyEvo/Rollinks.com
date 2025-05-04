@@ -11,7 +11,7 @@ import { useRouter } from 'next/navigation'
 const Header = () => {
   const [isToggle, setIsToggle] = useState(false)
   const [searchQuery, setSearchQuery] = useState('')
-  const [showSearch, setShowSearch] = useState(false)
+  const [showMobileSearch, setShowMobileSearch] = useState(false)
   const { cartCount = 0, handleCartClick } = useShoppingCart()
   const router = useRouter()
 
@@ -21,7 +21,7 @@ const Header = () => {
       router.push(`/product?search=${encodeURIComponent(searchQuery)}`)
       setSearchQuery('')
       setIsToggle(false)
-      setShowSearch(false)
+      setShowMobileSearch(false)
     }
   }
 
@@ -66,20 +66,8 @@ const Header = () => {
 
             {/* Icons */}  
             <div className="flex items-center space-x-4">
-              {/* Search Button - Mobile */}
-              <button 
-                onClick={() => setShowSearch(!showSearch)}
-                className="md:hidden p-2 rounded-full hover:bg-amber-50 transition-colors"
-              >
-                <Search className="w-5 h-5 text-gray-700" />
-              </button>
-
-              {/* Search Input - Desktop */}
-              <motion.div 
-                className="hidden md:flex relative"
-                initial={{ width: 0, opacity: 0 }}
-                animate={{ width: showSearch ? 200 : 0, opacity: showSearch ? 1 : 0 }}
-              >
+              {/* Search Input - Always visible on desktop */}
+              <div className="hidden md:flex relative">
                 <form onSubmit={handleSearch} className="relative">
                   <input
                     type="text"
@@ -99,18 +87,15 @@ const Header = () => {
                     </button>
                   )}
                 </form>
-              </motion.div>
+              </div>
 
-              {/* Search Toggle - Desktop */}
-              <motion.button
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                onClick={() => { setIsToggle(false), setShowSearch(!showSearch)}}
-                
-                className="hidden md:flex p-2 rounded-full hover:bg-amber-50 transition-colors"
+              {/* Search Button - Mobile */}
+              <button 
+                onClick={() => setShowMobileSearch(!showMobileSearch)}
+                className="md:hidden p-2 rounded-full hover:bg-amber-50 transition-colors"
               >
                 <Search className="w-5 h-5 text-gray-700" />
-              </motion.button>
+              </button>
 
               {/* Cart */}  
               <motion.button  
@@ -167,7 +152,7 @@ const Header = () => {
           </div>  
 
           {/* Mobile Search Input */}
-          {showSearch && (
+          {showMobileSearch && (
             <motion.div
               initial={{ opacity: 0, height: 0 }}
               animate={{ opacity: 1, height: 'auto' }}
