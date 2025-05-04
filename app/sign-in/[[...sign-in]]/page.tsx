@@ -23,9 +23,9 @@ const Page = () => {
 
   useEffect(() => {
     if (isSignedIn) {
-      router.replace('/');
+      window.location.href = '/';
     }
-  }, [isSignedIn, router]);
+  }, [isSignedIn]);
 
   useEffect(() => {
     const autoLogoutTime = localStorage.getItem('autoLogout');
@@ -87,7 +87,7 @@ const Page = () => {
         }
 
         setTimeout(() => {
-          router.replace('/');
+          window.location.href = '/';
         }, 1500);
       } else {
         toast.error('Unable to connect to internet.');
