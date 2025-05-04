@@ -30,7 +30,7 @@ const ForgotPassword: NextPage = () => {
 
     React.useEffect(() => {
         if (isSignedIn) {
-            router.push('/');
+            window.location.href = '/';
         }
     }, [isSignedIn, router]);
 
