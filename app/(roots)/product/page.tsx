@@ -5,22 +5,23 @@ import ProductCard from '../_components/ProductCard';
 import { client } from '@/lib/sanity';
 import { fullProduct, simplifiedProduct } from '@/app/interface';
 
-import { Filter, X, ChevronDown, ChevronUp, Star, ArrowLeft } from 'lucide-react';
+import { Filter, X, ChevronDown, ChevronUp, Star, ArrowLeft, Search } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import Link from 'next/link';
+
 async function getData() {
   const query = `*[_type == "product" && !(_id in path("drafts.**"))]{
-  _id,
-  name,
-  "slug": slug,
-  "images": images[].asset->url,
-  price,
-  discountPrice,
-  "categoryName": category->name,
-  rating,
- isBestSeller,
-  isNew
-}`;
+    _id,
+    name,
+    "slug": slug,
+    "images": images[].asset->url,
+    price,
+    discountPrice,
+    "categoryName": category->name,
+    rating,
+    isBestSeller,
+    isNew
+  }`;
   const data = await client.fetch(query);
   return data;
 }
@@ -36,8 +37,7 @@ async function getCategory() {
 }
 
 const ProductPage = () => {
-  
-  const [selectedCategory, setSelectedCategory] = useState<string | null>(null)
+  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [maxPrice, setMaxPrice] = useState<number | null>(null);
   const [minRating, setMinRating] = useState<number | null>(null);
   const [sortOption, setSortOption] = useState<string>('featured');
@@ -45,8 +45,7 @@ const ProductPage = () => {
   const [data, setData] = useState<fullProduct[]>([]);
   const [categories, setCategories] = useState<simplifiedProduct[]>([]);
   const [loading, setLoading] = useState(true);
-
-  
+  const [searchQuery, setSearchQuery] = useState('');
 
   useEffect(() => {
     async function fetchData() {
@@ -65,20 +64,22 @@ const ProductPage = () => {
     }
     fetchData();
   }, []);
-useEffect(() => {
-  // Extract category from URL
-  const urlParams = new URLSearchParams(window.location.search);
-  const urlCategory = urlParams.get('category');
-  
-  if (urlCategory) {
-    setSelectedCategory(urlCategory);
-  }
 
-  
-}, []); // Empty dependency array means this runs once on mount
+  useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const urlCategory = urlParams.get('category');
+    if (urlCategory) {
+      setSelectedCategory(urlCategory);
+    }
+  }, []);
 
   const filteredProducts = data.filter(product => {
+    const matchesSearch = searchQuery === '' || 
+      product.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      (product.categoryName && product.categoryName.toLowerCase().includes(searchQuery.toLowerCase()));
+
     return (
+      matchesSearch &&
       (!selectedCategory || product.categoryName === selectedCategory) &&
       (!maxPrice || product.price <= maxPrice) &&
       (!minRating || (product.rating || 0) >= minRating)
@@ -87,11 +88,10 @@ useEffect(() => {
     switch (sortOption) {
       case 'price-low': return a.price - b.price;
       case 'price-high': return b.price - a.price;
-
       case 'rating': return (b.rating || 0) - (a.rating || 0);
-      case 'isBestSeller': return (b.isBestSeller ? 1 : 0) - (a.isBestSeller ? 1 : 0)
+      case 'isBestSeller': return (b.isBestSeller ? 1 : 0) - (a.isBestSeller ? 1 : 0);
       case 'newest': return (b.isNew ? 1 : 0) - (a.isNew ? 1 : 0);
-      default: return 0; // featured - no sorting
+      default: return 0;
     }
   });
 
@@ -100,13 +100,15 @@ useEffect(() => {
     setMaxPrice(null);
     setMinRating(null);
     setSortOption('featured');
+    setSearchQuery('');
   };
 
   const activeFiltersCount = [
     selectedCategory,
     maxPrice,
     minRating,
-    sortOption !== 'featured'
+    sortOption !== 'featured',
+    searchQuery
   ].filter(Boolean).length;
 
   return (
@@ -116,10 +118,10 @@ useEffect(() => {
         {selectedCategory ? (
           <div className="flex flex-col space-y-4">
             <Link href="/product">
-            <div onClick={resetFilters} className="flex items-center text-blue-600 hover:text-blue-800 w-fit">
-              <ArrowLeft className="mr-2" size={18} />
-              Back to Products
-            </div>
+              <div onClick={resetFilters} className="flex items-center text-blue-600 hover:text-blue-800 w-fit">
+                <ArrowLeft className="mr-2" size={18} />
+                Back to Products
+              </div>
             </Link>
             <h1 className="text-3xl font-bold text-gray-800">
               {selectedCategory} Products
@@ -131,6 +133,30 @@ useEffect(() => {
             <p className="text-gray-600">Discover your perfect skincare routine</p>
           </>
         )}
+      </div>
+
+      {/* Search Input */}
+      <div className="max-w-7xl mx-auto mb-6">
+        <div className="relative">
+          <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+            <Search className="h-5 w-5 text-gray-400" />
+          </div>
+          <input
+            type="text"
+            placeholder="Search products by name or category..."
+            className="block w-full pl-10 pr-12 py-3 border border-gray-200 rounded-lg bg-white shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+          />
+          {searchQuery && (
+            <button
+              onClick={() => setSearchQuery('')}
+              className="absolute inset-y-0 right-0 pr-3 flex items-center"
+            >
+              <X className="h-5 w-5 text-gray-400 hover:text-gray-600" />
+            </button>
+          )}
+        </div>
       </div>
 
       <div className="max-w-7xl mx-auto">
@@ -162,7 +188,7 @@ useEffect(() => {
                   value={sortOption}
                 >
                   <option value="featured">Featured</option>
-<option value="isBestSeller">BestSeller</option>
+                  <option value="isBestSeller">Best Sellers</option>
                   <option value="newest">New Arrivals</option>
                   <option value="price-low">Price: Low to High</option>
                   <option value="price-high">Price: High to Low</option>
@@ -288,19 +314,17 @@ useEffect(() => {
                   transition={{ type: 'spring', stiffness: 400, damping: 20 }}
                   className="bg-white/80 backdrop-blur-sm rounded-xl shadow-sm hover:shadow-md transition-shadow border border-white/20"
                 >
-                <ProductCard
-  id={item._id}
-  title={item.name}
-  image={item.images?.[0]} // use the first image
-  price={item.price}
-  description={item.description}
-  slug={item.slug.current}
-  discount={item.discountPrice}
-  rating={item.rating ?? 0}
-  isNew={item.isNew}
-/>
-
-
+                  <ProductCard
+                    id={item._id}
+                    title={item.name}
+                    image={item.images?.[0]}
+                    price={item.price}
+                    description={item.description}
+                    slug={item.slug.current}
+                    discount={item.discountPrice}
+                    rating={item.rating ?? 0}
+                    isNew={item.isNew}
+                  />
                 </motion.div>
               ))}
             </AnimatePresence>
@@ -317,7 +341,7 @@ useEffect(() => {
               <X size={40} className="text-blue-500" />
             </div>
             <h3 className="text-xl font-medium mb-2">No products found</h3>
-            <p className="text-gray-600 mb-4">Try adjusting your filters to find what you're looking for</p>
+            <p className="text-gray-600 mb-4">Try adjusting your search or filters to find what you're looking for</p>
             <button
               onClick={resetFilters}
               className="px-6 py-2 bg-blue-600 text-white rounded-full hover:bg-blue-700 transition-colors"
