@@ -150,7 +150,7 @@ const ProductCard = ({ id, title, price, description, slug, image, discount, rat
                 {safePrice.toLocaleString('en-NG', {
   style: 'currency',
   currency: 'NGN',
-  minimumFractionDigits: 2,
+ 
 })}
               </span>
               {safeDiscount > 0 && (
@@ -158,7 +158,6 @@ const ProductCard = ({ id, title, price, description, slug, image, discount, rat
                  {safeDiscount.toLocaleString('en-NG', {
   style: 'currency',
   currency: 'NGN',
-  minimumFractionDigits: 2,
 })}
                 </span>
               )}
