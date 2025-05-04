@@ -108,8 +108,7 @@ const ProductCard = ({ id, title, price, description, slug, image, discount, rat
       transition={{ 
         delay: 0.2,
         duration: 2,
-        repeat: Infinity,
-        repeatType: "reverse"
+        
       }}
     >
       New Formula
@@ -131,8 +130,7 @@ const ProductCard = ({ id, title, price, description, slug, image, discount, rat
       transition={{ 
         delay: 0.3,
         duration: 2,
-        repeat: Infinity,
-        repeatType: "reverse"
+        
       }}
     >
       {discountPercentage}% OFF
@@ -156,8 +154,8 @@ const ProductCard = ({ id, title, price, description, slug, image, discount, rat
 })}
               </span>
               {safeDiscount > 0 && (
-                <span className="text-sm text-red-500 line-through ml-2">
-                  ₦{safeDiscount.toLocaleString('en-NG', {
+                <span className="text-sm line-clamp-1 text-red-500 line-through ml-2">
+                 {safeDiscount.toLocaleString('en-NG', {
   style: 'currency',
   currency: 'NGN',
   minimumFractionDigits: 2,
