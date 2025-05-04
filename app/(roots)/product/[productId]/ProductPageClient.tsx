@@ -289,7 +289,7 @@ export default function ProductPageClient({ data }: { data: fullProduct }) {
 
         <div className="grid md:grid-cols-2 gap-8 md:gap-12">
           {/* Image Section */}
-         <div className="bg-white/80 backdrop-blur-sm rounded-2xl overflow-hidden border border-white/20 shadow-lg">
+         <div className="bg-white/80 max-h-[max-content] backdrop-blur-sm rounded-2xl overflow-hidden border border-white/20 shadow-lg">
       {/* Main Image with Zoom Lens */}
       <div 
         className="relative aspect-square w-full cursor-zoom-in touch-none select-none"
