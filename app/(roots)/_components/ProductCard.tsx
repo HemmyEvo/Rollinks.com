@@ -149,11 +149,19 @@ const ProductCard = ({ id, title, price, description, slug, image, discount, rat
           <div className="mt-auto">
             <div className="mb-3 flex items-center">
               <span className="text-xl font-bold text-gray-900">
-                ₦{safePrice.toLocaleString('en-NGN', {minimumFractionDigits: 2})}
+                {safePrice.toLocaleString('en-NG', {
+  style: 'currency',
+  currency: 'NGN',
+  minimumFractionDigits: 2,
+})}
               </span>
               {safeDiscount > 0 && (
                 <span className="text-sm text-red-500 line-through ml-2">
-                  ₦{safeDiscount.toLocaleString('en-NGN', {minimumFractionDigits: 2})}
+                  ₦{safeDiscount.toLocaleString('en-NG', {
+  style: 'currency',
+  currency: 'NGN',
+  minimumFractionDigits: 2,
+})}
                 </span>
               )}
             </div>
