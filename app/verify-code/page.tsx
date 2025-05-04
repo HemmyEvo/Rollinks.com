@@ -17,7 +17,7 @@ const Page = () => {
 
   React.useEffect(() => {
     if (isSignedIn) {
-      router.push('/');
+      window.location.href = '/';
     }
   }, [isSignedIn, router]);
 
