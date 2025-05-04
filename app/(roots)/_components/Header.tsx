@@ -3,13 +3,27 @@ import { Button } from '@/components/ui/button'
 import { SignedIn, SignedOut, SignInButton, UserButton } from '@clerk/nextjs'
 import { Heart, LucideAlignRight, MenuIcon, Search, Settings, ShoppingCart, User, X } from 'lucide-react'
 import Link from 'next/link'
-import React from 'react'
+import React, { useState } from 'react'
 import { useShoppingCart } from 'use-shopping-cart'
 import { motion } from 'framer-motion'
+import { useRouter } from 'next/navigation'
 
 const Header = () => {
-  const [isToggle, setisToggle] = React.useState(false)
-  const {cartCount = 0, handleCartClick} = useShoppingCart()
+  const [isToggle, setIsToggle] = useState(false)
+  const [searchQuery, setSearchQuery] = useState('')
+  const [showSearch, setShowSearch] = useState(false)
+  const { cartCount = 0, handleCartClick } = useShoppingCart()
+  const router = useRouter()
+
+  const handleSearch = (e: React.FormEvent) => {
+    e.preventDefault()
+    if (searchQuery.trim()) {
+      router.push(`/product?search=${encodeURIComponent(searchQuery)}`)
+      setSearchQuery('')
+      setIsToggle(false)
+      setShowSearch(false)
+    }
+  }
 
   return (
     <header className="fixed inset-x-0 top-0 z-50">
@@ -24,7 +38,7 @@ const Header = () => {
               transition={{ duration: 0.5 }}
               className="flex items-center"
             >
-              <Link href="/" className="text-2xl font-bold text-amber-800 flex items-end" onClick={() => setisToggle(false)}>
+              <Link href="/" className="text-2xl font-bold text-amber-800 flex items-end" onClick={() => setIsToggle(false)}>
                 <span className="text-3xl text-amber-600">R</span>ollinks
               </Link>
             </motion.div>
@@ -32,41 +46,71 @@ const Header = () => {
             {/* Desktop Navigation */}  
             <div className="hidden md:flex items-center space-x-8">  
               <div className="flex space-x-6">  
-                <Link   
-                  href="/"   
-                  className="text-gray-700 hover:text-amber-600 transition-colors font-medium text-sm"  
-                >  
+                <Link href="/" className="text-gray-700 hover:text-amber-600 transition-colors font-medium text-sm">  
                   Home  
                 </Link>  
-                <Link   
-                  href="/product"   
-                  className="text-gray-700 hover:text-amber-600 transition-colors font-medium text-sm"  
-                >  
+                <Link href="/product" className="text-gray-700 hover:text-amber-600 transition-colors font-medium text-sm">  
                   Products  
                 </Link>  
-                <Link   
-                  href="/about-us"   
-                  className="text-gray-700 hover:text-amber-600 transition-colors font-medium text-sm"  
-                >  
+                <Link href="/about-us" className="text-gray-700 hover:text-amber-600 transition-colors font-medium text-sm">  
                   About  
                 </Link>  
-                <Link   
-                  href="/history"   
-                  className="text-gray-700 hover:text-amber-600 transition-colors font-medium text-sm"  
-                >  
+                <Link href="/history" className="text-gray-700 hover:text-amber-600 transition-colors font-medium text-sm">  
                   History  
                 </Link>  
-                <Link   
-                  href="/contact"   
-                  className="text-gray-700 hover:text-amber-600 transition-colors font-medium text-sm"  
-                >  
+                <Link href="/contact" className="text-gray-700 hover:text-amber-600 transition-colors font-medium text-sm">  
                   Contact  
                 </Link>  
               </div>  
             </div>  
 
             {/* Icons */}  
-            <div className="flex items-center space-x-4">  
+            <div className="flex items-center space-x-4">
+              {/* Search Button - Mobile */}
+              <button 
+                onClick={() => setShowSearch(!showSearch)}
+                className="md:hidden p-2 rounded-full hover:bg-amber-50 transition-colors"
+              >
+                <Search className="w-5 h-5 text-gray-700" />
+              </button>
+
+              {/* Search Input - Desktop */}
+              <motion.div 
+                className="hidden md:flex relative"
+                initial={{ width: 0, opacity: 0 }}
+                animate={{ width: showSearch ? 200 : 0, opacity: showSearch ? 1 : 0 }}
+              >
+                <form onSubmit={handleSearch} className="relative">
+                  <input
+                    type="text"
+                    placeholder="Search products..."
+                    className="w-full pl-10 pr-4 py-2 rounded-full border border-gray-200 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent text-sm"
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                  />
+                  <Search className="absolute left-3 top-2.5 h-4 w-4 text-gray-400" />
+                  {searchQuery && (
+                    <button
+                      type="button"
+                      onClick={() => setSearchQuery('')}
+                      className="absolute right-3 top-2.5 text-gray-400 hover:text-gray-600"
+                    >
+                      <X className="h-4 w-4" />
+                    </button>
+                  )}
+                </form>
+              </motion.div>
+
+              {/* Search Toggle - Desktop */}
+              <motion.button
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                onClick={() => setShowSearch(!showSearch)}
+                className="hidden md:flex p-2 rounded-full hover:bg-amber-50 transition-colors"
+              >
+                <Search className="w-5 h-5 text-gray-700" />
+              </motion.button>
+
               {/* Cart */}  
               <motion.button  
                 whileHover={{ scale: 1.05 }}  
@@ -97,7 +141,7 @@ const Header = () => {
                 <SignedOut>  
                   <SignInButton>  
                     <Button   
-                      onClick={() => setisToggle(!isToggle)}  
+                      onClick={() => setIsToggle(!isToggle)}  
                       variant="outline"   
                       className="bg-transparent border-amber-600 text-amber-700 hover:bg-amber-50 hover:text-amber-800"  
                     >  
@@ -109,7 +153,7 @@ const Header = () => {
 
               {/* Mobile Menu Button */}  
               <button   
-                onClick={() => setisToggle(!isToggle)}  
+                onClick={() => setIsToggle(!isToggle)}  
                 className="md:hidden p-2 rounded-full hover:bg-amber-50 transition-colors"  
               >  
                 {!isToggle ? (  
@@ -120,6 +164,36 @@ const Header = () => {
               </button>  
             </div>  
           </div>  
+
+          {/* Mobile Search Input */}
+          {showSearch && (
+            <motion.div
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: 'auto' }}
+              exit={{ opacity: 0, height: 0 }}
+              className="md:hidden px-4 pb-4"
+            >
+              <form onSubmit={handleSearch} className="relative">
+                <input
+                  type="text"
+                  placeholder="Search products..."
+                  className="w-full pl-10 pr-4 py-2 rounded-full border border-gray-200 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent text-sm"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                />
+                <Search className="absolute left-3 top-2.5 h-4 w-4 text-gray-400" />
+                {searchQuery && (
+                  <button
+                    type="button"
+                    onClick={() => setSearchQuery('')}
+                    className="absolute right-3 top-2.5 text-gray-400 hover:text-gray-600"
+                  >
+                    <X className="h-4 w-4" />
+                  </button>
+                )}
+              </form>
+            </motion.div>
+          )}
         </div>  
 
         {/* Mobile Menu */}  
@@ -133,39 +207,19 @@ const Header = () => {
           >  
             <div className="container mx-auto px-4 py-4">  
               <div className="flex flex-col space-y-4">  
-                <Link   
-                  href="/"   
-                  onClick={() => setisToggle(false)}  
-                  className="text-gray-700 hover:text-amber-600 transition-colors font-medium py-2 border-b border-gray-100"  
-                >  
+                <Link href="/" onClick={() => setIsToggle(false)} className="text-gray-700 hover:text-amber-600 transition-colors font-medium py-2 border-b border-gray-100">  
                   Home  
                 </Link>  
-                <Link   
-                  href="/product"   
-                  onClick={() => setisToggle(false)}  
-                  className="text-gray-700 hover:text-amber-600 transition-colors font-medium py-2 border-b border-gray-100"  
-                >  
+                <Link href="/product" onClick={() => setIsToggle(false)} className="text-gray-700 hover:text-amber-600 transition-colors font-medium py-2 border-b border-gray-100">  
                   Products  
                 </Link>  
-                <Link   
-                  href="/about-us"   
-                  onClick={() => setisToggle(false)}  
-                  className="text-gray-700 hover:text-amber-600 transition-colors font-medium py-2 border-b border-gray-100"  
-                >  
+                <Link href="/about-us" onClick={() => setIsToggle(false)} className="text-gray-700 hover:text-amber-600 transition-colors font-medium py-2 border-b border-gray-100">  
                   About  
                 </Link>  
-                <Link   
-                  href="/history"   
-                  onClick={() => setisToggle(false)}  
-                  className="text-gray-700 hover:text-amber-600 transition-colors font-medium py-2 border-b border-gray-100"  
-                >  
+                <Link href="/history" onClick={() => setIsToggle(false)} className="text-gray-700 hover:text-amber-600 transition-colors font-medium py-2 border-b border-gray-100">  
                   History  
                 </Link>  
-                <Link   
-                  href="/contact"   
-                  onClick={() => setisToggle(false)}  
-                  className="text-gray-700 hover:text-amber-600 transition-colors font-medium py-2 border-b border-gray-100"  
-                >  
+                <Link href="/contact" onClick={() => setIsToggle(false)} className="text-gray-700 hover:text-amber-600 transition-colors font-medium py-2 border-b border-gray-100">  
                   Contact  
                 </Link>  
               </div>  
@@ -181,7 +235,7 @@ const Header = () => {
                     <Button   
                       variant="default"   
                       className="w-full bg-amber-600 hover:bg-amber-700"  
-                      onClick={() => setisToggle(false)}  
+                      onClick={() => setIsToggle(false)}  
                     >  
                       Sign In  
                     </Button>  
