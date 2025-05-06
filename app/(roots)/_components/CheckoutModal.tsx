@@ -9,7 +9,7 @@ import { useAuth } from '@clerk/nextjs';
 import { api } from '@/convex/_generated/api';
 import { useConvexAuth, useQuery } from "convex/react";
 import { useRouter } from 'next/navigation';
-import { FiX, FiCheck, FiLoader, FiMapPin, FiUser, FiMail, FiPhone, FiHome } from 'react-icons/fi';
+import { FiX, FiCheck, FiLoader, FiMapPin, FiUser, FiMail, FiPhone, FiHome,FiInfo } from 'react-icons/fi';
 
 interface CheckoutModalProps {
   isOpen: boolean;
@@ -674,31 +674,40 @@ const items = cartDetails
                   <span className="text-gray-600">Subtotal</span>
                   <span className="text-gray-900">₦{(totalPrice || 0).toLocaleString()}</span>
                 </div>
-                <div className="flex justify-between py-2">
-  <span className="text-gray-600">Shipping</span>
-  {shippingFee > 0 ? (
-    <span className="text-gray-900">
-      ₦{shippingFee.toLocaleString()}
-    </span>
-  ) : selectedLocation ? (
-    <a
-      href={`https://wa.me/2347010331943?text=${encodeURIComponent(
-        `Hello, I want to place an order but the shipping fee is not available for my area.\n\nItems:\n${items.join('\n')}\n\nArea: ${selectedLocation}`
-      )}`}
-      target="_blank"
-      rel="noopener noreferrer"
-      className="text-blue-600 underline"
-    >
-      Shipping fee not available. Contact store owner
-    </a>
-  ):(
-   <span className="text-gray-900">
-   --
-</span>
-)
-
-}
-</div>
+               <div className="flex justify-between items-center py-3 border-b border-gray-100">
+      <span className="text-gray-600 font-medium">Shipping</span>
+      
+      {shippingFee > 0 ? (
+        <span className="text-gray-900 font-medium">
+          ₦{shippingFee.toLocaleString()}
+        </span>
+      ) : selectedLocation ? (
+        <div className="group relative inline-flex items-center gap-1">
+          <div className="flex items-center text-gray-500 cursor-help border-b border-dashed border-gray-300 pb-0.5">
+            <FiInfo className="h-4 w-4 mr-1" />
+            <span>Shipping Quote Required</span>
+          </div>
+          
+          <div className="absolute hidden group-hover:flex flex-col top-full mt-2 right-0 w-64 bg-white shadow-lg rounded-md p-3 text-sm border border-gray-200 z-10">
+            <p className="text-gray-700 mb-2">
+              We'll calculate shipping for {customCity}. Contact us with your items for an exact quote.
+            </p>
+            <a
+              href={`https://wa.me/2347010331943?text=${encodeURIComponent(
+                `Shipping Inquiry\n\nItems:\n${items.join('\n')}\n\nDelivery Area: ${customCity}`
+              )}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="self-end px-3 py-1.5 bg-blue-600 text-white text-xs font-medium rounded hover:bg-blue-700 transition-colors"
+            >
+              Request Quote
+            </a>
+          </div>
+        </div>
+      ) : (
+        <span className="text-gray-400">--</span>
+      )}
+    </div>
                 <div className="flex justify-between py-2 font-medium text-lg">
                   <span className="text-gray-900">Total</span>
                   <span className="text-gray-900">
