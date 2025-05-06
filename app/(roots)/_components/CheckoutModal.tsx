@@ -353,23 +353,7 @@ const predefinedLocations = [
           if (modalRef.current) {
             modalRef.current.style.display = 'block';
           }
-          
-        }
-      },
-      onCancel: () => {
-        setLoading(false);
-        // Show our modal again if payment is cancelled
-        if (modalRef.current) {
-          modalRef.current.style.display = 'block';
-        }
-      },
-    });
-  };
-
-  if (!isOpen) return null;
-
-  if (paymentSuccess) {
-    return (
+        return (
       <div className="absolute left-0 right-0 bottom-0 top-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-[1000]">
         <div className="bg-white rounded-lg max-w-md w-full max-h-[90vh] overflow-y-auto">
           <div className="p-6">
@@ -410,7 +394,7 @@ const predefinedLocations = [
             <button
               onClick={() => {
                 onClose();
-                router.push(`/order-tracking/${orderId}`);
+                router.push(`/history`);
               }}
               className="w-full bg-blue-600 text-white py-3 rounded-md hover:bg-blue-700 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
             >
@@ -420,8 +404,22 @@ const predefinedLocations = [
         </div>
       </div>
     );
-  }
+          
+        }
+      },
+      onCancel: () => {
+        setLoading(false);
+        // Show our modal again if payment is cancelled
+        if (modalRef.current) {
+          modalRef.current.style.display = 'block';
+        }
+      },
+    });
+  };
 
+  if (!isOpen) return null;
+
+  
   return (
     <div  className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-[1000]">
       <div ref={modalRef} className="bg-white rounded-lg w-full max-w-4xl max-h-[90vh] overflow-y-auto">
@@ -672,11 +670,30 @@ const predefinedLocations = [
                   <span className="text-gray-900">₦{(totalPrice || 0).toLocaleString()}</span>
                 </div>
                 <div className="flex justify-between py-2">
-                  <span className="text-gray-600">Shipping</span>
-                  <span className="text-gray-900">
-                    {shippingFee > 0 ? `₦${shippingFee.toLocaleString()}` : 'Calculated at next step'}
-                  </span>
-                </div>
+  <span className="text-gray-600">Shipping</span>
+  {shippingFee > 0 ? (
+    <span className="text-gray-900">
+      ₦{shippingFee.toLocaleString()}
+    </span>
+  ) : selectedLocation ? (
+    <a
+      href={`https://wa.me/2347010331943?text=${encodeURIComponent(
+        `Hello, I want to place an order but the shipping fee is not available for my area.\n\nItems:\n${items.join('\n')}\n\nArea: ${selectedLocation}`
+      )}`}
+      target="_blank"
+      rel="noopener noreferrer"
+      className="text-blue-600 underline"
+    >
+      Shipping fee not available. Contact store owner
+    </a>
+  ):(
+   <span className="text-gray-900">
+   --
+</span>
+)
+
+}
+</div>
                 <div className="flex justify-between py-2 font-medium text-lg">
                   <span className="text-gray-900">Total</span>
                   <span className="text-gray-900">
