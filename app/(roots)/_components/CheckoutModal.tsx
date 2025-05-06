@@ -416,6 +416,11 @@ const predefinedLocations = [
       },
     });
   };
+const items = cartDetails
+  ? Object.values(cartDetails).map(
+      (item) => `${item.name} (Qty: ${item.quantity}) - ₦${(item.price * item.quantity).toLocaleString()}`
+    )
+  : [];
 
   if (!isOpen) return null;
 
