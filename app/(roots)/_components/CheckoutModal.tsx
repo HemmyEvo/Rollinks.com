@@ -694,7 +694,7 @@ const items = cartDetails
             </p>
             <a
               href={`https://wa.me/2347010331943?text=${encodeURIComponent(
-                `Shipping Inquiry\n\nItems:\n${items.join('\n')}\n\nDelivery Area: ${customCity}`
+                `Shipping Inquiry\n\nItems:\n${items.join('\n')}\n\nDelivery Area: ${customCity}\nUserId : ${userId}`
               )}`}
               target="_blank"
               rel="noopener noreferrer"
@@ -719,7 +719,7 @@ const items = cartDetails
               <button
                 onClick={handlePayment}
              
-                disabled={selectedLocation?.value === 'custom' ||loading}
+                disabled={loading}
                 className={`w-full py-3 px-4 rounded-md text-white font-medium focus:outline-none focus:ring-2 focus:ring-offset-2 ${
                   loading ? 'bg-blue-400 cursor-not-allowed' : 'bg-blue-600 hover:bg-blue-700'
                 }`}
@@ -729,7 +729,19 @@ const items = cartDetails
                     <FiLoader className="animate-spin mr-2" />
                     Processing...
                   </span>
-                ) : (
+                ) : selectedLocation?.value === 'custom' ?(
+
+         <a
+              href={`https://wa.me/2347010331943?text=${encodeURIComponent(
+                `Shipping Inquiry\n\nItems:\n${items.join('\n')}\n\nDelivery Area: ${customCity}\nUserId : ${userId}`
+              )}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="w-full h-full "
+            >
+              Request Quote
+            </a>
+) :(
                   'Proceed to Payment'
                 )}
               </button>
