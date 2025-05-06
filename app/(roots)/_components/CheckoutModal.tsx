@@ -340,20 +340,7 @@ const predefinedLocations = [
           // Save to Sanity
           const createdOrder = await client.create(orderDoc);
           setOrderId(createdOrder.orderId);
-          setPaymentSuccess(true);
-          
-        } catch (error) {
-          console.error('Error saving order:', error);
-          alert(error)
-          alert('Order was successful but there was an issue saving your details. Please contact support with your payment reference.');
-        } finally {
-          clearCart();
-          setLoading(false);
-          // Show our modal again
-          if (modalRef.current) {
-            modalRef.current.style.display = 'block';
-          }
-        return (
+          return (
       <div className="absolute left-0 right-0 bottom-0 top-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-[1000]">
         <div className="bg-white rounded-lg max-w-md w-full max-h-[90vh] overflow-y-auto">
           <div className="p-6">
@@ -405,6 +392,19 @@ const predefinedLocations = [
       </div>
     );
           
+          
+        } catch (error) {
+          console.error('Error saving order:', error);
+          alert(error)
+          alert('Order was successful but there was an issue saving your details. Please contact support with your payment reference.');
+        } finally {
+          clearCart();
+          setLoading(false);
+          // Show our modal again
+          if (modalRef.current) {
+            modalRef.current.style.display = 'block';
+          }
+        
         }
       },
       onCancel: () => {
