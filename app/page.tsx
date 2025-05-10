@@ -28,7 +28,7 @@ export default function Home() {
 
     const checkAssetsLoaded = () => {
       const images = Array.from(document.images);
-      if (images.length === 0) {
+      if (images.length !== 0) {
         setTimeout(() => setIsLoading(false), 1500);
         return;
       }
@@ -230,7 +230,7 @@ export default function Home() {
       {/* Main Content */}
       <div
         className={`relative overflow-x-hidden bg-gradient-to-b from-[#fff9f5] to-white ${
-          isLoading ? "opacity-0" : "opacity-100 transition-opacity duration-500"
+          isLoading ? "opacity-0 overflow-y-hidden" : "opacity-100 transition-opacity duration-500"
         }`}
       >
         {/* Hero Section */}
