@@ -27,7 +27,9 @@ export default function Home() {
     };
 
     const checkAssetsLoaded = () => {
-    
+      const images = Array.from(document.images);
+      
+
       let loadedCount = 0;
       const imageLoadPromises = images.map((img) => {
         console.log(img)
