@@ -1,13 +1,11 @@
 "use client";
-import { Baby, HandCoins, Leaf, PersonStanding, Smile, Truck } from "lucide-react";
-import Image from "next/image";
-import React, { useEffect, useState } from "react";
+import { Leaf, HandCoins, Truck } from "lucide-react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import NewArrival from "./(roots)/_components/NewArrival";
 import HomeProducts from "./(roots)/_components/HomeProducts";
 import Category from "./(roots)/_components/Category";
-
 
 export default function Home() {
   const [isLoading, setIsLoading] = useState(true);
@@ -15,70 +13,96 @@ export default function Home() {
   const fullText = "Welcome to Rollinks Store";
 
   useEffect(() => {
-    // Text-to-speech function with synchronized display
-    const speakWelcome = () => {
-      if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
-        const speech = new SpeechSynthesisUtterance();
-        speech.text = fullText;
-        speech.volume = 1;
-        speech.rate = 0.9; // Slightly slower for better sync
-        speech.pitch = 1.1; // Slightly higher pitch for friendly tone
-        
-        // Animate text display with speech
-        let currentIndex = 0;
-        const interval = setInterval(() => {
-          if (currentIndex <= fullText.length) {
-            setDisplayText(fullText.substring(0, currentIndex));
-            currentIndex++;
-          } else {
-            clearInterval(interval);
-          }
-        }, 80); // Matches speech rate
-
-        speech.onend = () => {
+    const animateText = () => {
+      let currentIndex = 0;
+      const interval = setInterval(() => {
+        if (currentIndex <= fullText.length) {
+          setDisplayText(fullText.substring(0, currentIndex));
+          currentIndex++;
+        } else {
           clearInterval(interval);
-          setDisplayText(fullText);
-          // Proceed to check assets after speech completes
           checkAssetsLoaded();
+        }
+      }, 100);
+    };
+
+    const checkAssetsLoaded = () => {
+      const images = Array.from(document.images);
+      if (images.length === 0) {
+        setTimeout(() => setIsLoading(false), 1500);
+        return;
+      }
+
+      let loadedCount = 0;
+      const imageLoadPromises = images.map((img) => {
+        if (img.complete) {
+          loadedCount++;
+          return Promise.resolve();
+        }
+        return new Promise<void>((resolve) => {
+          img.addEventListener("load", () => {
+            loadedCount++;
+            resolve();
+          });
+          img.addEventListener("error", resolve);
+        });
+      });
+
+      Promise.all(imageLoadPromises).then(() => {
+        setTimeout(() => setIsLoading(false), 1500);
+      });
+    };
+
+    const speakWelcome = () => {
+      if (typeof window !== "undefined" && "speechSynthesis" in window) {
+        // Mobile-friendly speech synthesis with user gesture requirement
+        const handleUserInteraction = () => {
+          const speech = new SpeechSynthesisUtterance(fullText);
+          speech.volume = 1;
+          speech.rate = 0.9;
+          speech.pitch = 1.1;
+
+          // Mobile browsers often require this to work
+          window.speechSynthesis.cancel();
+          
+          speech.onstart = animateText;
+          speech.onend = checkAssetsLoaded;
+          window.speechSynthesis.speak(speech);
+
+          // Remove the event listener after first interaction
+          document.removeEventListener("click", handleUserInteraction);
+          document.removeEventListener("touchstart", handleUserInteraction);
         };
 
-        window.speechSynthesis.speak(speech);
+        // Add event listeners for both click and touch
+        document.addEventListener("click", handleUserInteraction);
+        document.addEventListener("touchstart", handleUserInteraction);
+
+        // Fallback in case no interaction occurs
+        const fallbackTimer = setTimeout(() => {
+          document.removeEventListener("click", handleUserInteraction);
+          document.removeEventListener("touchstart", handleUserInteraction);
+          animateText();
+          checkAssetsLoaded();
+        }, 3000);
+
+        return () => clearTimeout(fallbackTimer);
       } else {
-        // Fallback for browsers without speech synthesis
-        setDisplayText(fullText);
+        animateText();
         checkAssetsLoaded();
       }
     };
 
-    // Check if all assets are loaded
-    const checkAssetsLoaded = () => {
-      const images = Array.from(document.images);
-      const totalImages = images.length;
-      
-      if (totalImages === 0) {
-        setTimeout(() => setIsLoading(false), 1000);
-        return;
-      }
-
-      const imagePromises = images.map(img => {
-        return img.complete 
-          ? Promise.resolve() 
-          : new Promise(resolve => img.addEventListener('load', resolve));
-      });
-
-      Promise.all(imagePromises).then(() => {
-        setTimeout(() => setIsLoading(false), 800); // Smooth exit
-      });
-    };
-
-    // Start the welcome sequence
     speakWelcome();
 
     return () => {
-      window.speechSynthesis.cancel(); // Clean up speech
+      if (typeof window !== "undefined" && "speechSynthesis" in window) {
+        window.speechSynthesis.cancel();
+      }
     };
   }, []);
-const heroFooter = [
+
+  const heroFooter = [
     {
       icon: <Leaf className="w-6 h-6" />,
       title: "Naturally Derived",
@@ -95,15 +119,16 @@ const heroFooter = [
       label: "Fully protected while paying online",
     },
   ];
-const containerVariants = {
+
+  const containerVariants = {
     hidden: { opacity: 0 },
     visible: {
       opacity: 1,
       transition: {
         staggerChildren: 0.2,
-        delayChildren: 0.3
-      }
-    }
+        delayChildren: 0.3,
+      },
+    },
   };
 
   const itemVariants = {
@@ -114,87 +139,100 @@ const containerVariants = {
       transition: {
         type: "spring",
         stiffness: 100,
-        damping: 10
-      }
-    }
+        damping: 10,
+      },
+    },
   };
+
   return (
     <>
-      {/* Loading Screen */}
+      {/* Enhanced Loading Screen */}
       {isLoading && (
-        <div className="fixed inset-0 z-50 bg-white flex items-center justify-center">
+        <div className="fixed inset-0 z-50 bg-white flex flex-col items-center justify-center">
           <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.5 }}
-            className="text-center"
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.3 }}
+            className="relative w-64 h-64 mb-8"
           >
+            {/* Animated logo/brand mark */}
             <motion.div
-              animate={{ 
-                scale: [1, 1.05, 1],
-                rotate: [0, 2, -2, 0]
+              animate={{
+                rotate: [0, 5, -5, 0],
+                scale: [1, 1.03, 1],
               }}
-              transition={{ 
-                repeat: Infinity, 
-                repeatType: "reverse",
-                duration: 2.5,
-                ease: "easeInOut"
+              transition={{
+                repeat: Infinity,
+                repeatType: "mirror",
+                duration: 3,
+                ease: "easeInOut",
               }}
-              className="mb-8"
+              className="absolute inset-0 flex items-center justify-center"
             >
-              <Leaf className="w-16 h-16 text-amber-600 mx-auto" />
+              <div className="w-40 h-40 rounded-full bg-amber-50 flex items-center justify-center shadow-inner">
+                <Leaf className="w-20 h-20 text-amber-600" />
+              </div>
             </motion.div>
-            
-            <div className="h-24 flex items-center justify-center">
-              <motion.h1 
-                key={displayText}
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.2 }}
-                className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-amber-600 to-amber-800 bg-clip-text text-transparent"
-              >
-                {displayText}
-                <motion.span
-                  animate={{ opacity: [0, 1, 0] }}
-                  transition={{ 
-                    repeat: Infinity, 
-                    duration: 1.2,
-                    repeatDelay: 0.2
-                  }}
-                  className="ml-1"
-                >
-                  |
-                </motion.span>
-              </motion.h1>
-            </div>
 
-            <motion.div 
-              initial={{ width: 0 }}
-              animate={{ width: "100%" }}
-              transition={{ 
-                duration: 3, 
-                ease: "linear",
-                delay: 0.5
-              }}
-              className="mt-8 h-1 bg-amber-100 rounded-full overflow-hidden"
+            {/* Progress ring */}
+            <motion.svg
+              className="absolute inset-0"
+              viewBox="0 0 64 64"
+              initial={{ rotate: -90 }}
             >
-              <motion.div
-                initial={{ width: 0 }}
-                animate={{ width: "100%" }}
-                transition={{ 
-                  duration: 3, 
-                  ease: "linear",
-                  delay: 0.5
-                }}
-                className="h-full bg-gradient-to-r from-amber-400 to-amber-600"
+              <motion.circle
+                cx="32"
+                cy="32"
+                r="30"
+                fill="none"
+                strokeWidth="2"
+                strokeLinecap="round"
+                stroke="#FBBF24"
+                strokeDasharray="188.5"
+                strokeDashoffset="188.5"
+                animate={{ strokeDashoffset: 0 }}
+                transition={{ duration: 3, ease: "linear" }}
               />
-            </motion.div>
+            </motion.svg>
           </motion.div>
+
+          <div className="text-center max-w-md px-4">
+            <motion.h1
+              key={displayText}
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="text-3xl font-bold text-gray-800 mb-2"
+            >
+              {displayText}
+              <motion.span
+                animate={{ opacity: [0, 1, 0] }}
+                transition={{
+                  repeat: Infinity,
+                  duration: 1.5,
+                }}
+                className="ml-1"
+              >
+                |
+              </motion.span>
+            </motion.h1>
+            <motion.p
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.5 }}
+              className="text-gray-500 text-sm"
+            >
+              Loading premium experience...
+            </motion.p>
+          </div>
         </div>
       )}
 
-       {/* Main Content */}
-      <div className={`relative overflow-x-hidden bg-gradient-to-b from-[#fff9f5] to-white ${isLoading ? 'opacity-0' : 'opacity-100 transition-opacity duration-500'}`}>
+      {/* Main Content */}
+      <div
+        className={`relative overflow-x-hidden bg-gradient-to-b from-[#fff9f5] to-white ${
+          isLoading ? "opacity-0" : "opacity-100 transition-opacity duration-500"
+        }`}
+      >
         {/* Hero Section */}
         <section
           className="relative w-full h-screen min-h-[600px] flex items-center justify-center bg-cover bg-center"
