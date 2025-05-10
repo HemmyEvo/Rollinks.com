@@ -35,6 +35,7 @@ export default function Home() {
 
       let loadedCount = 0;
       const imageLoadPromises = images.map((img) => {
+        console.log(img)
         if (img.complete) {
           loadedCount++;
           return Promise.resolve();
