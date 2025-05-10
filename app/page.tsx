@@ -3,7 +3,6 @@ import { Baby, HandCoins, Leaf, PersonStanding, Smile, Truck } from "lucide-reac
 import Image from "next/image";
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
-import React from "react";
 import { motion } from "framer-motion";
 import NewArrival from "./(roots)/_components/NewArrival";
 import HomeProducts from "./(roots)/_components/HomeProducts";
