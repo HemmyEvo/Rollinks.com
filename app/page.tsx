@@ -1,6 +1,6 @@
 "use client";
 import { Leaf, HandCoins, Truck } from "lucide-react";
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import NewArrival from "./(roots)/_components/NewArrival";
