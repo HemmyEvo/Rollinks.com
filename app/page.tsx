@@ -1,6 +1,7 @@
 "use client";
 import { Baby, HandCoins, Leaf, PersonStanding, Smile, Truck } from "lucide-react";
 import Image from "next/image";
+import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import React from "react";
 import { motion } from "framer-motion";
