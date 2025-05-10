@@ -44,7 +44,7 @@ export default function Home() {
             loadedCount++;
             resolve();
           });
-          img.addEventListener("error", resolve);
+          img.addEventListener("error", () => resolve());
         });
       });
 
