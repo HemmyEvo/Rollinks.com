@@ -78,6 +78,23 @@ export default function Home() {
       window.speechSynthesis.cancel(); // Clean up speech
     };
   }, []);
+const heroFooter = [
+    {
+      icon: <Leaf className="w-6 h-6" />,
+      title: "Naturally Derived",
+      label: "Natural and organic beauty products",
+    },
+    {
+      icon: <Truck className="w-6 h-6" />,
+      title: "Free Shipping",
+      label: "Free shipping on all orders over $99",
+    },
+    {
+      icon: <HandCoins className="w-6 h-6" />,
+      title: "Secure Payment",
+      label: "Fully protected while paying online",
+    },
+  ];
 const containerVariants = {
     hidden: { opacity: 0 },
     visible: {
