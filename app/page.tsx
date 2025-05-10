@@ -388,7 +388,7 @@ export default function Home() {
         <section className="relative h-[400px] overflow-hidden">
           <div 
             className="absolute inset-0 bg-cover bg-center bg-fixed"
-            style={{ backgroundImage: "url('/banner.jpg')" }}
+            style={{ backgroundImage: "url('/banner.jpeg')" }}
           ></div>
           <div className="absolute inset-0 bg-gradient-to-r from-black/60 to-black/30 backdrop-blur-sm"></div>
           <div className="relative z-10 h-full flex items-center px-6 md:px-12">
