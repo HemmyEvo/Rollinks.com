@@ -757,7 +757,7 @@ const items = cartDetails
   e.preventDefault(); 
   setErrors(prevErrors => ({...prevErrors, city: 'City is required'}))
 } : undefined}
-/>
+>
               Request Quote
             </a>
 ) :(
