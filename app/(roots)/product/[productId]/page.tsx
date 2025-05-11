@@ -55,6 +55,7 @@ async function getData(slug: string): Promise<fullProduct | null> {
     description: data.description,
     
 }
+}
 
    export default async function page(props: {
      params: Promise<{ productId: string }>
