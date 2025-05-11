@@ -74,7 +74,7 @@ async function getData(slug: string): Promise<fullProduct | null> {
 }
 
    export default async function page(props: {
-     params: Promise<{ slug: string }>
+     params: Promise<{ productId: string }>
      
    }) {
   const data = await getData(params.productId)
