@@ -84,10 +84,7 @@ async function getData(slug: string): Promise<fullProduct | null> {
       description: `${data.description} | Available for ${price}${originalPrice ? ` (was ${originalPrice})` : ''}`,
       type: 'product',
       url: `https://rollinks-com.vercel.app/products/${data.slug}`,
-      images: data.images?.map(image => ({
-        url: image,
-        alt: data.name,
-      })),
+      
       siteName: 'Rollinks Beauty',
       ...(originalPrice && {
         price: {
