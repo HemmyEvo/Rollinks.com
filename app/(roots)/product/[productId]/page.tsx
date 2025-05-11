@@ -79,23 +79,7 @@ async function getData(slug: string): Promise<fullProduct | null> {
       'Naira',
       'affordable beauty'
     ],
-    openGraph: {
-      title: `${data.name} | ${data.categoryName} - Rollinks`,
-      description: `${data.description} | Available for ${price}${originalPrice ? ` (was ${originalPrice})` : ''}`,
-      type: 'product',
-      url: `https://rollinks-com.vercel.app/products/${data.slug}`,
-      
-      siteName: 'Rollinks Beauty',
-      ...(originalPrice && {
-        price: {
-          amount: data.discountPrice,
-          currency: 'NGN',
-          originalAmount: data.price,
-        },
-      }),
-    },
     
-}
 }
 
    export default async function page(props: {
