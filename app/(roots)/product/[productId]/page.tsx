@@ -5,7 +5,6 @@ import { fullProduct } from '@/app/interface'
 
 
 async function getData(slug: string): Promise<fullProduct | null> {
-console.log(slug)
   try {
     const query = `*[_type == "product" && slug.current == "${slug}"][0]{
       _id,
@@ -33,7 +32,6 @@ console.log(slug)
     const data = await client.fetch(query)
     return data || null
   } catch (error) {
-console.log("hi")
     console.error('Error fetching product:', error)
     return null
   }
@@ -43,6 +41,7 @@ console.log("hi")
    }) {
      const params = await props.params
   const data = await getData(params.productId)
+  console.log(data)
 
   if (!data) {
     return {
@@ -52,28 +51,9 @@ console.log("hi")
   }
 
   return {
-    title: data.seo?.metaTitle || data.name,
-    description: data.seo?.metaDescription || data.description,
-    keywords: data.seo?.keywords,
-    openGraph: {
-      title: data.seo?.metaTitle || data.name,
-      description: data.seo?.metaDescription || data.description,
-      images: data.images?.length > 0 ? [
-        {
-          url: data.images[0],
-          width: 800,
-          height: 600,
-          alt: data.name,
-        }
-      ] : undefined,
-    },
-    twitter: {
-      card: 'summary_large_image',
-      title: data.seo?.metaTitle || data.name,
-      description: data.seo?.metaDescription || data.description,
-      images: data.images?.length > 0 ? [data.images[0]] : undefined,
-    },
-  }
+    title: data.name,
+    description: data.description,
+    
 }
 
    export default async function page(props: {
