@@ -5,6 +5,7 @@ import { fullProduct } from '@/app/interface'
 
 
 async function getData(slug: string): Promise<fullProduct | null> {
+console.log(slug)
   try {
     const query = `*[_type == "product" && slug.current == "${slug}"][0]{
       _id,
@@ -32,6 +33,7 @@ async function getData(slug: string): Promise<fullProduct | null> {
     const data = await client.fetch(query)
     return data || null
   } catch (error) {
+console.log("hi")
     console.error('Error fetching product:', error)
     return null
   }
@@ -79,6 +81,7 @@ async function getData(slug: string): Promise<fullProduct | null> {
 
    }) {
      const params = await props.params
+    console.log(params)
   const data = await getData(params.productId)
   if (!data) return notFound()
 
