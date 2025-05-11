@@ -62,7 +62,7 @@ async function getData(slug: string): Promise<fullProduct | null> {
   }
 
   // Format price with Naira symbol
-  const formatPrice = (price) => {
+  const formatPrice = (price:any) => {
     return new Intl.NumberFormat('en-NG', {
       style: 'currency',
       currency: 'NGN'
