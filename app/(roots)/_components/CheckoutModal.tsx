@@ -725,7 +725,7 @@ const items = cartDetails
                 `Shipping Inquiry\n\nItems:\n${items.join('\n')}\n\nDelivery Area: ${customCity}\nUserId : ${userId}`
               )}`}
               target="_blank"
-              disabled={!customCity}
+              onClick={!customCity ? (e) => e.preventDefault() : undefined}
               rel="noopener noreferrer"
               className="self-end px-3 py-1.5 bg-blue-600 text-white text-xs font-medium rounded hover:bg-blue-700 transition-colors"
             >
@@ -767,7 +767,7 @@ const items = cartDetails
               target="_blank"
               rel="noopener noreferrer"
               className="w-full h-full "
-             disabled={!customCity}
+             onClick={!customCity ? (e) => e.preventDefault() : undefined}
             >
               Request Quote
             </a>
