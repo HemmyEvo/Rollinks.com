@@ -753,8 +753,10 @@ const items = cartDetails
               target="_blank"
               rel="noopener noreferrer"
               className="w-full h-full "
-             onClick={!customCity ? (e) => {e.preventDefault(); setErrors(error => error.city ='City is required')}: undefined}
-            >
+             onClick={!customCity ? (e) => {
+  e.preventDefault(); 
+  setErrors(prevErrors => ({...prevErrors, city: 'City is required'}))
+} : undefined}
               Request Quote
             </a>
 ) :(
