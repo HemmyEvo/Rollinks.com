@@ -613,7 +613,7 @@ const items = cartDetails
               
               {selectedLocation?.value === 'custom' && (
                 <div className="mb-4">
-               <div>
+               <div className="w-full flex justify-between">
       <label htmlFor="customCity" className="block text-sm font-medium text-gray-700 mb-1">
         City *
         <button
@@ -752,7 +752,9 @@ const items = cartDetails
               )}`}
               target="_blank"
               rel="noopener noreferrer"
-              className="w-full h-full "
+              className={`w-full py-3 text-center px-4 rounded-md text-white font-medium focus:outline-none focus:ring-2 focus:ring-offset-2 ${
+                  loading ? 'bg-blue-400 cursor-not-allowed' : 'bg-blue-600 hover:bg-blue-700'
+                }`}
              onClick={!customCity ? (e) => {
   e.preventDefault(); 
   setErrors(prevErrors => ({...prevErrors, city: 'City is required'}))
