@@ -747,8 +747,8 @@ const items = cartDetails
                 ) : shippingFee <= 0 ? (
 
          <a
-              href={`https://wa.me/2347010331943?text=${encodeURIComponent(
-                `Shipping Inquiry\n\nItems:\n${items.join('\n')}\n\nDelivery Area: ${customCity}\nUserId : ${userId}`
+              href={`https://wa.me/+2347053142223?text=${encodeURIComponent(
+                `Shipping Inquiry\n\nItems:\n${items.join('\n')}\n\nDelivery Area: ${customCity}\n\nUserId : ${userId}`
               )}`}
               target="_blank"
               rel="noopener noreferrer"
