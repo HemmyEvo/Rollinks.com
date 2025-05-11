@@ -37,9 +37,14 @@ async function getData(slug: string): Promise<fullProduct | null> {
   }
 }
 
-export async function generateMetadata({ params }: { params: { productId: string } }): Promise<Metadata> {
+interface PageProps {
+  params: { productId: string }
+  searchParams: { [key: string]: string | string[] | undefined }
+}
+
+export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const data = await getData(params.productId)
-  
+
   if (!data) {
     return {
       title: 'Product not found',
@@ -72,7 +77,7 @@ export async function generateMetadata({ params }: { params: { productId: string
   }
 }
 
-export default async function Page({ params }: { params: { productId: string } }) {
+export default async function Page({ params }: PageProps) {
   const data = await getData(params.productId)
   if (!data) return notFound()
 
