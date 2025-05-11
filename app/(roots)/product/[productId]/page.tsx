@@ -52,12 +52,7 @@ async function getData(slug: string): Promise<fullProduct | null> {
         url: 'https://rollinks-com.vercel.app',
         images: '/rollinks-logo.jpg',
       },
-      twitter: {
-        card: 'summary',
-        title: 'Product not found - Rollinks',
-        description: 'The product you are looking for does not exist.',
-        images: '/rollinks-logo.jpg',
-      }
+     
     }
   }
 
@@ -102,28 +97,7 @@ async function getData(slug: string): Promise<fullProduct | null> {
         },
       }),
     },
-    twitter: {
-      card: 'summary_large_image',
-      title: `${data.name} | ${data.categoryName} - Rollinks`,
-      description: `${data.description} | Now ${price}${originalPrice ? ` (was ${originalPrice})` : ''}`,
-      images: data.images?.length > 0 ? data.images[0] : '/rollinks-logo.jpg',
-    },
-    alternates: {
-      canonical: `https://rollinks-com.vercel.app/products/${data.slug}`,
-    },
-    other: {
-      'product:price:amount': data.price,
-      'product:price:currency': 'NGN',
-      'product:brand': 'Rollinks',
-      'product:availability': 'in stock',
-      'product:condition': data.isNew ? 'new' : 'refurbished',
-      'product:retailer_item_id': data._id,
-      ...(originalPrice && {
-        'product:original_price:amount': data.price,
-        'product:original_price:currency': 'NGN',
-      }),
-    }
-  }
+    
 }
 
    export default async function page(props: {
