@@ -744,7 +744,7 @@ const items = cartDetails
                     Processing...
                   </span>
   </button>
-                ) : shippingFee < 0 ? (
+                ) : shippingFee <= 0 ? (
 
          <a
               href={`https://wa.me/2347010331943?text=${encodeURIComponent(
@@ -768,7 +768,7 @@ const items = cartDetails
                   loading ? 'bg-blue-400 cursor-not-allowed' : 'bg-blue-600 hover:bg-blue-700'
                 }`}
               >
-                  'Proceed to Payment'
+                  Proceed to Payment
   </button>
                 )}
             
