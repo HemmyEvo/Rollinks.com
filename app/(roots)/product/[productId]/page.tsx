@@ -1,9 +1,9 @@
-
-import { client, urlFor } from '@/lib/sanity'
+import { client } from '@/lib/sanity'
 import ProductPageClient from './ProductPageClient'
 import { notFound } from 'next/navigation'
 import { fullProduct } from '@/app/interface'
-import {Metadata} from 'next'
+import { Metadata } from 'next'
+
 async function getData(slug: string): Promise<fullProduct | null> {
   try {
     const query = `*[_type == "product" && slug.current == "${slug}"][0]{
@@ -37,33 +37,42 @@ async function getData(slug: string): Promise<fullProduct | null> {
   }
 }
 
- export const metadata: Metadata = {
-  title: data?.name,
-  description: data?.description,
-  openGraph: {
-    title: data?.name,
-    description: data?.description,
-    images: [
-      {
-        url: data?.images[0] || '/default-image.jpg', // URL of the image
-        width: 800,
-        height: 600,
-        alt: data?.name || 'Default alt text',
-      },
-    ],
-  },
-  twitter: {
-    card: 'summary_large_image',
-    title: data?.name,
-    description: data?.description,
-    images: [data?.images[0] || '/default-image.jpg'], // Twitter specific image
-  },
-};
+export async function generateMetadata({ params }: { params: { productId: string } }): Promise<Metadata> {
+  const data = await getData(params.productId)
+  
+  if (!data) {
+    return {
+      title: 'Product not found',
+      description: 'The product you are looking for does not exist.'
+    }
+  }
 
-   export default async function page(props: {
-     params: Promise<{ productId: string }>
-   }) { 
-  const params = await props.params;
+  return {
+    title: data.seo?.metaTitle || data.name,
+    description: data.seo?.metaDescription || data.description,
+    keywords: data.seo?.keywords,
+    openGraph: {
+      title: data.seo?.metaTitle || data.name,
+      description: data.seo?.metaDescription || data.description,
+      images: data.images?.length > 0 ? [
+        {
+          url: data.images[0],
+          width: 800,
+          height: 600,
+          alt: data.name,
+        }
+      ] : undefined,
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: data.seo?.metaTitle || data.name,
+      description: data.seo?.metaDescription || data.description,
+      images: data.images?.length > 0 ? [data.images[0]] : undefined,
+    },
+  }
+}
+
+export default async function Page({ params }: { params: { productId: string } }) {
   const data = await getData(params.productId)
   if (!data) return notFound()
 
