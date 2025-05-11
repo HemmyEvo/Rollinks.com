@@ -2,11 +2,11 @@ import { client } from '@/lib/sanity'
 import ProductPageClient from './ProductPageClient'
 import { notFound } from 'next/navigation'
 import { fullProduct } from '@/app/interface'
-
+import { Metadata } from 'next'
 
 async function getData(slug: string): Promise<fullProduct | null> {
   try {
-    const query = `*[_type == "product" && slug.current == "${slug}"][0]{
+    const query = `*[_type == "product" && slug.current == $slug][0]{
       _id,
       name,
       "slug": slug.current,
@@ -29,17 +29,16 @@ async function getData(slug: string): Promise<fullProduct | null> {
         keywords
       }
     }`
-    const data = await client.fetch(query)
+    
+    const data = await client.fetch<fullProduct | null>(query, { slug })
     return data || null
   } catch (error) {
     console.error('Error fetching product:', error)
     return null
   }
 }
-   export async function generateMetadata(props: {
-     params: Promise<{ productId: string }>
-   }) {
-     const params = await props.params
+
+export async function generateMetadata({ params }: { params: { productId: string } }): Promise<Metadata> {
   const data = await getData(params.productId)
 
   if (!data) {
@@ -52,7 +51,7 @@ async function getData(slug: string): Promise<fullProduct | null> {
   return {
     title: data.seo?.metaTitle || data.name,
     description: data.seo?.metaDescription || data.description,
-    keywords: data.seo?.keywords,
+    keywords: data.seo?.keywords?.join(', '),
     openGraph: {
       title: data.seo?.metaTitle || data.name,
       description: data.seo?.metaDescription || data.description,
@@ -74,11 +73,7 @@ async function getData(slug: string): Promise<fullProduct | null> {
   }
 }
 
-   export default async function page(props: {
-     params: Promise<{ productId: string }>
-     
-   }) {
-     const params = await props.params
+export default async function Page({ params }: { params: { productId: string } }) {
   const data = await getData(params.productId)
   if (!data) return notFound()
 
