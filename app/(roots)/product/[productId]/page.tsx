@@ -69,8 +69,8 @@ async function getData(slug: string): Promise<fullProduct | null> {
     }).format(price).replace('NGN', '₦');
   };
 
-  const price = formatPrice(data.discountPrice || data.price);
-  const originalPrice = data.discountPrice ? formatPrice(data.price) : null;
+  const price = formatPrice(data.price);
+  const originalPrice =  formatPrice(data.price) 
 
   return {
     title: `${data.name} | ${data.categoryName} - Rollinks`,
@@ -78,8 +78,6 @@ async function getData(slug: string): Promise<fullProduct | null> {
     keywords: [
       data.name,
       data.categoryName,
-      ...(data.skinType ? data.skinType.split(',') : []),
-      ...(data.ingredients ? data.ingredients.split(',') : []),
       'skincare',
       'beauty products',
       'Nigeria',
@@ -114,7 +112,7 @@ async function getData(slug: string): Promise<fullProduct | null> {
       canonical: `https://rollinks-com.vercel.app/products/${data.slug}`,
     },
     other: {
-      'product:price:amount': data.discountPrice || data.price,
+      'product:price:amount': data.price,
       'product:price:currency': 'NGN',
       'product:brand': 'Rollinks',
       'product:availability': 'in stock',
