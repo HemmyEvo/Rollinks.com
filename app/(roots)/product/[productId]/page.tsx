@@ -2,7 +2,7 @@ import { client } from '@/lib/sanity'
 import ProductPageClient from './ProductPageClient'
 import { notFound } from 'next/navigation'
 import { fullProduct } from '@/app/interface'
-import { Metadata, ResolvingMetadata } from 'next'
+import { Metadata } from 'next'
 
 async function getData(slug: string): Promise<fullProduct | null> {
   try {
@@ -39,8 +39,7 @@ async function getData(slug: string): Promise<fullProduct | null> {
 
 export async function generateMetadata(
   { params }: { params: { productId: string } },
-  parent: ResolvingMetadata
-): Promise<Metadata> {
+) {
   const data = await getData(params.productId)
 
   if (!data) {
