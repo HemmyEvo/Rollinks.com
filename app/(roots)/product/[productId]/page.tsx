@@ -3,7 +3,7 @@ import { client, urlFor } from '@/lib/sanity'
 import ProductPageClient from './ProductPageClient'
 import { notFound } from 'next/navigation'
 import { fullProduct } from '@/app/interface'
-
+import {Metadata} from 'next'
 async function getData(slug: string): Promise<fullProduct | null> {
   try {
     const query = `*[_type == "product" && slug.current == "${slug}"][0]{
@@ -37,7 +37,28 @@ async function getData(slug: string): Promise<fullProduct | null> {
   }
 }
 
-   
+ export const metadata: Metadata = {
+  title: data?.name,
+  description: data?.description,
+  openGraph: {
+    title: data?.name,
+    description: data?.description,
+    images: [
+      {
+        url: data?.images[0] || '/default-image.jpg', // URL of the image
+        width: 800,
+        height: 600,
+        alt: data?.name || 'Default alt text',
+      },
+    ],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: data?.name,
+    description: data?.description,
+    images: [data?.images[0] || '/default-image.jpg'], // Twitter specific image
+  },
+};
 
    export default async function page(props: {
      params: Promise<{ productId: string }>
