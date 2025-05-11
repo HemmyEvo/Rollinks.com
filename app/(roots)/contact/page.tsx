@@ -146,7 +146,7 @@ const ContactPage = () => {
             {/* Footer */}
             <div className="text-center pt-4 border-t border-white/30">
               <p className="text-sm text-gray-600">
-                Or reach us directly at <span className="font-medium text-emerald-700">07010331943</span>
+                Or reach us directly at <span className="font-medium text-emerald-700">07053142223</span>
               </p>
               <div className="flex justify-center mt-3 space-x-1">
                 <Leaf className="w-4 h-4 text-emerald-600" />
