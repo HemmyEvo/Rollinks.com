@@ -711,27 +711,12 @@ const items = cartDetails
         </span>
       ) : selectedLocation ? (
         <div className="group relative inline-flex items-center gap-1">
-          <div className="flex items-center text-gray-500 cursor-help border-b border-dashed border-gray-300 pb-0.5">
+          <div className="flex items-center text-gray-500 border-b border-dashed border-gray-300 pb-0.5">
             <FiInfo className="h-4 w-4 mr-1" />
             <span>Shipping Quote Required</span>
           </div>
           
-          <div className="absolute hidden group-hover:flex flex-col top-full mt-2 right-0 w-64 bg-white shadow-lg rounded-md p-3 text-sm border border-gray-200 z-10">
-            <p className="text-gray-700 mb-2">
-              We'll calculate shipping for {customCity}. Contact us with your items for an exact quote.
-            </p>
-            <a
-              href={`https://wa.me/2347010331943?text=${encodeURIComponent(
-                `Shipping Inquiry\n\nItems:\n${items.join('\n')}\n\nDelivery Area: ${customCity}\nUserId : ${userId}`
-              )}`}
-              target="_blank"
-              onClick={!customCity ? (e) => e.preventDefault() : undefined}
-              rel="noopener noreferrer"
-              className="self-end px-3 py-1.5 bg-blue-600 text-white text-xs font-medium rounded hover:bg-blue-700 transition-colors"
-            >
-              Request Quote
-            </a>
-          </div>
+       
         </div>
       ) : (
         <span className="text-gray-400">--</span>
@@ -745,20 +730,21 @@ const items = cartDetails
                 </div>
               </div>
               
-              <button
-                onClick={handlePayment}
              
+                {loading ? (
+                <button
+                onClick={handlePayment}
                 disabled={loading}
                 className={`w-full py-3 px-4 rounded-md text-white font-medium focus:outline-none focus:ring-2 focus:ring-offset-2 ${
                   loading ? 'bg-blue-400 cursor-not-allowed' : 'bg-blue-600 hover:bg-blue-700'
                 }`}
               >
-                {loading ? (
                   <span className="flex items-center justify-center">
                     <FiLoader className="animate-spin mr-2" />
                     Processing...
                   </span>
-                ) : selectedLocation?.value === 'custom' ?(
+  </button>
+                ) : shippingFee < 0 ? (
 
          <a
               href={`https://wa.me/2347010331943?text=${encodeURIComponent(
@@ -767,14 +753,22 @@ const items = cartDetails
               target="_blank"
               rel="noopener noreferrer"
               className="w-full h-full "
-             onClick={!customCity ? (e) => e.preventDefault() : undefined}
+             onClick={!customCity ? (e) => {e.preventDefault(); setError(error => error.city ='City is required')}: undefined}
             >
               Request Quote
             </a>
 ) :(
+ <button
+                onClick={handlePayment}
+                disabled={loading}
+                className={`w-full py-3 px-4 rounded-md text-white font-medium focus:outline-none focus:ring-2 focus:ring-offset-2 ${
+                  loading ? 'bg-blue-400 cursor-not-allowed' : 'bg-blue-600 hover:bg-blue-700'
+                }`}
+              >
                   'Proceed to Payment'
+  </button>
                 )}
-              </button>
+            
             </div>
           </div>
         </div>
