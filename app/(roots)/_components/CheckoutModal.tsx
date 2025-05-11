@@ -28,6 +28,7 @@ const CheckoutModal = ({ isOpen, onClose }: CheckoutModalProps) => {
   const [orderId, setOrderId] = useState('');
   const router = useRouter();
   const modalRef = useRef<HTMLDivElement>(null);
+const [showModal, setShowModal] = useState(false);
 
   // Form state
   const [formData, setFormData] = useState({
