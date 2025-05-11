@@ -612,9 +612,36 @@ const items = cartDetails
               
               {selectedLocation?.value === 'custom' && (
                 <div className="mb-4">
-                  <label htmlFor="customCity" className="block text-sm font-medium text-gray-700 mb-1">
-                    City *
-                  </label>
+               <div>
+      <label htmlFor="customCity" className="block text-sm font-medium text-gray-700 mb-1">
+        City *
+        <button
+          type="button"
+          className="ml-1 text-gray-400 hover:text-gray-500 focus:outline-none"
+          onClick={() => setShowModal(!showModal)}
+          aria-label="Location information"
+        >
+          <FiInfo className="h-4 w-4 inline" />
+        </button>
+      </label>
+
+      {/* Modal/Popover */}
+      {showModal && (
+        <div className="mt-2 p-3 bg-blue-50 border border-blue-100 rounded-md text-sm text-gray-700">
+          <p>
+            If your delivery location isn't listed, please use the "Request Quote" option. 
+            This will connect you with our sales team via WhatsApp to complete your order.
+          </p>
+          <button
+            type="button"
+            className="mt-2 text-blue-600 hover:text-blue-800 text-xs font-medium"
+            onClick={() => setShowModal(false)}
+          >
+            Close
+          </button>
+        </div>
+      )}
+    </div>
                   <input
                     type="text"
                     id="customCity"
@@ -697,6 +724,7 @@ const items = cartDetails
                 `Shipping Inquiry\n\nItems:\n${items.join('\n')}\n\nDelivery Area: ${customCity}\nUserId : ${userId}`
               )}`}
               target="_blank"
+              disabled={!customCity}
               rel="noopener noreferrer"
               className="self-end px-3 py-1.5 bg-blue-600 text-white text-xs font-medium rounded hover:bg-blue-700 transition-colors"
             >
@@ -738,6 +766,7 @@ const items = cartDetails
               target="_blank"
               rel="noopener noreferrer"
               className="w-full h-full "
+             disabled={!customCity}
             >
               Request Quote
             </a>
