@@ -10,7 +10,7 @@ import Category from "./(roots)/_components/Category";
 export default function Home() {
   const [isLoading, setIsLoading] = useState(true);
   const [displayText, setDisplayText] = useState("");
-  const fullText = "Welcome to Rollinks Store";
+  const fullText = "Welcome";
 
   useEffect(() => {
     const animateText = () => {
@@ -221,7 +221,7 @@ export default function Home() {
               transition={{ delay: 0.5 }}
               className="text-gray-500 text-sm"
             >
-              Loading premium experience...
+              Loading assets...
             </motion.p>
           </div>
         </div>
