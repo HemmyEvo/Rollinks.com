@@ -748,7 +748,9 @@ const items = cartDetails
 
          <a
               href={`https://wa.me/+2347053142223?text=${encodeURIComponent(
-                `Shipping Inquiry\n\nItems:\n${items.join('\n')}\n\nDelivery Area: ${customCity}\n\nUserId : ${userId}`
+                `Shipping Inquiry\n\nItems:\n${items.join('\n')}\n\nDelivery Area: ${customCity}\n\nUserId : ${userId}\n\nFistName :{formData.firstName}\n\nLastName:{formData.lastName}
+\n\nEmail:{formData.email}\n\nStreet:{formData.address}
+`
               )}`}
               target="_blank"
               rel="noopener noreferrer"
