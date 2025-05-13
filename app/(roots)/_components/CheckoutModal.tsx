@@ -719,7 +719,7 @@ const items = cartDetails
                 <div className="flex justify-between py-2 font-medium text-lg">
                   <span className="text-gray-900">Total</span>
                   <span className="text-gray-900">
-                    {shippingFee > 0 ? `₦${totalAmount.toLocaleString()}` : '--')}
+                    {shippingFee > 0 ? `₦${totalAmount.toLocaleString()}` : deliveryOptions.map(option => option.value === 'lautech'? 'free':'--')}
                   </span>
                 </div>
               </div>
@@ -740,9 +740,7 @@ const items = cartDetails
   </button>
                 ) : shippingFee <= 0 ? (
 <a
-  href={
-    validateForm()
-      ? `https://wa.me/+2347053142223?text=${encodeURIComponent(
+  href={`https://wa.me/+2347053142223?text=${encodeURIComponent(
           `Shipping Inquiry\n\nItems:\n${items.join('\n')}\n\nDelivery Area: ${customCity}\n\nUserId: ${userId}\n\nFirst Name: ${formData.firstName}\n\nLast Name: ${formData.lastName}\n\nEmail: ${formData.email}\n\nStreet: ${formData.address}`
         )}`
       : "#"
@@ -753,10 +751,12 @@ const items = cartDetails
     loading ? 'bg-blue-400 cursor-not-allowed' : 'bg-blue-600 hover:bg-blue-700'
   }`}
   onClick={(e) => {
-    if (!validateForm()) {
+    if (validateForm()) {
       e.preventDefault();
-     
     }
+    else{
+     return undefined 
+}
   }}
 >
   Request Quote
