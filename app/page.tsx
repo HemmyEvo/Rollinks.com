@@ -50,7 +50,12 @@ useEffect(() => {
     });
   };
 
-  const createMediaLoadPromise = (media: HTMLMediaElement) => {
+  const createMediaLoadPromise = (element: Element) => {
+    if (!(element instanceof HTMLMediaElement)) {
+      return Promise.resolve();
+    }
+    
+    const media = element as HTMLMediaElement;
     return new Promise<void>((resolve) => {
       if (media.readyState >= 3) { // HAVE_FUTURE_DATA
         resolve();
@@ -108,52 +113,37 @@ useEffect(() => {
   };
 
   const speakWelcome = () => {
-    if (typeof window !== "undefined") {
-      const handleUserInteraction = () => {
-        const words = fullText.split(' ');
-        let currentWordIndex = 0;
+    if (typeof window !== "undefined" && 'speechSynthesis' in window) {
+      const words = fullText.split(' ');
+      let currentWordIndex = 0;
+      
+      const speakNextWord = () => {
+        if (currentWordIndex >= words.length) {
+          checkAssetsLoaded();
+          return;
+        }
         
-        const speakNextWord = () => {
-          if (currentWordIndex >= words.length) {
-            checkAssetsLoaded();
-            return;
-          }
-          
-          const word = words[currentWordIndex];
-          const speech = new SpeechSynthesisUtterance(word);
-          speech.volume = 1;
-          speech.rate = 0.9;
-          speech.pitch = 1.1;
+        const word = words[currentWordIndex];
+        const speech = new SpeechSynthesisUtterance(word);
+        speech.volume = 1;
+        speech.rate = 0.9;
+        speech.pitch = 1.1;
 
-          setDisplayText(words.slice(0, currentWordIndex + 1).join(' '));
+        setDisplayText(words.slice(0, currentWordIndex + 1).join(' '));
 
-          speech.onend = () => {
-            currentWordIndex++;
-            setTimeout(speakNextWord, 100);
-          };
-
-          window.speechSynthesis.cancel();
-          window.speechSynthesis.speak(speech);
+        speech.onend = () => {
+          currentWordIndex++;
+          setTimeout(speakNextWord, 100);
         };
 
-        speakNextWord();
-
-        document.removeEventListener("click", handleUserInteraction);
-        document.removeEventListener("touchstart", handleUserInteraction);
+        window.speechSynthesis.cancel();
+        window.speechSynthesis.speak(speech);
       };
 
-      document.addEventListener("click", handleUserInteraction);
-      document.addEventListener("touchstart", handleUserInteraction);
-
-      const fallbackTimer = setTimeout(() => {
-        document.removeEventListener("click", handleUserInteraction);
-        document.removeEventListener("touchstart", handleUserInteraction);
-        animateText();
-        checkAssetsLoaded();
-      }, 3000);
-
-      return () => clearTimeout(fallbackTimer);
+      // Start speaking automatically
+      speakNextWord();
     } else {
+      // Fallback to text animation if speech synthesis isn't available
       animateText();
       checkAssetsLoaded();
     }
@@ -162,7 +152,7 @@ useEffect(() => {
   speakWelcome();
 
   return () => {
-    if (typeof window !== "undefined") {
+    if (typeof window !== "undefined" && 'speechSynthesis' in window) {
       window.speechSynthesis.cancel();
     }
   };
