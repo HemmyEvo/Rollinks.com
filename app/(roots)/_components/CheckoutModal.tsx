@@ -50,36 +50,35 @@ const [showModal, setShowModal] = useState(false);
   const [selectedLocation, setSelectedLocation] = useState<Option | null>(null);
   const [customCity, setCustomCity] = useState('');
   const [shippingFee, setShippingFee] = useState(0);
+  const [deliveryOptions, setDeliveryOptions] = useState([])
 
   const { userId } = useAuth();
   const { isAuthenticated } = useConvexAuth();
   const me = useQuery(api.user.getMe, isAuthenticated ? undefined : "skip");
+useEffect(() => {
+    async function fetchDeliveryOptions() {
+      try {
+        const data = await client.fetch(`
+          *[_type == "deliveryOption"] {
+            name,
+            value,
+            price,
+            description,
+            customCityTriggers
+          }
+        `)
+        setDeliveryOptions(data)
+      } catch (err) {
+        console.log(err)
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    fetchDeliveryOptions()
+  }, [])
 
 
-  // Delivery pricing configuration for skincare orders from Adenike, Ogbomoso
-
-const deliveryPrices = {
-  lautech: 300, // LAUTECH Campus (short-distance bike delivery)
-  ogbomoso: {
-    central: 500,   // Central Ogbomoso (e.g., Adenike, Takie, Under G)
-    outskirts: 800, // Outskirts of Ogbomoso (e.g., Aroje, Iresaadu axis)
-  },
-  intercity: {
-    nearby: 1500,   // Nearby cities (e.g., Ilorin, Ibadan) via waybill or bus
-    mid: 3500,      // Mid-distance cities (e.g., Lagos, Abuja) via intercity buses
-    far: 6000,      // Far cities (e.g., Port Harcourt, Kano) via long-distance logistics
-  },
-};
-
-const predefinedLocations = [
-  { value: 'lautech', label: 'LAUTECH Campus' },
-  { value: 'ogbomoso-central', label: 'Ogbomoso Central (Adenike, Takie, Under G)' },
-  { value: 'ogbomoso-outskirts', label: 'Ogbomoso Outskirts (Aroje, Iresaadu)' },
-  { value: 'intercity-nearby', label: 'Nearby Cities (Ibadan, Ilorin)' },
-  { value: 'intercity-mid', label: 'Mid-Distance Cities (Lagos, Abuja)' },
-  { value: 'intercity-far', label: 'Far Cities (Port Harcourt, Kano)' },
-{ value: 'custom', label: 'Others' },
-];
   // Build the country list
   const countries = useMemo(() => {
     return data.map((country: any) => ({
@@ -141,77 +140,46 @@ const predefinedLocations = [
     setErrors(prev => ({ ...prev, state: '', location: '' }));
   };
 
-  const handleLocationChange = (selectedOption: Option | null) => {
-    setSelectedLocation(selectedOption);
-    setCustomCity('');
-    setErrors(prev => ({ ...prev, location: '', city: '' }));
+  
+  // Convert delivery options to select options
+  const locationOptions = deliveryOptions.map(option => ({
+    value: option.value,
+    label: `${option.name} - ₦${option.price}`,
+    description: option.description
+  }))
 
-    if (!selectedOption) return;
-    
-    switch (selectedOption.value) {
-  case 'lautech':
-    setShippingFee(deliveryPrices.lautech);
-    break;
-  case 'ogbomoso-central':
-    setShippingFee(deliveryPrices.ogbomoso.central);
-    break;
-  case 'ogbomoso-outskirts':
-    setShippingFee(deliveryPrices.ogbomoso.outskirts);
-    break;
-  case 'intercity-nearby':
-    setShippingFee(deliveryPrices.intercity.nearby);
-    break;
-  case 'intercity-mid':
-    setShippingFee(deliveryPrices.intercity.mid);
-    break;
-  case 'intercity-far':
-    setShippingFee(deliveryPrices.intercity.far);
-    break;
-  case 'custom':
-    setShippingFee(0);
-    break;
-}
-  };
+  // Add custom option
+  locationOptions.push({ value: 'custom', label: 'Other Locations' })
 
-  // Detect location from user input
-  useEffect(() => {
-  if (selectedLocation?.value !== 'custom' || !customCity.trim()) return;
+  const handleLocationChange = (selectedOption) => {
+    setSelectedLocation(selectedOption)
+    setCustomCity('')
+    setErrors(prev => ({ ...prev, location: '', city: '' }))
 
-  const city = customCity.toLowerCase();
+    if (!selectedOption) return
 
-  if (city.includes('lautech') || city.includes('university')) {
-    setShippingFee(deliveryPrices.lautech);
-  } else if (city.includes('ogbomoso')) {
-    // Assume central for generic "Ogbomoso"
-    setShippingFee(deliveryPrices.ogbomoso.central);
-  } else if (
-    city.includes('ilorin') ||
-    city.includes('ibadan') ||
-    city.includes('osogbo') ||
-    city.includes('oshogbo')
-  ) {
-    setShippingFee(deliveryPrices.intercity.nearby);
-  } else if (
-    city.includes('lagos') ||
-    city.includes('abuja') ||
-    city.includes('abeokuta') ||
-    city.includes('akure')
-  ) {
-    setShippingFee(deliveryPrices.intercity.mid);
-  } else if (
-    city.includes('port harcourt') ||
-    city.includes('kano') ||
-    city.includes('maiduguri') ||
-    city.includes('uyo') ||
-    city.includes('calabar') ||
-    city.includes('yola')
-  ) {
-    setShippingFee(deliveryPrices.intercity.far);
-  } else {
-    // Default if city not matched — e.g. unknown
-    setShippingFee(0);
+    if (selectedOption.value === 'custom') {
+      setShippingFee(0)
+    } else {
+      const option = deliveryOptions.find(opt => opt.value === selectedOption.value)
+      setShippingFee(option?.price || 0)
+    }
   }
-}, [customCity, selectedLocation]);
+
+  // Detect location from custom city input
+  useEffect(() => {
+    if (selectedLocation?.value !== 'custom' || !customCity.trim() || !deliveryOptions.length) return
+
+    const city = customCity.toLowerCase()
+    const matchedOption = deliveryOptions.find(option => 
+      option.customCityTriggers?.some(trigger => 
+        city.includes(trigger.toLowerCase())
+      )
+    )
+
+    setShippingFee(matchedOption?.price || 0)
+  }, [customCity, selectedLocation, deliveryOptions])
+  
   const totalAmount = useMemo(() => {
     return (totalPrice || 0) + shippingFee;
   }, [totalPrice, shippingFee]);
@@ -227,7 +195,18 @@ const predefinedLocations = [
   };
 
   const handlePayment = async () => {
-    if (!validateForm()) return;
+      
+  if (!validateForm()) {
+    // Scroll to first error
+    const firstError = Object.keys(errors)[0];
+    if (firstError) {
+      document.querySelector(`[name="${firstError}"]`)?.scrollIntoView({
+        behavior: 'smooth',
+        block: 'center'
+      });
+    }
+    return;
+  }
     handleCartClick()
     setLoading(true);
     
