@@ -597,7 +597,7 @@ const items = cartDetails
     <option value="">Select a location</option>
     {deliveryOptions.map(option => (
       <option key={option.value} value={option.value}>
-        {option.name} - ₦{option.price}
+        {option.name} - {option.price === 0 ?'free': '₦'+ option.price}
       </option>
     ))}
     <option value="custom">Other Location</option>
@@ -608,8 +608,8 @@ const items = cartDetails
 {selectedLocation?.value === 'custom' && (
   <div className="mb-4">
     <div className="w-full flex justify-between">
-      <label htmlFor="customCity" className="block text-sm font-medium text-gray-700 mb-1">
-        City *
+      <label htmlFor="customCity" className="block text-sm font-medium text-gray-700 w-full flex justify-between mb-1">
+        Preferred Location*
         <button
           type="button"
           className="ml-1 text-gray-400 hover:text-gray-500 focus:outline-none"
@@ -719,7 +719,7 @@ const items = cartDetails
                 <div className="flex justify-between py-2 font-medium text-lg">
                   <span className="text-gray-900">Total</span>
                   <span className="text-gray-900">
-                    {shippingFee > 0 ? `₦${totalAmount.toLocaleString()}` : '--'}
+                    {shippingFee > 0 ? `₦${totalAmount.toLocaleString()}` : deliveryOptions.map(option => option.value === 'lautech'? 'free':'--'}
                   </span>
                 </div>
               </div>
@@ -751,9 +751,8 @@ const items = cartDetails
               className={`w-full py-3 text-center px-4 rounded-md text-white font-medium focus:outline-none focus:ring-2 focus:ring-offset-2 ${
                   loading ? 'bg-blue-400 cursor-not-allowed' : 'bg-blue-600 hover:bg-blue-700'
                 }`}
-             onClick={!customCity ? (e) => {
+             onClick={validateForm() ? (e) => {
   e.preventDefault(); 
-  setErrors(prevErrors => ({...prevErrors, city: 'City is required'}))
 } : undefined}
 >
               Request Quote
