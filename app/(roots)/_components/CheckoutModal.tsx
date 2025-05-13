@@ -64,7 +64,7 @@ const [showModal, setShowModal] = useState(false);
   const [selectedLocation, setSelectedLocation] = useState<Option | null>(null);
   const [customCity, setCustomCity] = useState('');
   const [shippingFee, setShippingFee] = useState(0);
-  const [deliveryOptions, setDeliveryOptions] = useState([])
+  const [deliveryOptions, setDeliveryOptions] = useState<DeliveryOption[]>([])
 
   const { userId } = useAuth();
   const { isAuthenticated } = useConvexAuth();
