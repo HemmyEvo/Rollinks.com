@@ -180,7 +180,7 @@ const handleLocationChange = (selectedOption: SelectOption | null) => {
     setShippingFee(0);
   } else {
     const option = deliveryOptions.find((opt: DeliveryOption) => opt.value === selectedOption.value);
-     console.log(option)
+     setShippingFee(option?.price || 0);
   }
 };
 
@@ -597,7 +597,7 @@ const items = cartDetails
     <option value="">Select a location</option>
     {deliveryOptions.map(option => (
       <option key={option.value} value={option.value}>
-        {option.label} - ₦{option.price}
+        {option.name} - ₦{option.price}
       </option>
     ))}
     <option value="custom">Other Location</option>
