@@ -739,24 +739,28 @@ const items = cartDetails
                   </span>
   </button>
                 ) : shippingFee <= 0 ? (
-
-         <a
-              href={`https://wa.me/+2347053142223?text=${encodeURIComponent(
-                `Shipping Inquiry\n\nItems:\n${items.join('\n')}\n\nDelivery Area: ${customCity}\n\nUserId : ${userId}\n\nFistName :${formData.firstName}\n\nLastName:${formData.lastName}
-\n\nEmail:${formData.email}\n\nStreet:${formData.address}
-`
-              )}`}
-              target="_blank"
-              rel="noopener noreferrer"
-              className={`w-full py-3 text-center px-4 rounded-md text-white font-medium focus:outline-none focus:ring-2 focus:ring-offset-2 ${
-                  loading ? 'bg-blue-400 cursor-not-allowed' : 'bg-blue-600 hover:bg-blue-700'
-                }`}
-             onClick={validateForm() ? (e) => {
-  e.preventDefault(); 
-} : undefined}
+<a
+  href={
+    validateForm()
+      ? `https://wa.me/+2347053142223?text=${encodeURIComponent(
+          `Shipping Inquiry\n\nItems:\n${items.join('\n')}\n\nDelivery Area: ${customCity}\n\nUserId: ${userId}\n\nFirst Name: ${formData.firstName}\n\nLast Name: ${formData.lastName}\n\nEmail: ${formData.email}\n\nStreet: ${formData.address}`
+        )}`
+      : "#"
+  }
+  target="_blank"
+  rel="noopener noreferrer"
+  className={`w-full py-3 text-center px-4 rounded-md text-white font-medium focus:outline-none focus:ring-2 focus:ring-offset-2 ${
+    loading ? 'bg-blue-400 cursor-not-allowed' : 'bg-blue-600 hover:bg-blue-700'
+  }`}
+  onClick={(e) => {
+    if (!validateForm()) {
+      e.preventDefault();
+     
+    }
+  }}
 >
-              Request Quote
-            </a>
+  Request Quote
+</a>
 ) :(
  <button
                 onClick={handlePayment}
