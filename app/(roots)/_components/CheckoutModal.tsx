@@ -161,7 +161,7 @@ useEffect(() => {
     if (selectedOption.value === 'custom') {
       setShippingFee(0)
     } else {
-      const option = deliveryOptions.find(opt => opt.value === selectedOption.value)
+      const option = deliveryOptions.find((opt:any) => opt.value === selectedOption.value)
       setShippingFee(option?.price || 0)
     }
   }
@@ -171,8 +171,8 @@ useEffect(() => {
     if (selectedLocation?.value !== 'custom' || !customCity.trim() || !deliveryOptions.length) return
 
     const city = customCity.toLowerCase()
-    const matchedOption = deliveryOptions.find(option => 
-      option.customCityTriggers?.some(trigger => 
+    const matchedOption = deliveryOptions.find((option:any) => 
+      option.customCityTriggers?.some((trigger:any) => 
         city.includes(trigger.toLowerCase())
       )
     )
