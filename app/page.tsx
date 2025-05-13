@@ -145,7 +145,7 @@ export default function Home() {
   };
 
   return (
-    <div className={`${is loading ? 'overflow-hidden':''}`}>
+    <div className={`${isLoading ? 'overflow-hidden':''}`}>
       {/* Enhanced Loading Screen */}
       {isLoading && (
         <div className="fixed overflow-hidden inset-0 z-50 bg-white flex flex-col items-center justify-center">
