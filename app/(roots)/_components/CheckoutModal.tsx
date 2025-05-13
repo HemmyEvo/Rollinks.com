@@ -58,7 +58,7 @@ const [showModal, setShowModal] = useState(false);
   const [emailWarning, setEmailWarning] = useState(false);
 
   // Location state
-  const [selectedCountry, setSelectedCountry] = useState<Option | null>(null);
+  const [selectedCountry, setSelectedCountry] = useState<any| null>(null);
   const [selectedState, setSelectedState] = useState<Option[]| null>(null);
   const [stateOptions, setStateOptions] = useState<Option[]>([]);
   const [selectedLocation, setSelectedLocation] = useState<any | null>(null);
