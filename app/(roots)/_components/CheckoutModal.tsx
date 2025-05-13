@@ -180,7 +180,7 @@ const handleLocationChange = (selectedOption: SelectOption | null) => {
     setShippingFee(0);
   } else {
     const option = deliveryOptions.find((opt: DeliveryOption) => opt.value === selectedOption.value);
-     setShippingFee((option as DeliveryOption)?.price || 0);
+     console.log(option)
   }
 };
 
