@@ -54,7 +54,7 @@ export default function Home() {
     };
 
     const speakWelcome = () => {
-      if (typeof window !== "undefined" && "speechSynthesis" in window) {
+      if (typeof window === "undefined" && "speechSynthesis" in window) {
         // Mobile-friendly speech synthesis with user gesture requirement
         const handleUserInteraction = () => {
           const speech = new SpeechSynthesisUtterance(fullText);
@@ -148,7 +148,7 @@ export default function Home() {
     <>
       {/* Enhanced Loading Screen */}
       {isLoading && (
-        <div className="fixed inset-0 z-50 bg-white flex flex-col items-center justify-center">
+        <div className="fixed overflow-hidden inset-0 z-50 bg-white flex flex-col items-center justify-center">
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
