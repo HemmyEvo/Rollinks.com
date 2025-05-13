@@ -54,7 +54,7 @@ export default function Home() {
     };
 
     const speakWelcome = () => {
-      if (typeof window === "undefined" && "speechSynthesis" in window) {
+      if (typeof window !== "undefined") {
         // Mobile-friendly speech synthesis with user gesture requirement
         const handleUserInteraction = () => {
           const speech = new SpeechSynthesisUtterance(fullText);
@@ -96,7 +96,7 @@ export default function Home() {
     speakWelcome();
 
     return () => {
-      if (typeof window !== "undefined" && "speechSynthesis" in window) {
+      if (typeof window !== "undefined" ) {
         window.speechSynthesis.cancel();
       }
     };
@@ -145,7 +145,7 @@ export default function Home() {
   };
 
   return (
-    <>
+    <div className={${is loading ? 'overflow-hidden':''}}>
       {/* Enhanced Loading Screen */}
       {isLoading && (
         <div className="fixed overflow-hidden inset-0 z-50 bg-white flex flex-col items-center justify-center">
@@ -442,6 +442,6 @@ export default function Home() {
           </div>
         </section>
       </div>
-    </>
+    </div>
   );
 }
