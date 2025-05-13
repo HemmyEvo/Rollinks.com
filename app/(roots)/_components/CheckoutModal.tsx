@@ -719,7 +719,7 @@ const items = cartDetails
                 <div className="flex justify-between py-2 font-medium text-lg">
                   <span className="text-gray-900">Total</span>
                   <span className="text-gray-900">
-                    {shippingFee > 0 ? `₦${totalAmount.toLocaleString()}` : deliveryOptions.map(option => option.value === 'lautech'? 'free':'--')}
+                    {shippingFee > 0 ? `₦${totalAmount.toLocaleString()}` : '--')}
                   </span>
                 </div>
               </div>
