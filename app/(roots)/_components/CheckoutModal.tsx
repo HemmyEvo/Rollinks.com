@@ -21,6 +21,20 @@ interface Option {
   label: string;
 }
 
+interface DeliveryOption {
+  value: string;
+  name: string;
+  price: number;
+  description?: string;
+  customCityTriggers?: string[];
+}
+
+interface SelectOption {
+  value: string;
+  label: string;
+  description?: string;
+}
+
 const CheckoutModal = ({ isOpen, onClose }: CheckoutModalProps) => {
   const { totalPrice, clearCart,handleCartClick, cartDetails } = useShoppingCart();
   const [loading, setLoading] = useState(false);
@@ -142,44 +156,47 @@ useEffect(() => {
 
   
   // Convert delivery options to select options
-  const locationOptions = deliveryOptions.map((option:any) => ({
-    value: option.value,
-    label: `${option.name} - ₦${option.price}`,
-    description: option.description
-  }))
+  const locationOptions: SelectOption[] = deliveryOptions.map((option: DeliveryOption) => ({
+  value: option.value,
+  label: `${option.name} - ₦${option.price}`,
+  description: option.description
+}));
 
-  // Add custom option
-  locationOptions.push({ value: 'custom', label: 'Other Locations', description :''})
+// Add custom option
+locationOptions.push({ 
+  value: 'custom', 
+  label: 'Other Locations', 
+  description: '' 
+});
 
-  const handleLocationChange = (selectedOption:any) => {
-    setSelectedLocation(selectedOption)
-    setCustomCity('')
-    setErrors(prev => ({ ...prev, location: '', city: '' }))
+const handleLocationChange = (selectedOption: SelectOption | null) => {
+  setSelectedLocation(selectedOption);
+  setCustomCity('');
+  setErrors(prev => ({ ...prev, location: '', city: '' }));
 
-    if (!selectedOption) return
+  if (!selectedOption) return;
 
-    if (selectedOption.value === 'custom') {
-      setShippingFee(0)
-    } else {
-      const option = deliveryOptions.find((opt:any) => opt.value === selectedOption.value)
-      setShippingFee(option?.price || 0)
-    }
+  if (selectedOption.value === 'custom') {
+    setShippingFee(0);
+  } else {
+    const option = deliveryOptions.find((opt: DeliveryOption) => opt.value === selectedOption.value);
+    setShippingFee(option?.price || 0);
   }
+};
 
-  // Detect location from custom city input
-  useEffect(() => {
-    if (selectedLocation?.value !== 'custom' || !customCity.trim() || !deliveryOptions.length) return
+// Detect location from custom city input
+useEffect(() => {
+  if (selectedLocation?.value !== 'custom' || !customCity.trim() || !deliveryOptions.length) return;
 
-    const city = customCity.toLowerCase()
-    const matchedOption = deliveryOptions.find((option:any) => 
-      option.customCityTriggers?.some((trigger:any) => 
-        city.includes(trigger.toLowerCase())
-      )
+  const city = customCity.toLowerCase();
+  const matchedOption = deliveryOptions.find((option: DeliveryOption) => 
+    option.customCityTriggers?.some((trigger: string) => 
+      city.includes(trigger.toLowerCase())
     )
+  );
 
-    setShippingFee(matchedOption?.price || 0)
-  }, [customCity, selectedLocation, deliveryOptions])
-  
+  setShippingFee(matchedOption?.price || 0);
+}, [customCity, selectedLocation, deliveryOptions]);
   const totalAmount = useMemo(() => {
     return (totalPrice || 0) + shippingFee;
   }, [totalPrice, shippingFee]);
