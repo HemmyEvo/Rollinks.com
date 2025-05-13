@@ -713,13 +713,13 @@ const items = cartDetails
        
         </div>
       ) : (
-        <span className="text-gray-400">--</span>
+        <span className="text-gray-400">{deliveryOptions.map(option => option.value === 'lautech'? 'free':'--'}</span>
       )}
     </div>
                 <div className="flex justify-between py-2 font-medium text-lg">
                   <span className="text-gray-900">Total</span>
                   <span className="text-gray-900">
-                    {shippingFee > 0 ? `₦${totalAmount.toLocaleString()}` : deliveryOptions.map(option => option.value === 'lautech'? 'free':'--')}
+                    {shippingFee > 0 ? `₦${totalAmount.toLocaleString()}` : '--')}
                   </span>
                 </div>
               </div>
@@ -751,7 +751,7 @@ const items = cartDetails
     loading ? 'bg-blue-400 cursor-not-allowed' : 'bg-blue-600 hover:bg-blue-700'
   }`}
   onClick={(e) => {
-    if (validateForm()) {
+    if (!validateForm()) {
       e.preventDefault();
     }
     else{
