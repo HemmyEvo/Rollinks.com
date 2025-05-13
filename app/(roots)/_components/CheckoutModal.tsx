@@ -142,7 +142,7 @@ useEffect(() => {
 
   
   // Convert delivery options to select options
-  const locationOptions = deliveryOptions.map(option => ({
+  const locationOptions = deliveryOptions.map(option:any => ({
     value: option.value,
     label: `${option.name} - ₦${option.price}`,
     description: option.description
