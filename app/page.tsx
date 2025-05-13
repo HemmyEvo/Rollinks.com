@@ -111,7 +111,7 @@ export default function Home() {
     {
       icon: <Truck className="w-6 h-6" />,
       title: "Free Shipping",
-      label: "Free shipping on all orders over $99",
+      label: "Enjoy free shipping on orders of 5+ products delivered to Lautech Campus!",
     },
     {
       icon: <HandCoins className="w-6 h-6" />,
