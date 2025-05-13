@@ -149,7 +149,7 @@ useEffect(() => {
   }))
 
   // Add custom option
-  locationOptions.push({ value: 'custom', label: 'Other Locations' })
+  locationOptions.push({ value: 'custom', label: 'Other Locations', description :''})
 
   const handleLocationChange = (selectedOption) => {
     setSelectedLocation(selectedOption)
