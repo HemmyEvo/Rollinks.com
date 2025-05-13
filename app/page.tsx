@@ -10,97 +10,163 @@ import Category from "./(roots)/_components/Category";
 export default function Home() {
   const [isLoading, setIsLoading] = useState(true);
   const [displayText, setDisplayText] = useState("");
-  const fullText = "Welcome";
+  const fullText = "Welcome to Rollinks Skincare";
 
-  useEffect(() => {
-    const animateText = () => {
-      let currentIndex = 0;
-      const interval = setInterval(() => {
-        if (currentIndex <= fullText.length) {
-          setDisplayText(fullText.substring(0, currentIndex));
-          currentIndex++;
-        } else {
-          clearInterval(interval);
-          checkAssetsLoaded();
-        }
-      }, 100);
-    };
+useEffect(() => {
+  const animateText = () => {
+    let currentIndex = 0;
+    const interval = setInterval(() => {
+      if (currentIndex <= fullText.length) {
+        setDisplayText(fullText.substring(0, currentIndex));
+        currentIndex++;
+      } else {
+        clearInterval(interval);
+        checkAssetsLoaded();
+      }
+    }, 100);
+  };
 
-    const checkAssetsLoaded = () => {
+  const createImageLoadPromise = (img: HTMLImageElement) => {
+    return new Promise<void>((resolve) => {
+      if (img.complete && img.naturalHeight !== 0) {
+        resolve();
+        return;
+      }
+
+      const onLoad = () => {
+        img.removeEventListener('load', onLoad);
+        img.removeEventListener('error', onError);
+        resolve();
+      };
+
+      const onError = () => {
+        img.removeEventListener('load', onLoad);
+        img.removeEventListener('error', onError);
+        resolve();
+      };
+
+      img.addEventListener('load', onLoad);
+      img.addEventListener('error', onError);
+    });
+  };
+
+  const createMediaLoadPromise = (media: HTMLMediaElement) => {
+    return new Promise<void>((resolve) => {
+      if (media.readyState >= 3) { // HAVE_FUTURE_DATA
+        resolve();
+        return;
+      }
+
+      const onCanPlay = () => {
+        media.removeEventListener('canplay', onCanPlay);
+        media.removeEventListener('error', onError);
+        resolve();
+      };
+
+      const onError = () => {
+        media.removeEventListener('canplay', onCanPlay);
+        media.removeEventListener('error', onError);
+        resolve();
+      };
+
+      media.addEventListener('canplay', onCanPlay);
+      media.addEventListener('error', onError);
+    });
+  };
+
+  const createTimeoutPromise = (ms: number) => {
+    return new Promise((_, reject) => {
+      setTimeout(() => reject(new Error(`Asset loading timed out after ${ms}ms`)), ms);
+    });
+  };
+
+  const checkAssetsLoaded = async () => {
+    try {
       const images = Array.from(document.images);
+      const mediaElements = Array.from(document.querySelectorAll('video, audio'));
       
-      if(images.length !== 0){
-      setTimeout(() => setIsLoading(false), 1500);
-}
-      let loadedCount = 0;
-      const imageLoadPromises = images.map((img) => {
-        console.log(img)
-        if (img.complete) {
-          loadedCount++;
-          return Promise.resolve();
-        }
-        return new Promise<void>((resolve) => {
-          img.addEventListener("load", () => {
-            loadedCount++;
-            resolve();
-          });
-          img.addEventListener("error", () => resolve());
-        });
-      });
+      if (images.length === 0 && mediaElements.length === 0) {
+        setTimeout(() => setIsLoading(false), 500);
+        return;
+      }
 
-      Promise.all(imageLoadPromises).then(() => {
-        setTimeout(() => setIsLoading(false), 1500);
-      });
-    };
+      const assetPromises = [
+        ...images.map(createImageLoadPromise),
+        ...mediaElements.map(createMediaLoadPromise)
+      ];
 
-    const speakWelcome = () => {
-      if (typeof window !== "undefined") {
-        // Mobile-friendly speech synthesis with user gesture requirement
-        const handleUserInteraction = () => {
-          const speech = new SpeechSynthesisUtterance(fullText);
+      await Promise.race([
+        Promise.all(assetPromises),
+        createTimeoutPromise(3000)
+      ]);
+
+      setTimeout(() => setIsLoading(false), 500);
+    } catch (error) {
+      console.error('Asset loading error:', error);
+      setIsLoading(false);
+    }
+  };
+
+  const speakWelcome = () => {
+    if (typeof window !== "undefined") {
+      const handleUserInteraction = () => {
+        const words = fullText.split(' ');
+        let currentWordIndex = 0;
+        
+        const speakNextWord = () => {
+          if (currentWordIndex >= words.length) {
+            checkAssetsLoaded();
+            return;
+          }
+          
+          const word = words[currentWordIndex];
+          const speech = new SpeechSynthesisUtterance(word);
           speech.volume = 1;
           speech.rate = 0.9;
           speech.pitch = 1.1;
 
-          // Mobile browsers often require this to work
-          window.speechSynthesis.cancel();
-          
-          speech.onstart = animateText;
-          speech.onend = checkAssetsLoaded;
-          window.speechSynthesis.speak(speech);
+          setDisplayText(words.slice(0, currentWordIndex + 1).join(' '));
 
-          // Remove the event listener after first interaction
-          document.removeEventListener("click", handleUserInteraction);
-          document.removeEventListener("touchstart", handleUserInteraction);
+          speech.onend = () => {
+            currentWordIndex++;
+            setTimeout(speakNextWord, 100);
+          };
+
+          window.speechSynthesis.cancel();
+          window.speechSynthesis.speak(speech);
         };
 
-        // Add event listeners for both click and touch
-        document.addEventListener("click", handleUserInteraction);
-        document.addEventListener("touchstart", handleUserInteraction);
+        speakNextWord();
 
-        // Fallback in case no interaction occurs
-        const fallbackTimer = setTimeout(() => {
-          document.removeEventListener("click", handleUserInteraction);
-          document.removeEventListener("touchstart", handleUserInteraction);
-          animateText();
-          checkAssetsLoaded();
-        }, 3000);
+        document.removeEventListener("click", handleUserInteraction);
+        document.removeEventListener("touchstart", handleUserInteraction);
+      };
 
-        return () => clearTimeout(fallbackTimer);
-      } else {
+      document.addEventListener("click", handleUserInteraction);
+      document.addEventListener("touchstart", handleUserInteraction);
+
+      const fallbackTimer = setTimeout(() => {
+        document.removeEventListener("click", handleUserInteraction);
+        document.removeEventListener("touchstart", handleUserInteraction);
         animateText();
         checkAssetsLoaded();
-      }
-    };
+      }, 3000);
 
-    speakWelcome();
+      return () => clearTimeout(fallbackTimer);
+    } else {
+      animateText();
+      checkAssetsLoaded();
+    }
+  };
 
-    return () => {
-      if (typeof window !== "undefined" ) {
-        window.speechSynthesis.cancel();
-      }
-    };
-  }, []);
+  speakWelcome();
+
+  return () => {
+    if (typeof window !== "undefined") {
+      window.speechSynthesis.cancel();
+    }
+  };
+}, []);
 
   const heroFooter = [
     {
