@@ -713,7 +713,7 @@ const items = cartDetails
        
         </div>
       ) : (
-        <span className="text-gray-400">{deliveryOptions.map(option => option.value === 'lautech'? 'free':'--')}</span>
+        <span className="text-gray-400">{deliveryOptions.map(option => option.value === 'lautech' ? 'free' : '--')}</span>
       )}
     </div>
                 <div className="flex justify-between py-2 font-medium text-lg">
