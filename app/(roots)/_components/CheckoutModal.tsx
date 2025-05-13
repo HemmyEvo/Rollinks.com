@@ -738,7 +738,7 @@ const items = cartDetails
                     Processing...
                   </span>
   </button>
-                ) : shippingFee <= 0 ? (
+                ) : customCity && shippingFee <= 0 ? (
 <a
   href={`https://wa.me/+2347053142223?text=${encodeURIComponent(
           `Shipping Inquiry\n\nItems:\n${items.join('\n')}\n\nDelivery Area: ${customCity}\n\nUserId: ${userId}\n\nFirst Name: ${formData.firstName}\n\nLast Name: ${formData.lastName}\n\nEmail: ${formData.email}\n\nStreet: ${formData.address}`
