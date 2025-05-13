@@ -585,31 +585,29 @@ const items = cartDetails
                 {errors.state && <p className="mt-1 text-sm text-red-600">{errors.state}</p>}
               </div>
               
-              <div className="mb-4">
-                <label className="block text-sm font-medium text-gray-700 mb-1">Delivery Location *</label>
-                <Select
-                  options={predefinedLocations}
-                  value={selectedLocation}
-                  onChange={handleLocationChange}
-                  placeholder="Select Delivery Location"
-                  className={`${errors.location ? 'border-red-500 rounded-md' : ''}`}
-                  styles={{
-                    control: (base, state) => ({
-                      ...base,
-                      borderColor: errors.location ? '#ef4444' : '#d1d5db',
-                      minHeight: '42px',
-                      '&:hover': {
-                        borderColor: errors.location ? '#ef4444' : '#9ca3af'
-                      }
-                    })
-                  }}
-                />
-                {errors.location && <p className="mt-1 text-sm text-red-600">{errors.location}</p>}
-              </div>
-              
-              {selectedLocation?.value === 'custom' && (
-                <div className="mb-4">
-               <div className="w-full flex justify-between">
+            <div className="mb-4">
+  <label className="block text-sm font-medium text-gray-700 mb-1">Delivery Location *</label>
+  <select
+    value={selectedLocation?.value || ''}
+    onChange={(e) => handleLocationChange(
+      locationOptions.find(opt => opt.value === e.target.value) || null
+    )}
+    className={`w-full p-2 border rounded-md ${errors.location ? 'border-red-500' : 'border-gray-300'}`}
+  >
+    <option value="">Select a location</option>
+    {deliveryOptions.map(option => (
+      <option key={option.value} value={option.value}>
+        {option.label} - ₦{option.price}
+      </option>
+    ))}
+    <option value="custom">Other Location</option>
+  </select>
+  {errors.location && <p className="mt-1 text-sm text-red-600">{errors.location}</p>}
+</div>
+
+{selectedLocation?.value === 'custom' && (
+  <div className="mb-4">
+    <div className="w-full flex justify-between">
       <label htmlFor="customCity" className="block text-sm font-medium text-gray-700 mb-1">
         City *
         <button
@@ -639,17 +637,17 @@ const items = cartDetails
         </div>
       )}
     </div>
-                  <input
-                    type="text"
-                    id="customCity"
-                    value={customCity}
-                    onChange={(e) => setCustomCity(e.target.value)}
-                    className={`w-full p-2 border rounded-md ${errors.city ? 'border-red-500' : 'border-gray-300'}`}
-                    placeholder="Enter your city"
-                  />
-                  {errors.city && <p className="mt-1 text-sm text-red-600">{errors.city}</p>}
-                </div>
-              )}
+    <input
+      type="text"
+      id="customCity"
+      value={customCity}
+      onChange={(e) => setCustomCity(e.target.value)}
+      className={`w-full p-2 border rounded-md ${errors.city ? 'border-red-500' : 'border-gray-300'}`}
+      placeholder="Enter your city"
+    />
+    {errors.city && <p className="mt-1 text-sm text-red-600">{errors.city}</p>}
+  </div>
+)}
               
               <div className="mb-4">
                 <label htmlFor="deliveryInstructions" className="block text-sm font-medium text-gray-700 mb-1">
