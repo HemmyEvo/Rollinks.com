@@ -713,7 +713,13 @@ const items = cartDetails
        
         </div>
       ) : (
-        <span className="text-gray-400">{selectedLocation?.value === 0 ? 'free' : '--'}</span>
+       <span className="text-gray-400">
+  {deliveryOptions.find(opt => opt.value === selectedLocation?.value)?.price === 0 
+    ? 'free' 
+    : deliveryOptions.find(opt => opt.value === selectedLocation?.value)?.price 
+      ? `₦${deliveryOptions.find(opt => opt.value === selectedLocation?.value).price.toLocaleString()}` 
+      : '--'}
+</span>
       )}
     </div>
                 <div className="flex justify-between py-2 font-medium text-lg">
