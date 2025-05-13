@@ -59,9 +59,9 @@ const [showModal, setShowModal] = useState(false);
 
   // Location state
   const [selectedCountry, setSelectedCountry] = useState<Option | null>(null);
-  const [selectedState, setSelectedState] = useState<any | null>(null);
+  const [selectedState, setSelectedState] = useState<Option[]| null>(null);
   const [stateOptions, setStateOptions] = useState<Option[]>([]);
-  const [selectedLocation, setSelectedLocation] = useState<Option | null>(null);
+  const [selectedLocation, setSelectedLocation] = useState<any | null>(null);
   const [customCity, setCustomCity] = useState('');
   const [shippingFee, setShippingFee] = useState(0);
   const [deliveryOptions, setDeliveryOptions] = useState<DeliveryOption[]>([])
