@@ -10,7 +10,7 @@ import Category from "./(roots)/_components/Category";
 export default function Home() {
   const [isLoading, setIsLoading] = useState(true);
   const [displayText, setDisplayText] = useState("");
-  const fullText = "Welcome to Rollinks Skincare";
+  const fullText = "Welcome to Rollinks Skincare!";
 
 useEffect(() => {
     const animateText = () => {
@@ -54,46 +54,55 @@ useEffect(() => {
     };
 
     const speakWelcome = () => {
-      if (typeof window !== "undefined") {
-        // Mobile-friendly speech synthesis with user gesture requirement
-        const handleUserInteraction = () => {
-          const speech = new SpeechSynthesisUtterance(fullText);
-          speech.volume = 1;
-          speech.rate = 0.9;
-          speech.pitch = 1.1;
+  if (typeof window !== "undefined") {
+    
+    const handleUserInteraction = () => {
+      const speech = new SpeechSynthesisUtterance(fullText);
+      speech.volume = 1;
+      speech.rate = 0.9;
+      speech.pitch = 1.1;
 
-          // Mobile browsers often require this to work
-          window.speechSynthesis.cancel();
+      // Mobile browsers often require this to work
+      window.speechSynthesis.cancel();
 
-          speech.onstart = animateText;
-          speech.onend = checkAssetsLoaded;
-          window.speechSynthesis.speak(speech);
+      speech.onstart = animateText;
+      speech.onend = checkAssetsLoaded;
+      window.speechSynthesis.speak(speech);
 
-          // Remove the event listener after first interaction
-          document.removeEventListener("click", handleUserInteraction);
-          document.removeEventListener("touchstart", handleUserInteraction);
-        };
-
-        // Add event listeners for both click and touch
-        document.addEventListener("click", handleUserInteraction);
-        document.addEventListener("touchstart", handleUserInteraction);
-
-        // Fallback in case no interaction occurs
-        const fallbackTimer = setTimeout(() => {
-          document.removeEventListener("click", handleUserInteraction);
-          document.removeEventListener("touchstart", handleUserInteraction);
-          animateText();
-          checkAssetsLoaded();
-        }, 3000);
-
-        return () => clearTimeout(fallbackTimer);
-      } else {
-        animateText();
-        checkAssetsLoaded();
-      }
+      // Remove the event listeners if they were added
+      document.removeEventListener("click", handleUserInteraction);
+      document.removeEventListener("touchstart", handleUserInteraction);
     };
 
-    speakWelcome();
+    // Try to speak immediately on load
+    try {
+      // Some browsers may block this without user interaction
+      handleUserInteraction();
+    } catch (e) {
+      console.log("Automatic speech blocked, falling back to user interaction");
+      
+      // If automatic speech is blocked, fall back to click/touch handlers
+      document.addEventListener("click", handleUserInteraction);
+      document.addEventListener("touchstart", handleUserInteraction);
+
+      // Fallback in case no interaction occurs
+      const fallbackTimer = setTimeout(() => {
+        document.removeEventListener("click", handleUserInteraction);
+        document.removeEventListener("touchstart", handleUserInteraction);
+        animateText();
+        checkAssetsLoaded();
+      }, 3000);
+
+      return () => clearTimeout(fallbackTimer);
+    }
+  } else {
+    animateText();
+    checkAssetsLoaded();
+  }
+};
+
+// Call the function
+speakWelcome();
 
     return () => {
       if (typeof window !== "undefined" ) {
