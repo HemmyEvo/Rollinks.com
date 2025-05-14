@@ -713,14 +713,18 @@ const items = cartDetails
        
         </div>
       ) : (
-      <span className="text-gray-400">
+    <span className="text-gray-400">
   {(() => {
     const deliveryOption = deliveryOptions?.find(opt => opt.value === selectedLocation?.value);
-    if (deliveryOption?.price === 0) return 'free';
-    if (deliveryOption?.price !== undefined) return `₦${deliveryOption.price.toLocaleString()}`;
+    const price = deliveryOption?.price;
+    
+    if (price === 0) return 'free';
+    if (price !== undefined) return `₦${price.toLocaleString()}`;
     return '--';
-  })}
-</span>)}
+  })()}
+</span>
+
+)}
     </div>
                 <div className="flex justify-between py-2 font-medium text-lg">
                   <span className="text-gray-900">Total</span>
