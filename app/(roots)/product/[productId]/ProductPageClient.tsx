@@ -581,8 +581,8 @@ export default function ProductPageClient({ data }: { data: fullProduct }) {
             <div className="flex items-center gap-3 p-4 bg-blue-50/50 rounded-lg mb-6">
               <Truck className="text-blue-500" />
               <div>
-                <p className="text-sm font-medium">Free delivery</p>
-                <p className="text-xs text-gray-500">Estimated 1-2 business days</p>
+                <p className="text-sm font-medium">Delivery</p>
+                <p className="text-xs text-gray-500">Estimated 2-3 business days</p>
               </div>
             </div>
 
