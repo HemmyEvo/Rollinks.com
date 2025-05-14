@@ -91,7 +91,7 @@ const Header = () => {
 
               {/* Search Button - Mobile */}
               <button 
-                onClick={() => {setShowMobileSearch(!showMobileSearch); setIsToggle(!isToggle)}}
+                onClick={() => {setShowMobileSearch(!showMobileSearch); setIsToggle(false)}}
                 className="md:hidden p-2 rounded-full hover:bg-amber-50 transition-colors"
               >
                 <Search className="w-5 h-5 text-gray-700" />
