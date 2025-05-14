@@ -719,7 +719,7 @@ const items = cartDetails
     if (deliveryOption?.price === 0) return 'free';
     if (deliveryOption?.price !== undefined) return `₦${deliveryOption.price.toLocaleString()}`;
     return '--';
-  })()}
+  })}
 </span>
     </div>
                 <div className="flex justify-between py-2 font-medium text-lg">
