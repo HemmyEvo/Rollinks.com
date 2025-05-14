@@ -59,7 +59,7 @@ const [showModal, setShowModal] = useState(false);
 
   // Location state
   const [selectedCountry, setSelectedCountry] = useState<any| null>(null);
-  const [selectedState, setSelectedState] = useState<Option[]| null>(null);
+  const [selectedState, setSelectedState] = useState<Option | null>(null);
   const [stateOptions, setStateOptions] = useState<Option[]>([]);
   const [selectedLocation, setSelectedLocation] = useState<any | null>(null);
   const [customCity, setCustomCity] = useState('');
@@ -147,7 +147,7 @@ useEffect(() => {
     }
   };
 
-  const handleStateChange = (selectedOption: Option[] | null) => {
+  const handleStateChange = (selectedOption: Option | null) => {
     setSelectedState(selectedOption);
     setSelectedLocation(null);
     setShippingFee(0);
