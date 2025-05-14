@@ -718,7 +718,7 @@ const items = cartDetails
     const deliveryOption = deliveryOptions?.find(opt => opt.value === selectedLocation?.value);
     const price = deliveryOption?.price;
     
-    if (price === 0) return 'free';
+    if (price === 0) return 'Free';
     if (price !== undefined) return `₦${price.toLocaleString()}`;
     return '--';
   })()}
