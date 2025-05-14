@@ -46,8 +46,8 @@ const [showModal, setShowModal] = useState(false);
 const me = useQuery(api.user.getMe, isAuthenticated ? undefined : "skip");
   // Form state
   const [formData, setFormData] = useState({
-    firstName: '',
-    lastName: '',
+    firstName: me ? me.firstName : '',
+    lastName: me ? me.lastName : '',
     email: me ? me.email : '',
     phone: '',
     address: '',
