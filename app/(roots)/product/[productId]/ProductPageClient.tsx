@@ -34,6 +34,7 @@ type ZoomState = {
   isDragging: boolean;
   dragStart: { x: number; y: number };
   touchDistance: number | null;
+  showInstructions:Boolean;
 };
 
 export default function ProductPageClient({ data }: { data: fullProduct }) {
@@ -97,13 +98,14 @@ export default function ProductPageClient({ data }: { data: fullProduct }) {
 
 
   const [zoomState, setZoomState] = useState<ZoomState>({
-    isActive: false,
-    position: { x: 50, y: 50 },
-    scale: 2,
-    isDragging: false,
-    dragStart: { x: 0, y: 0 },
-    touchDistance: null
-  });
+  isActive: false,
+  position: { x: 50, y: 50 },
+  scale: 2,
+  isDragging: false,
+  dragStart: { x: 0, y: 0 },
+  touchDistance: null,
+  showInstructions: true
+});
 
   const imageRef = useRef<HTMLDivElement>(null);
   const zoomRef = useRef<HTMLDivElement>(null);
@@ -118,12 +120,16 @@ export default function ProductPageClient({ data }: { data: fullProduct }) {
       touch2.clientY - touch1.clientY
     );
   };
-
-  // Handle mouse enter/leave
+const dismissInstructions = () => {
+  setZoomState(prev => ({ ...prev, showInstructions: false }));
+};
   const handleMouseEnter = () => {
-    setZoomState(prev => ({ ...prev, isActive: true }));
-  };
-
+  setZoomState(prev => ({ 
+    ...prev, 
+    isActive: true,
+    showInstructions: window.innerWidth > 768 // Show on desktop only initially
+  }));
+};
   const handleMouseLeave = () => {
     setZoomState(prev => ({ ...prev, isActive: false }));
   };
@@ -147,25 +153,26 @@ export default function ProductPageClient({ data }: { data: fullProduct }) {
 
   // Touch event handlers
   const handleTouchStart = (e: React.TouchEvent<HTMLDivElement>) => {
-    if (e.touches.length === 2) {
-      const touch1 = { clientX: e.touches[0].clientX, clientY: e.touches[0].clientY };
-      const touch2 = { clientX: e.touches[1].clientX, clientY: e.touches[1].clientY };
-      
-      setZoomState(prev => ({
-        ...prev,
-        isActive: true,
-        touchDistance: getDistance(touch1, touch2)
-      }));
-    } else if (e.touches.length === 1) {
-      handleMouseEnter();
-      const touch = { clientX: e.touches[0].clientX, clientY: e.touches[0].clientY };
-      const fakeMouseEvent = {
-        clientX: touch.clientX,
-        clientY: touch.clientY
-      } as React.MouseEvent<HTMLDivElement>;
-      handleMouseMove(fakeMouseEvent);
-    }
-  };
+  if (e.touches.length === 2) {
+    const touch1 = { clientX: e.touches[0].clientX, clientY: e.touches[0].clientY };
+    const touch2 = { clientX: e.touches[1].clientX, clientY: e.touches[1].clientY };
+
+    setZoomState(prev => ({
+      ...prev,
+      isActive: true,
+      touchDistance: getDistance(touch1, touch2),
+      showInstructions: true
+    }));
+  } else if (e.touches.length === 1) {
+    setZoomState(prev => ({ ...prev, isActive: true, showInstructions: true }));
+    const touch = { clientX: e.touches[0].clientX, clientY: e.touches[0].clientY };
+    const fakeMouseEvent = {
+      clientX: touch.clientX,
+      clientY: touch.clientY
+    } as React.MouseEvent<HTMLDivElement>;
+    handleMouseMove(fakeMouseEvent);
+  }
+};
 
   const handleTouchMove = (e: React.TouchEvent<HTMLDivElement>) => {
     if (e.touches.length === 2 && zoomState.touchDistance) {
@@ -292,114 +299,140 @@ export default function ProductPageClient({ data }: { data: fullProduct }) {
          <div className="bg-white/80 max-h-[max-content] backdrop-blur-sm rounded-2xl overflow-hidden border border-white/20 shadow-lg">
       {/* Main Image with Zoom Lens */}
       <div 
-        className="relative aspect-square w-full cursor-zoom-in touch-none select-none"
-        onMouseEnter={handleMouseEnter}
-        onMouseLeave={handleMouseLeave}
-        onMouseMove={handleMouseMove}
-        onTouchStart={handleTouchStart}
-        onTouchMove={handleTouchMove}
-        onTouchEnd={handleTouchEnd}
-        ref={imageRef}
-      >
-        {data.images?.[activeImage] && (
-          <>
-            <Image
-              src={urlFor(data.images[activeImage]).url()}
-              alt={data.name || `Product image`}
-              fill
-              className="object-contain p-4 select-none pointer-events-none"
-              priority
-              sizes="(max-width: 768px) 100vw, 50vw"
-              draggable={false}
-            />
-            
-            {/* Zoom Lens */}
-            {zoomState.isActive && (
-              <div
-                ref={zoomLensRef}
-                className="absolute border-2 border-white/50 bg-white/20 pointer-events-none touch-none select-none"
-                style={{
-                  width: '100px',
-                  height: '100px',
-                  left: `calc(${zoomState.position.x}% - 50px)`,
-                  top: `calc(${zoomState.position.y}% - 50px)`,
-                  transform: 'translateZ(0)',
-                  boxShadow: '0 0 0 1px rgba(0,0,0,0.1) inset',
-                  backdropFilter: 'blur(2px)'
-                }}
-                onMouseDown={handleDragStart}
-              />
-            )}
-          </>
-        )}
-      </div>
+  className="relative aspect-square w-full cursor-zoom-in touch-none select-none"
+  onMouseEnter={handleMouseEnter}
+  onMouseLeave={handleMouseLeave}
+  onMouseMove={handleMouseMove}
+  onTouchStart={handleTouchStart}
+  onTouchMove={handleTouchMove}
+  onTouchEnd={handleTouchEnd}
+  ref={imageRef}
+>
+  {data.images?.[activeImage] && (
+    <>
+      <Image
+        src={urlFor(data.images[activeImage]).url()}
+        alt={data.name || `Product image`}
+        fill
+        className="object-contain p-4 select-none pointer-events-none"
+        priority
+        sizes="(max-width: 768px) 100vw, 50vw"
+        draggable={false}
+      />
 
-      {/* Zoomed View */}
-      {zoomState.isActive && (
-        <div 
-          className="fixed inset-0 z-50 bg-black bg-opacity-50 flex items-center justify-center p-4 md:p-8 touch-none"
-          ref={zoomRef}
-        >
-          <div className="relative w-full h-full max-w-4xl max-h-[90vh] overflow-hidden">
-            <div 
-              className="absolute inset-0 bg-white touch-none will-change-transform"
-              style={{
-                backgroundImage: `url(${urlFor(data.images[activeImage]).url()})`,
-                backgroundRepeat: 'no-repeat',
-                backgroundPosition: `${zoomState.position.x}% ${zoomState.position.y}%`,
-                backgroundSize: `${zoomState.scale * 100}%`,
-                transform: 'translateZ(0)'
-              }}
-              ref={zoomableRef}
-            />
-            
-            {/* Mobile-friendly controls */}
-            <div className="absolute bottom-4 left-0 right-0 flex justify-center touch-none">
-              <div className="flex items-center gap-1 bg-white/90 backdrop-blur-sm rounded-full px-4 py-2 shadow-lg">
-                <button
-                  onClick={zoomOut}
-                  className="p-2 hover:bg-gray-100 rounded-full transition-colors touch-auto"
-                  aria-label="Zoom out"
-                >
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 12H4" />
-                  </svg>
-                </button>
-                <span className="text-sm font-medium min-w-[40px] text-center touch-none select-none">
-                  {Math.round(zoomState.scale * 100)}%
-                </span>
-                <button
-                  onClick={zoomIn}
-                  className="p-2 hover:bg-gray-100 rounded-full transition-colors touch-auto"
-                  aria-label="Zoom in"
-                >
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
-                  </svg>
-                </button>
-                <button
-                  onClick={resetZoom}
-                  className="p-2 hover:bg-gray-100 rounded-full transition-colors touch-auto text-xs font-medium"
-                  aria-label="Reset zoom"
-                >
-                  Reset
-                </button>
-              </div>
-            </div>
-            
-            <button
-              onClick={() => setZoomState(prev => ({ ...prev, isActive: false }))}
-              className="absolute top-4 right-4 bg-white rounded-full p-2 shadow-lg hover:bg-gray-100 transition-colors touch-auto"
-              aria-label="Close zoom"
-            >
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-              </svg>
-            </button>
+      {/* Desktop Instructions */}
+      {zoomState.isActive && zoomState.showInstructions && window.innerWidth > 768 && (
+        <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+          <div 
+            className="bg-black/70 text-white text-sm p-3 rounded-lg max-w-[80%] text-center animate-fade-in"
+            onClick={dismissInstructions}
+          >
+            <p>Drag the zoom lens or move your cursor to explore details</p>
+            <p className="text-xs mt-1 opacity-80">Click anywhere to close</p>
           </div>
         </div>
       )}
 
+      {/* Mobile Instructions */}
+      {zoomState.isActive && zoomState.showInstructions && window.innerWidth <= 768 && (
+        <div className="absolute inset-0 flex items-end justify-center pointer-events-none pb-4">
+          <div 
+            className="bg-black/70 text-white text-sm p-3 rounded-lg max-w-[90%] text-center animate-fade-in"
+            onClick={dismissInstructions}
+          >
+            <p>Pinch to zoom • Drag to pan</p>
+            <p className="text-xs mt-1 opacity-80">Tap to close • Double tap to reset</p>
+          </div>
+        </div>
+      )}
+
+      {/* Zoom Lens */}
+      {zoomState.isActive && (
+        <div
+          ref={zoomLensRef}
+          className="absolute border-2 border-white/50 bg-white/20 pointer-events-auto touch-none select-none"
+          style={{
+            width: '100px',
+            height: '100px',
+            left: `calc(${zoomState.position.x}% - 50px)`,
+            top: `calc(${zoomState.position.y}% - 50px)`,
+            transform: 'translateZ(0)',
+            boxShadow: '0 0 0 1px rgba(0,0,0,0.1) inset',
+            backdropFilter: 'blur(2px)',
+            cursor: zoomState.isDragging ? 'grabbing' : 'grab'
+          }}
+          onMouseDown={handleDragStart}
+        />
+      )}
+    </>
+  )}
+</div>
+
+{/* Zoomed View */}
+{zoomState.isActive && (
+  <div 
+    className="fixed inset-0 z-50 bg-black bg-opacity-50 flex items-center justify-center p-4 md:p-8 touch-none"
+    ref={zoomRef}
+  >
+    <div className="relative w-full h-full max-w-4xl max-h-[90vh] overflow-hidden">
+      <div 
+        className="absolute inset-0 bg-white touch-none will-change-transform"
+        style={{
+          backgroundImage: `url(${urlFor(data.images[activeImage]).url()})`,
+          backgroundRepeat: 'no-repeat',
+          backgroundPosition: `${zoomState.position.x}% ${zoomState.position.y}%`,
+          backgroundSize: `${zoomState.scale * 100}%`,
+          transform: 'translateZ(0)'
+        }}
+        ref={zoomableRef}
+      />
+
+      {/* Mobile-friendly controls */}
+      <div className="absolute bottom-4 left-0 right-0 flex justify-center touch-none">
+        <div className="flex items-center gap-1 bg-white/90 backdrop-blur-sm rounded-full px-4 py-2 shadow-lg">
+          <button
+            onClick={zoomOut}
+            className="p-2 hover:bg-gray-100 rounded-full transition-colors touch-auto"
+            aria-label="Zoom out"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 12H4" />
+            </svg>
+          </button>
+          <span className="text-sm font-medium min-w-[40px] text-center touch-none select-none">
+            {Math.round(zoomState.scale * 100)}%
+          </span>
+          <button
+            onClick={zoomIn}
+            className="p-2 hover:bg-gray-100 rounded-full transition-colors touch-auto"
+            aria-label="Zoom in"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+            </svg>
+          </button>
+          <button
+            onClick={resetZoom}
+            className="p-2 hover:bg-gray-100 rounded-full transition-colors touch-auto text-xs font-medium"
+            aria-label="Reset zoom"
+          >
+            Reset
+          </button>
+        </div>
+      </div>
+
+      <button
+        onClick={() => setZoomState(prev => ({ ...prev, isActive: false }))}
+        className="absolute top-4 right-4 bg-white rounded-full p-2 shadow-lg hover:bg-gray-100 transition-colors touch-auto"
+        aria-label="Close zoom"
+      >
+        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+        </svg>
+      </button>
+    </div>
+  </div>
+)}
       {/* Thumbnails */}
       <div className="relative pb-2 px-4 border-t border-white/20 touch-none">
         <div 
