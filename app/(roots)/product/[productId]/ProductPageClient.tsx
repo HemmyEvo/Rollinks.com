@@ -34,7 +34,7 @@ type ZoomState = {
   isDragging: boolean;
   dragStart: { x: number; y: number };
   touchDistance: number | null;
-  showInstructions:Boolean;
+  showInstructions:boolean;
 };
 
 export default function ProductPageClient({ data }: { data: fullProduct }) {
