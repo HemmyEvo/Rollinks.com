@@ -720,7 +720,7 @@ const items = cartDetails
     if (deliveryOption?.price !== undefined) return `₦${deliveryOption.price.toLocaleString()}`;
     return '--';
   })}
-</span>
+</span>)
     </div>
                 <div className="flex justify-between py-2 font-medium text-lg">
                   <span className="text-gray-900">Total</span>
