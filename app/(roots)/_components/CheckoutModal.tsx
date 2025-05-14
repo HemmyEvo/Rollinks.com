@@ -147,7 +147,7 @@ useEffect(() => {
     }
   };
 
-  const handleStateChange = (selectedOption: Option | null) => {
+  const handleStateChange = (selectedOption: Option[] | null) => {
     setSelectedState(selectedOption);
     setSelectedLocation(null);
     setShippingFee(0);
