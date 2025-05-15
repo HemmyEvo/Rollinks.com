@@ -228,7 +228,7 @@ useEffect(() => {
     handleCartClick()
     setLoading(true);
     
-    // Temporarily hide our modal while Paystack is open
+    // Temporarily hide our modal while Paystack is open.
     if (modalRef.current) {
       modalRef.current.style.display = 'none';
     }
