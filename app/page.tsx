@@ -81,7 +81,7 @@ useEffect(() => {
     }
   };
 
-  if (typeof window !== "undefined" && "speechSynthesis" in window) {
+  if (typeof window !== "undefined") {
     speakWelcome();
   } else {
     animateText();
