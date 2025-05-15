@@ -129,7 +129,6 @@ export default function Home() {
       document.removeEventListener("click", handleUserInteraction);
       document.removeEventListener("touchstart", handleUserInteraction);
       clearTimeout(promptTimer);
-      clearTimeout(fallbackTimer);
       if (typeof window !== "undefined" && "speechSynthesis" in window) {
         window.speechSynthesis.cancel();
       }
