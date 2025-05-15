@@ -96,7 +96,10 @@ try {
 
   return () => clearTimeout(fallbackTimer);  
 
-  } else {
+  }
+}
+
+ else {
     animateText();
     checkAssetsLoaded();
   }
