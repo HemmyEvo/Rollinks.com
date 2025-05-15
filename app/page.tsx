@@ -272,7 +272,7 @@ setShowClickPrompt(true);
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.8 }}
-onclick={handleUserInteraction}
+onClick={handleUserInteraction}
                     className="mt-6 p-4 bg-white/50 rounded-lg border border-white/30 shadow-sm flex items-center space-x-3"
                   >
                     <motion.div
