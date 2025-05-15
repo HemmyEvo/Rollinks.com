@@ -57,44 +57,45 @@ useEffect(() => {
   if (typeof window !== "undefined") {
     
     const handleUserInteraction = () => {
-      const speech = new SpeechSynthesisUtterance(fullText);
-      speech.volume = 1;
-      speech.rate = 0.9;
-      speech.pitch = 1.1;
+const speech = new SpeechSynthesisUtterance(fullText);
+speech.volume = 1;
+speech.rate = 0.9;
+speech.pitch = 1.1;
 
-      // Mobile browsers often require this to work
-      window.speechSynthesis.cancel();
+// Mobile browsers often require this to work  
+  window.speechSynthesis.cancel();  
 
-      speech.onstart = animateText;
-      speech.onend = checkAssetsLoaded;
-      window.speechSynthesis.speak(speech);
+  speech.onstart = animateText;  
+  speech.onend = checkAssetsLoaded;  
+  window.speechSynthesis.speak(speech);  
 
-      // Remove the event listeners if they were added
-      document.removeEventListener("click", handleUserInteraction);
-document.removeEventListener("touchstart", handleUserInteraction);
-    };
+  // Remove the event listeners if they were added  
+  document.removeEventListener("click", handleUserInteraction);  
+    document.removeEventListener("touchstart", handleUserInteraction);   
+};  
 
-    // Try to speak immediately on load
-    try {
-      // Some browsers may block this without user interaction
-      handleUserInteraction();
-    } catch (e) {
-      console.log("Automatic speech blocked, falling back to user interaction");
-      
-      // If automatic speech is blocked, fall back to click/touch handlers
-      document.addEventListener("click", handleUserInteraction);
-      document.addEventListener("touchstart", handleUserInteraction);
+// Try to speak immediately on load  
+try {  
+  // Some browsers may block this without user interaction  
+  handleUserInteraction();  
+} catch (e) {  
+  console.log("Automatic speech blocked, falling back to user interaction");  
+    
+  // If automatic speech is blocked, fall back to click/touch handlers  
+  document.addEventListener("click", handleUserInteraction);  
+  document.addEventListener("touchstart", handleUserInteraction);  
+    
 
-      // Fallback in case no interaction occurs
-      const fallbackTimer = setTimeout(() => {
-        document.removeEventListener("click", handleUserInteraction);
-        document.removeEventListener("touchstart", handleUserInteraction);
-        animateText();
-        checkAssetsLoaded();
-      }, 3000);
+  // Fallback in case no interaction occurs  
+  const fallbackTimer = setTimeout(() => {  
+    document.removeEventListener("click", handleUserInteraction);  
+    document.removeEventListener("touchstart", handleUserInteraction);  
+    animateText();  
+    checkAssetsLoaded();  
+  }, 3000);  
 
-      return () => clearTimeout(fallbackTimer);
-    }
+  return () => clearTimeout(fallbackTimer);  
+
   } else {
     animateText();
     checkAssetsLoaded();
