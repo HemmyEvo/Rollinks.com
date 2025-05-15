@@ -43,6 +43,8 @@ const CheckoutModal = ({ isOpen, onClose }: CheckoutModalProps) => {
   const router = useRouter();
   const modalRef = useRef<HTMLDivElement>(null);
 const [showModal, setShowModal] = useState(false);
+const { userId } = useAuth();
+const { isAuthenticated } = useConvexAuth();
 const me = useQuery(api.user.getMe, isAuthenticated ? undefined : "skip");
   // Form state
   const [formData, setFormData] = useState({
@@ -66,8 +68,8 @@ const me = useQuery(api.user.getMe, isAuthenticated ? undefined : "skip");
   const [shippingFee, setShippingFee] = useState(0);
   const [deliveryOptions, setDeliveryOptions] = useState<DeliveryOption[]>([])
 
-  const { userId } = useAuth();
-  const { isAuthenticated } = useConvexAuth();
+  
+  
 useEffect(() => {
     async function fetchDeliveryOptions() {
       try {
