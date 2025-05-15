@@ -12,88 +12,95 @@ export default function Home() {
   const [displayText, setDisplayText] = useState("");
   const fullText = "Welcome to Rollinks Skincare!";
 
-useEffect(() => {
-  const animateText = () => {
-    let currentIndex = 0;
-    const interval = setInterval(() => {
-      if (currentIndex <= fullText.length) {
-        setDisplayText(fullText.substring(0, currentIndex));
-        currentIndex++;
-      } else {
-        clearInterval(interval);
-      }
-    }, 100);
-  };
+  useEffect(() => {
+    const animateText = () => {
+      let currentIndex = 0;
+      const interval = setInterval(() => {
+        if (currentIndex <= fullText.length) {
+          setDisplayText(fullText.substring(0, currentIndex));
+          currentIndex++;
+        } else {
+          clearInterval(interval);
+          checkAssetsLoaded();
+        }
+      }, 100);
+    };
 
-  const checkAssetsLoaded = () => {
-    const images = Array.from(document.images);
-    if (images.length !== 0) {
+    const checkAssetsLoaded = () => {
+      const images = Array.from(document.images);
+      
+      if(images.length !== 0){
       setTimeout(() => setIsLoading(false), 1500);
-      return;
-    }
-
-    const imageLoadPromises = images.map((img) => {
-      if (img.complete) return Promise.resolve();
-      return new Promise<void>((resolve) => {
-        img.addEventListener("load", () => resolve(), { once: true });
-        img.addEventListener("error", () => resolve(), { once: true });
+}
+      let loadedCount = 0;
+      const imageLoadPromises = images.map((img) => {
+        console.log(img)
+        if (img.complete) {
+          loadedCount++;
+          return Promise.resolve();
+        }
+        return new Promise<void>((resolve) => {
+          img.addEventListener("load", () => {
+            loadedCount++;
+            resolve();
+          });
+          img.addEventListener("error", () => resolve());
+        });
       });
-    });
 
-    Promise.all(imageLoadPromises).then(() => {
-      setTimeout(() => setIsLoading(false), 1500);
-    });
-  };
+      Promise.all(imageLoadPromises).then(() => {
+        setTimeout(() => setIsLoading(false), 1500);
+      });
+    };
 
-  const speakWelcome = () => {
-    const speech = new SpeechSynthesisUtterance(fullText);
-    speech.volume = 1;
-    speech.rate = 1.2;
-    speech.pitch = 1.1;
+    const speakWelcome = () => {
+      if (typeof window !== "undefined" && "speechSynthesis" in window) {
+        // Mobile-friendly speech synthesis with user gesture requirement
+        const handleUserInteraction = () => {
+          const speech = new SpeechSynthesisUtterance(fullText);
+          speech.volume = 1;
+          speech.rate = 0.9;
+          speech.pitch = 1.1;
 
-    window.speechSynthesis.cancel(); // Reset any previous speech
-    speech.onstart = animateText;
-    speech.onend = checkAssetsLoaded;
+          // Mobile browsers often require this to work
+          window.speechSynthesis.cancel();
+          
+          speech.onstart = animateText;
+          speech.onend = checkAssetsLoaded;
+          window.speechSynthesis.speak(speech);
 
-    try {
-      window.speechSynthesis.speak(speech);
-    } catch (err) {
-      console.log("Speech blocked, requiring interaction");
+          // Remove the event listener after first interaction
+          document.removeEventListener("click", handleUserInteraction);
+          document.removeEventListener("touchstart", handleUserInteraction);
+        };
 
-      const handleUserInteraction = () => {
-        window.speechSynthesis.cancel();
-        window.speechSynthesis.speak(speech);
-        document.removeEventListener("click", handleUserInteraction);
-        document.removeEventListener("touchstart", handleUserInteraction);
-      };
+        // Add event listeners for both click and touch
+        document.addEventListener("click", handleUserInteraction);
+        document.addEventListener("touchstart", handleUserInteraction);
 
-      document.addEventListener("click", handleUserInteraction);
-      document.addEventListener("touchstart", handleUserInteraction);
+        // Fallback in case no interaction occurs
+        const fallbackTimer = setTimeout(() => {
+          document.removeEventListener("click", handleUserInteraction);
+          document.removeEventListener("touchstart", handleUserInteraction);
+          animateText();
+          checkAssetsLoaded();
+        }, 3000);
 
-      const fallbackTimer = setTimeout(() => {
-        document.removeEventListener("click", handleUserInteraction);
-        document.removeEventListener("touchstart", handleUserInteraction);
+        return () => clearTimeout(fallbackTimer);
+      } else {
         animateText();
         checkAssetsLoaded();
-      }, 3000);
+      }
+    };
 
-      return () => clearTimeout(fallbackTimer);
-    }
-  };
-
-  if (typeof window !== "undefined") {
     speakWelcome();
-  } else {
-    animateText();
-    checkAssetsLoaded();
-  }
 
-  return () => {
-    if (typeof window !== "undefined") {
-      window.speechSynthesis.cancel();
-    }
-  };
-}, []);
+    return () => {
+      if (typeof window !== "undefined" && "speechSynthesis" in window) {
+        window.speechSynthesis.cancel();
+      }
+    };
+  }, []);
   const heroFooter = [
     {
       icon: <Leaf className="w-6 h-6" />,
