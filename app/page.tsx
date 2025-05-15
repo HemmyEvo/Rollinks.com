@@ -70,7 +70,8 @@ useEffect(() => {
       window.speechSynthesis.speak(speech);
 
       // Remove the event listeners if they were added
-      document.removeEventListener("load", handleUserInteraction);
+      document.removeEventListener("click", handleUserInteraction);
+document.removeEventListener("touchstart", handleUserInteraction);
     };
 
     // Try to speak immediately on load
@@ -81,8 +82,8 @@ useEffect(() => {
       console.log("Automatic speech blocked, falling back to user interaction");
       
       // If automatic speech is blocked, fall back to click/touch handlers
-      document.addEventListener("load", handleUserInteraction);
-      
+      document.addEventListener("click", handleUserInteraction);
+      document.addEventListener("touchstart", handleUserInteraction);
 
       // Fallback in case no interaction occurs
       const fallbackTimer = setTimeout(() => {
