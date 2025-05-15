@@ -70,8 +70,7 @@ useEffect(() => {
       window.speechSynthesis.speak(speech);
 
       // Remove the event listeners if they were added
-      document.removeEventListener("click", handleUserInteraction);
-      document.removeEventListener("touchstart", handleUserInteraction);
+      document.removeEventListener("load", handleUserInteraction);
     };
 
     // Try to speak immediately on load
@@ -82,8 +81,8 @@ useEffect(() => {
       console.log("Automatic speech blocked, falling back to user interaction");
       
       // If automatic speech is blocked, fall back to click/touch handlers
-      document.addEventListener("click", handleUserInteraction);
-      document.addEventListener("touchstart", handleUserInteraction);
+      document.addEventListener("load", handleUserInteraction);
+      
 
       // Fallback in case no interaction occurs
       const fallbackTimer = setTimeout(() => {
@@ -311,26 +310,6 @@ speakWelcome();
         {/* New Arrivals */}
         <section className="py-16 md:py-24 px-4">
           <div className="container mx-auto">
-            <div className="text-center mb-12">
-              <motion.h2 
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5 }}
-                viewport={{ once: true }}
-                className="text-3xl md:text-4xl font-bold text-gray-900 mb-4"
-              >
-                New Arrivals
-              </motion.h2>
-              <motion.p 
-                initial={{ opacity: 0 }}
-                whileInView={{ opacity: 1 }}
-                transition={{ delay: 0.2, duration: 0.5 }}
-                viewport={{ once: true }}
-                className="text-gray-600 max-w-2xl mx-auto"
-              >
-                Discover our latest collection of premium skincare products
-              </motion.p>
-            </div>
             <NewArrival />
           </div>
         </section>
@@ -369,26 +348,7 @@ speakWelcome();
         {/* Categories */}
         <section className="py-16 md:py-24 px-4 bg-white/50">
           <div className="container mx-auto">
-            <div className="text-center mb-12">
-              <motion.h2 
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5 }}
-                viewport={{ once: true }}
-                className="text-3xl md:text-4xl font-bold text-gray-900 mb-4"
-              >
-                Shop By Category
-              </motion.h2>
-              <motion.p 
-                initial={{ opacity: 0 }}
-                whileInView={{ opacity: 1 }}
-                transition={{ delay: 0.2, duration: 0.5 }}
-                viewport={{ once: true }}
-                className="text-gray-600 max-w-2xl mx-auto"
-              >
-                Find the perfect products for your skincare needs
-              </motion.p>
-            </div>
+            
             <Category />
           </div>
         </section>
@@ -427,26 +387,7 @@ speakWelcome();
         {/* Featured Products */}
         <section className="py-16 md:py-24 px-4 bg-gradient-to-b from-white to-[#fff9f5]">
           <div className="container mx-auto">
-            <div className="text-center mb-12">
-              <motion.h2 
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5 }}
-                viewport={{ once: true }}
-                className="text-3xl md:text-4xl font-bold text-gray-900 mb-4"
-              >
-                Our Best Sellers
-              </motion.h2>
-              <motion.p 
-                initial={{ opacity: 0 }}
-                whileInView={{ opacity: 1 }}
-                transition={{ delay: 0.2, duration: 0.5 }}
-                viewport={{ once: true }}
-                className="text-gray-600 max-w-2xl mx-auto"
-              >
-                Loved by thousands of customers worldwide
-              </motion.p>
-            </div>
+          
             <HomeProducts />
           </div>
         </section>
