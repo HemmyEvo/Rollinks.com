@@ -48,6 +48,7 @@ export default function Home() {
             currentIndex++;
           } else {
             clearInterval(interval);
+           setAssetsLoaded(true);
           }
         }, 100);
       };
@@ -55,7 +56,6 @@ export default function Home() {
       speech.onend = () => {
         
         setSpeechComplete(true);
-        setAssetsLoaded(true);
       };
 
       window.speechSynthesis.speak(speech);
@@ -69,7 +69,7 @@ export default function Home() {
         } else {
           clearInterval(interval);
           setSpeechComplete(true);
-          checkAssetsLoaded();
+          setAssetsLoaded(true);
         }
       }, 100);
     }
@@ -126,7 +126,7 @@ export default function Home() {
       if (!userInteracted) {
         startSpeech();
       }
-    }, 8000);
+    }, 1000);
 
     // Initial assets check
     checkAssetsLoaded();
@@ -140,7 +140,7 @@ export default function Home() {
         window.speechSynthesis.cancel();
       }
     };
-  }, [userInteracted]);
+  }, []);
 
   useEffect(() => {
     // When both speech and assets are loaded, hide loading screen
