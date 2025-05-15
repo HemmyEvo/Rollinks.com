@@ -10,15 +10,15 @@ import HomeProducts from "./(roots)/_components/HomeProducts";
 import Category from "./(roots)/_components/Category";
 
 export default function Home() {
-  const [isLoading, setIsLoading] = useState(true);
+    const [isLoading, setIsLoading] = useState(true);
   const [displayText, setDisplayText] = useState("");
   const [showClickPrompt, setShowClickPrompt] = useState(false);
   const [assetsLoaded, setAssetsLoaded] = useState(false);
   const [speechComplete, setSpeechComplete] = useState(false);
+  const [userInteracted, setUserInteracted] = useState(false);
   const fullText = "Welcome to Rollinks Skincare!";
 
   useEffect(() => {
-    // Prevent scrolling when loading
     if (isLoading) {
       document.body.style.overflow = "hidden";
     } else {
@@ -30,8 +30,36 @@ export default function Home() {
     };
   }, [isLoading]);
 
-  useEffect(() => {
-    const animateText = () => {
+  const startSpeech = () => {
+    if (typeof window !== "undefined" && "speechSynthesis" in window) {
+      window.speechSynthesis.cancel(); // Cancel any ongoing speech
+
+      const speech = new SpeechSynthesisUtterance(fullText);
+      speech.volume = 1;
+      speech.rate = 0.9;
+      speech.pitch = 1.1;
+
+      speech.onstart = () => {
+        // Animate text when speech starts
+        let currentIndex = 0;
+        const interval = setInterval(() => {
+          if (currentIndex <= fullText.length) {
+            setDisplayText(fullText.substring(0, currentIndex));
+            currentIndex++;
+          } else {
+            clearInterval(interval);
+          }
+        }, 100);
+      };
+
+      speech.onend = () => {
+        setSpeechComplete(true);
+        checkAssetsLoaded();
+      };
+
+      window.speechSynthesis.speak(speech);
+    } else {
+      // Fallback if speech synthesis isn't available
       let currentIndex = 0;
       const interval = setInterval(() => {
         if (currentIndex <= fullText.length) {
@@ -39,112 +67,87 @@ export default function Home() {
           currentIndex++;
         } else {
           clearInterval(interval);
+          setSpeechComplete(true);
           checkAssetsLoaded();
         }
       }, 100);
-    };
+    }
+  };
 
-    const checkAssetsLoaded = () => {
-      const images = Array.from(document.images);
-      
-      if (images.length === 0) {
-        setAssetsLoaded(true);
-        return;
+  const checkAssetsLoaded = () => {
+    const images = Array.from(document.images);
+    
+    if (images.length === 0) {
+      setAssetsLoaded(true);
+      return;
+    }
+
+    let loadedCount = 0;
+    const imageLoadPromises = images.map((img) => {
+      if (img.complete) {
+        loadedCount++;
+        return Promise.resolve();
       }
-
-      let loadedCount = 0;
-      const imageLoadPromises = images.map((img) => {
-        if (img.complete) {
+      return new Promise<void>((resolve) => {
+        img.addEventListener("load", () => {
           loadedCount++;
-          return Promise.resolve();
-        }
-        return new Promise<void>((resolve) => {
-          img.addEventListener("load", () => {
-            loadedCount++;
-            resolve();
-          });
-          img.addEventListener("error", () => resolve());
+          resolve();
         });
+        img.addEventListener("error", () => resolve());
       });
+    });
 
-      Promise.all(imageLoadPromises).then(() => {
-        setAssetsLoaded(true);
-      });
-    };
+    Promise.all(imageLoadPromises).then(() => {
+      setAssetsLoaded(true);
+    });
+  };
 
-    const speakWelcome = () => {
-      if (typeof window !== "undefined" && "speechSynthesis" in window) {
-        const handleUserInteraction = () => {
-          const speech = new SpeechSynthesisUtterance(fullText);
-          speech.volume = 1;
-          speech.rate = 0.9;
-          speech.pitch = 1.1;
+  const handleUserInteraction = () => {
+    setUserInteracted(true);
+    setShowClickPrompt(false);
+    startSpeech();
+  };
 
-          window.speechSynthesis.cancel();
+  useEffect(() => {
+    // Set up event listeners for user interaction
+    document.addEventListener("click", handleUserInteraction);
+    document.addEventListener("touchstart", handleUserInteraction);
 
-          speech.onstart = animateText;
-          speech.onend = () => {
-            setSpeechComplete(true);
-            // Only proceed if assets are also loaded
-            if (assetsLoaded) {
-              setTimeout(() => setIsLoading(false), 500);
-            }
-          };
-          window.speechSynthesis.speak(speech);
-
-          // Remove the event listener after first interaction
-          document.removeEventListener("click", handleUserInteraction);
-          document.removeEventListener("touchstart", handleUserInteraction);
-          setShowClickPrompt(false);
-        };
-
-        // Show prompt after a delay if no interaction
-        const promptTimer = setTimeout(() => {
-          setShowClickPrompt(true);
-        }, 2000);
-
-        document.addEventListener("click", handleUserInteraction);
-        document.addEventListener("touchstart", handleUserInteraction);
-
-        // Fallback in case no interaction occurs
-        const fallbackTimer = setTimeout(() => {
-          document.removeEventListener("click", handleUserInteraction);
-          document.removeEventListener("touchstart", handleUserInteraction);
-          animateText();
-          checkAssetsLoaded();
-          setSpeechComplete(true);
-          if (assetsLoaded) {
-            setTimeout(() => setIsLoading(false), 500);
-          }
-        }, 8000);
-
-        return () => {
-          clearTimeout(promptTimer);
-          clearTimeout(fallbackTimer);
-        };
-      } else {
-        animateText();
-        checkAssetsLoaded();
-        setSpeechComplete(true);
-        if (assetsLoaded) {
-          setTimeout(() => setIsLoading(false), 500);
-        }
+    // Show prompt after delay if no interaction
+    const promptTimer = setTimeout(() => {
+      if (!userInteracted) {
+        setShowClickPrompt(true);
       }
-    };
+    }, 2000);
 
-    speakWelcome();
+    // Fallback if no interaction after 8 seconds
+    const fallbackTimer = setTimeout(() => {
+      if (!userInteracted) {
+        startSpeech();
+      }
+    }, 8000);
+
+    // Initial assets check
+    checkAssetsLoaded();
 
     return () => {
+      document.removeEventListener("click", handleUserInteraction);
+      document.removeEventListener("touchstart", handleUserInteraction);
+      clearTimeout(promptTimer);
+      clearTimeout(fallbackTimer);
       if (typeof window !== "undefined" && "speechSynthesis" in window) {
         window.speechSynthesis.cancel();
       }
     };
-  }, [assetsLoaded]);
+  }, [userInteracted]);
 
-  // Check if both speech and assets are complete
   useEffect(() => {
+    // When both speech and assets are loaded, hide loading screen
     if (speechComplete && assetsLoaded) {
-      setTimeout(() => setIsLoading(false), 500);
+      const timer = setTimeout(() => {
+        setIsLoading(false);
+      }, 500);
+      return () => clearTimeout(timer);
     }
   }, [speechComplete, assetsLoaded]);
 
@@ -190,6 +193,7 @@ export default function Home() {
     },
   };
 
+  
   return (
     <div className={`${isLoading ? 'overflow-hidden h-screen' : ''}`}>
       {/* Enhanced Glassmorphism Loading Screen */}
@@ -270,11 +274,14 @@ export default function Home() {
                 className="flex flex-col items-center space-y-4"
               >
                 <div className="flex items-center space-x-2 text-sm text-gray-600">
-                  {!speechComplete && (
+                  {!speechComplete && !userInteracted && (
                     <>
                       <Volume2 className="w-4 h-4 animate-pulse" />
-                      <span>Preparing audio welcome...</span>
+                      <span>Click anywhere to hear welcome message</span>
                     </>
+                  )}
+                  {!speechComplete && userInteracted && (
+                    <span>Playing welcome message...</span>
                   )}
                   {speechComplete && !assetsLoaded && (
                     <span>Loading assets...</span>
@@ -353,6 +360,7 @@ export default function Home() {
           </motion.div>
         </div>
       )}
+
 
         {/* Main Content */}
       <div
