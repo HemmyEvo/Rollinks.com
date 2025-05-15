@@ -53,8 +53,9 @@ export default function Home() {
       };
 
       speech.onend = () => {
+        
         setSpeechComplete(true);
-        checkAssetsLoaded();
+        setAssetsLoaded(true);
       };
 
       window.speechSynthesis.speak(speech);
