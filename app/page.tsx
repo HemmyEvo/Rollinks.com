@@ -48,7 +48,7 @@ useEffect(() => {
   const speakWelcome = () => {
     const speech = new SpeechSynthesisUtterance(fullText);
     speech.volume = 1;
-    speech.rate = 0.9;
+    speech.rate = 1.2;
     speech.pitch = 1.1;
 
     window.speechSynthesis.cancel(); // Reset any previous speech
