@@ -1,5 +1,7 @@
+
+
 "use client";
-import { Leaf, HandCoins, Truck } from "lucide-react";
+import { Leaf, HandCoins, Truck, Volume2, Hand } from "lucide-react";
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import { motion } from "framer-motion";
@@ -10,7 +12,23 @@ import Category from "./(roots)/_components/Category";
 export default function Home() {
   const [isLoading, setIsLoading] = useState(true);
   const [displayText, setDisplayText] = useState("");
+  const [showClickPrompt, setShowClickPrompt] = useState(false);
+  const [assetsLoaded, setAssetsLoaded] = useState(false);
+  const [speechComplete, setSpeechComplete] = useState(false);
   const fullText = "Welcome to Rollinks Skincare!";
+
+  useEffect(() => {
+    // Prevent scrolling when loading
+    if (isLoading) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "auto";
+    }
+
+    return () => {
+      document.body.style.overflow = "auto";
+    };
+  }, [isLoading]);
 
   useEffect(() => {
     const animateText = () => {
@@ -29,12 +47,13 @@ export default function Home() {
     const checkAssetsLoaded = () => {
       const images = Array.from(document.images);
       
-      if(images.length !== 0){
-      setTimeout(() => setIsLoading(false), 1500);
-}
+      if (images.length === 0) {
+        setAssetsLoaded(true);
+        return;
+      }
+
       let loadedCount = 0;
       const imageLoadPromises = images.map((img) => {
-        console.log(img)
         if (img.complete) {
           loadedCount++;
           return Promise.resolve();
@@ -49,32 +68,41 @@ export default function Home() {
       });
 
       Promise.all(imageLoadPromises).then(() => {
-        setTimeout(() => setIsLoading(false), 1500);
+        setAssetsLoaded(true);
       });
     };
 
     const speakWelcome = () => {
       if (typeof window !== "undefined" && "speechSynthesis" in window) {
-        // Mobile-friendly speech synthesis with user gesture requirement
         const handleUserInteraction = () => {
           const speech = new SpeechSynthesisUtterance(fullText);
           speech.volume = 1;
           speech.rate = 0.9;
           speech.pitch = 1.1;
 
-          // Mobile browsers often require this to work
           window.speechSynthesis.cancel();
-          
+
           speech.onstart = animateText;
-          speech.onend = checkAssetsLoaded;
+          speech.onend = () => {
+            setSpeechComplete(true);
+            // Only proceed if assets are also loaded
+            if (assetsLoaded) {
+              setTimeout(() => setIsLoading(false), 500);
+            }
+          };
           window.speechSynthesis.speak(speech);
 
           // Remove the event listener after first interaction
           document.removeEventListener("click", handleUserInteraction);
           document.removeEventListener("touchstart", handleUserInteraction);
+          setShowClickPrompt(false);
         };
 
-        // Add event listeners for both click and touch
+        // Show prompt after a delay if no interaction
+        const promptTimer = setTimeout(() => {
+          setShowClickPrompt(true);
+        }, 2000);
+
         document.addEventListener("click", handleUserInteraction);
         document.addEventListener("touchstart", handleUserInteraction);
 
@@ -84,12 +112,23 @@ export default function Home() {
           document.removeEventListener("touchstart", handleUserInteraction);
           animateText();
           checkAssetsLoaded();
-        }, 3000);
+          setSpeechComplete(true);
+          if (assetsLoaded) {
+            setTimeout(() => setIsLoading(false), 500);
+          }
+        }, 8000);
 
-        return () => clearTimeout(fallbackTimer);
+        return () => {
+          clearTimeout(promptTimer);
+          clearTimeout(fallbackTimer);
+        };
       } else {
         animateText();
         checkAssetsLoaded();
+        setSpeechComplete(true);
+        if (assetsLoaded) {
+          setTimeout(() => setIsLoading(false), 500);
+        }
       }
     };
 
@@ -100,7 +139,15 @@ export default function Home() {
         window.speechSynthesis.cancel();
       }
     };
-  }, []);
+  }, [assetsLoaded]);
+
+  // Check if both speech and assets are complete
+  useEffect(() => {
+    if (speechComplete && assetsLoaded) {
+      setTimeout(() => setIsLoading(false), 500);
+    }
+  }, [speechComplete, assetsLoaded]);
+
   const heroFooter = [
     {
       icon: <Leaf className="w-6 h-6" />,
@@ -144,21 +191,24 @@ export default function Home() {
   };
 
   return (
-    <div className={`${isLoading ? 'overflow-hidden':''}`}>
-      {/* Enhanced Loading Screen */}
+    <div className={`${isLoading ? 'overflow-hidden h-screen' : ''}`}>
+      {/* Enhanced Glassmorphism Loading Screen */}
       {isLoading && (
-        <div className="fixed overflow-hidden inset-0 z-50 bg-white flex flex-col items-center justify-center">
+        <div className="fixed inset-0 z-50 flex flex-col items-center justify-center p-4">
+          {/* Glassmorphism background */}
+          <div className="absolute inset-0 bg-white/20 backdrop-blur-lg backdrop-filter" />
+          
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.3 }}
-            className="relative w-64 h-64 mb-8"
+            className="relative w-full max-w-md bg-white/30 rounded-2xl border border-white/20 shadow-xl backdrop-blur-md p-8 flex flex-col items-center"
           >
             {/* Animated logo/brand mark */}
             <motion.div
               animate={{
                 rotate: [0, 5, -5, 0],
-                scale: [1, 1.03, 1],
+                scale: [1, 1.05, 1],
               }}
               transition={{
                 repeat: Infinity,
@@ -166,16 +216,16 @@ export default function Home() {
                 duration: 3,
                 ease: "easeInOut",
               }}
-              className="absolute inset-0 flex items-center justify-center"
+              className="w-40 h-40 mb-8 flex items-center justify-center"
             >
-              <div className="w-40 h-40 rounded-full bg-amber-50 flex items-center justify-center shadow-inner">
+              <div className="w-full h-full rounded-full bg-amber-50/70 flex items-center justify-center shadow-inner">
                 <Leaf className="w-20 h-20 text-amber-600" />
               </div>
             </motion.div>
 
             {/* Progress ring */}
             <motion.svg
-              className="absolute inset-0"
+              className="absolute top-8 w-40 h-40"
               viewBox="0 0 64 64"
               initial={{ rotate: -90 }}
             >
@@ -188,45 +238,123 @@ export default function Home() {
                 strokeLinecap="round"
                 stroke="#FBBF24"
                 strokeDasharray="188.5"
-                strokeDashoffset="188.5"
-                animate={{ strokeDashoffset: 0 }}
+                strokeDashoffset={assetsLoaded && speechComplete ? 0 : 188.5}
                 transition={{ duration: 3, ease: "linear" }}
               />
             </motion.svg>
+
+            <div className="text-center w-full">
+              <motion.h1
+                key={displayText}
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="text-3xl font-bold text-gray-800 mb-4"
+              >
+                {displayText}
+                <motion.span
+                  animate={{ opacity: [0, 1, 0] }}
+                  transition={{
+                    repeat: Infinity,
+                    duration: 1.5,
+                  }}
+                  className="ml-1"
+                >
+                  |
+                </motion.span>
+              </motion.h1>
+
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 0.5 }}
+                className="flex flex-col items-center space-y-4"
+              >
+                <div className="flex items-center space-x-2 text-sm text-gray-600">
+                  {!speechComplete && (
+                    <>
+                      <Volume2 className="w-4 h-4 animate-pulse" />
+                      <span>Preparing audio welcome...</span>
+                    </>
+                  )}
+                  {speechComplete && !assetsLoaded && (
+                    <span>Loading assets...</span>
+                  )}
+                  {speechComplete && assetsLoaded && (
+                    <span className="text-green-600">Ready to go!</span>
+                  )}
+                </div>
+
+                {showClickPrompt && (
+                  <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.8 }}
+                    className="mt-6 p-4 bg-white/50 rounded-lg border border-white/30 shadow-sm flex items-center space-x-3"
+                  >
+                    <motion.div
+                      animate={{
+                        scale: [1, 1.1, 1],
+                        rotate: [0, 10, -10, 0],
+                      }}
+                      transition={{
+                        repeat: Infinity,
+                        repeatType: "mirror",
+                        duration: 2,
+                      }}
+                    >
+                      <Hand className="w-6 h-6 text-amber-600" />
+                    </motion.div>
+                    <span className="text-gray-700">
+                      Click anywhere to continue
+                    </span>
+                  </motion.div>
+                )}
+
+                <motion.div
+                  className="w-full bg-white/50 rounded-full h-2 mt-4 overflow-hidden"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                >
+                  <motion.div
+                    className="h-full bg-amber-500 rounded-full"
+                    initial={{ width: 0 }}
+                    animate={{
+                      width: `${(speechComplete ? 50 : 0) + (assetsLoaded ? 50 : 0)}%`,
+                    }}
+                    transition={{ duration: 1 }}
+                  />
+                </motion.div>
+              </motion.div>
+            </div>
           </motion.div>
 
-          <div className="text-center max-w-md px-4">
-            <motion.h1
-              key={displayText}
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              className="text-3xl font-bold text-gray-800 mb-2"
-            >
-              {displayText}
-              <motion.span
-                animate={{ opacity: [0, 1, 0] }}
-                transition={{
-                  repeat: Infinity,
-                  duration: 1.5,
-                }}
-                className="ml-1"
+          {/* Fun facts/amusing content */}
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 1.5 }}
+            className="mt-8 grid grid-cols-1 md:grid-cols-3 gap-4 max-w-4xl w-full"
+          >
+            {[
+              "Did you know? The average person spends about $300 per year on skincare products.",
+              "Fun fact: Skin is the body's largest organ, weighing about 8 pounds!",
+              "Skincare tip: Always patch test new products before full application.",
+            ].map((fact, index) => (
+              <motion.div
+                key={index}
+                initial={{ y: 20, opacity: 0 }}
+                animate={{ y: 0, opacity: 1 }}
+                transition={{ delay: 1.8 + index * 0.2 }}
+                className="bg-white/30 backdrop-blur-sm p-4 rounded-xl border border-white/20 text-sm text-gray-700 shadow-sm"
               >
-                |
-              </motion.span>
-            </motion.h1>
-            <motion.p
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.5 }}
-              className="text-gray-500 text-sm"
-            >
-              Loading assets...
-            </motion.p>
-          </div>
+                {fact}
+              </motion.div>
+            ))}
+          </motion.div>
         </div>
       )}
 
-      {/* Main Content */}
+        {/* Main Content */}
       <div
         className={`relative overflow-x-hidden bg-gradient-to-b from-[#fff9f5] to-white ${
           isLoading ? "opacity-0 overflow-y-hidden" : "opacity-100 transition-opacity duration-500"
