@@ -250,12 +250,7 @@ setShowClickPrompt(true);
                 className="flex flex-col items-center space-y-4"
               >
                 <div className="flex items-center space-x-2 text-sm text-gray-600">
-                  {!speechComplete && !userInteracted && (
-                    <>
-                      <Volume2 className="w-4 h-4 animate-pulse" />
-                      <span>Click anywhere to hear welcome message</span>
-                    </>
-                  )}
+                  
                   {!speechComplete && userInteracted && (
                     <span>Playing welcome message...</span>
                   )}
