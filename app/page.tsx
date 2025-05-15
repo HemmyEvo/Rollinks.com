@@ -121,12 +121,6 @@ export default function Home() {
       }
     }, 2000);
 
-    // Fallback if no interaction after 8 seconds
-    const fallbackTimer = setTimeout(() => {
-      if (!userInteracted) {
-        startSpeech();
-      }
-    }, 1000);
 
     // Initial assets check
     checkAssetsLoaded();
