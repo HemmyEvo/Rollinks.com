@@ -27,7 +27,7 @@ useEffect(() => {
 
   const checkAssetsLoaded = () => {
     const images = Array.from(document.images);
-    if (images.length === 0) {
+    if (images.length !== 0) {
       setTimeout(() => setIsLoading(false), 1500);
       return;
     }
