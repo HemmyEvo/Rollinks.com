@@ -37,10 +37,8 @@ export default function Home() {
     };
   }, [isLoading]);
 
+  
   const startSpeech = () => {
-    if (hasSpokenRef.current) return;
-    hasSpokenRef.current = true;
-
     if (typeof window !== "undefined" && "speechSynthesis" in window) {
       window.speechSynthesis.cancel(); // Cancel any ongoing speech
 
@@ -58,12 +56,13 @@ export default function Home() {
             currentIndex++;
           } else {
             clearInterval(interval);
-            setAssetsLoaded(true);
+           setAssetsLoaded(true);
           }
         }, 100);
       };
 
       speech.onend = () => {
+        
         setSpeechComplete(true);
       };
 
@@ -84,68 +83,34 @@ export default function Home() {
     }
   };
 
-  const checkAssetsLoaded = () => {
-    const images = Array.from(document.images);
-
-    if (images.length === 0) {
-      setAssetsLoaded(true);
-      return;
-    }
-
-    let loadedCount = 0;
-    const imageLoadPromises = images.map((img) => {
-      if (img.complete) {
-        loadedCount++;
-        return Promise.resolve();
-      }
-      return new Promise<void>((resolve) => {
-        img.addEventListener("load", () => {
-          loadedCount++;
-          resolve();
-        });
-        img.addEventListener("error", () => resolve());
-      });
-    });
-
-    Promise.all(imageLoadPromises).then(() => {
-      setAssetsLoaded(true);
-    });
-  };
+  
 
   const handleUserInteraction = () => {
-    if (hasSpokenRef.current) return;
-    
     setUserInteracted(true);
     setShowClickPrompt(false);
     startSpeech();
   };
 
   useEffect(() => {
-    const isFirstVisit = localStorage.getItem('hasVisited') === null;
-    if (!isFirstVisit) {
-      setIsLoading(false);
-      return;
-    }
-
-    // Set up event listeners for user interaction
-    const interactionHandler = () => handleUserInteraction();
-    document.addEventListener("click", interactionHandler);
-    document.addEventListener("touchstart", interactionHandler);
+    
 
     // Show prompt after delay if no interaction
     const promptTimer = setTimeout(() => {
-      if (!userInteracted) {
-        setShowClickPrompt(true);
-      }
-    }, 2000);
+setShowClickPrompt(true);
+    }, 1000);
 
-    // Initial assets check
-    checkAssetsLoaded();
+    // Fallback if no interaction after 8 seconds
+    const fallbackTimer = setTimeout(() => {
+      if (!userInteracted) {
+        startSpeech();
+      }
+    }, 1000);
+
 
     return () => {
-      document.removeEventListener("click", interactionHandler);
-      document.removeEventListener("touchstart", interactionHandler);
+      
       clearTimeout(promptTimer);
+      clearTimeout(fallbackTimer);
       if (typeof window !== "undefined" && "speechSynthesis" in window) {
         window.speechSynthesis.cancel();
       }
@@ -153,9 +118,6 @@ export default function Home() {
   }, []);
 
   useEffect(() => {
-    const isFirstVisit = localStorage.getItem('hasVisited') === null;
-    if (!isFirstVisit) return;
-
     // When both speech and assets are loaded, hide loading screen
     if (speechComplete && assetsLoaded) {
       const timer = setTimeout(() => {
@@ -164,7 +126,7 @@ export default function Home() {
       return () => clearTimeout(timer);
     }
   }, [speechComplete, assetsLoaded]);
-
+  
   // Rest of your component remains the same...
   const heroFooter = [
     {
@@ -325,8 +287,8 @@ export default function Home() {
                     >
                       <Hand className="w-6 h-6 text-amber-600" />
                     </motion.div>
-                    <span className="text-gray-700">
-                      Click anywhere to continue
+                    <span onclick={handleUserInteraction}className="text-gray-700">
+                      Click the button to continue
                     </span>
                   </motion.div>
                 )}
