@@ -1,8 +1,6 @@
-
-
 "use client";
 import { Leaf, HandCoins, Truck, Volume2, Hand } from "lucide-react";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import NewArrival from "./(roots)/_components/NewArrival";
@@ -10,19 +8,28 @@ import HomeProducts from "./(roots)/_components/HomeProducts";
 import Category from "./(roots)/_components/Category";
 
 export default function Home() {
-    const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(true);
   const [displayText, setDisplayText] = useState("");
   const [showClickPrompt, setShowClickPrompt] = useState(false);
   const [assetsLoaded, setAssetsLoaded] = useState(false);
   const [speechComplete, setSpeechComplete] = useState(false);
   const [userInteracted, setUserInteracted] = useState(false);
+  const hasSpokenRef = useRef(false);
   const fullText = "Welcome to Rollinks Skincare!";
 
   useEffect(() => {
+    // Check if this is the first visit
+    const isFirstVisit = localStorage.getItem('hasVisited') === null;
+    if (!isFirstVisit) {
+      setIsLoading(false);
+      return;
+    }
+
     if (isLoading) {
       document.body.style.overflow = "hidden";
     } else {
       document.body.style.overflow = "auto";
+      localStorage.setItem('hasVisited', 'true');
     }
 
     return () => {
@@ -31,6 +38,9 @@ export default function Home() {
   }, [isLoading]);
 
   const startSpeech = () => {
+    if (hasSpokenRef.current) return;
+    hasSpokenRef.current = true;
+
     if (typeof window !== "undefined" && "speechSynthesis" in window) {
       window.speechSynthesis.cancel(); // Cancel any ongoing speech
 
@@ -48,13 +58,12 @@ export default function Home() {
             currentIndex++;
           } else {
             clearInterval(interval);
-           setAssetsLoaded(true);
+            setAssetsLoaded(true);
           }
         }, 100);
       };
 
       speech.onend = () => {
-        
         setSpeechComplete(true);
       };
 
@@ -77,7 +86,7 @@ export default function Home() {
 
   const checkAssetsLoaded = () => {
     const images = Array.from(document.images);
-    
+
     if (images.length === 0) {
       setAssetsLoaded(true);
       return;
@@ -104,15 +113,24 @@ export default function Home() {
   };
 
   const handleUserInteraction = () => {
+    if (hasSpokenRef.current) return;
+    
     setUserInteracted(true);
     setShowClickPrompt(false);
     startSpeech();
   };
 
   useEffect(() => {
+    const isFirstVisit = localStorage.getItem('hasVisited') === null;
+    if (!isFirstVisit) {
+      setIsLoading(false);
+      return;
+    }
+
     // Set up event listeners for user interaction
-    document.addEventListener("click", handleUserInteraction);
-    document.addEventListener("touchstart", handleUserInteraction);
+    const interactionHandler = () => handleUserInteraction();
+    document.addEventListener("click", interactionHandler);
+    document.addEventListener("touchstart", interactionHandler);
 
     // Show prompt after delay if no interaction
     const promptTimer = setTimeout(() => {
@@ -121,13 +139,12 @@ export default function Home() {
       }
     }, 2000);
 
-
     // Initial assets check
     checkAssetsLoaded();
 
     return () => {
-      document.removeEventListener("click", handleUserInteraction);
-      document.removeEventListener("touchstart", handleUserInteraction);
+      document.removeEventListener("click", interactionHandler);
+      document.removeEventListener("touchstart", interactionHandler);
       clearTimeout(promptTimer);
       if (typeof window !== "undefined" && "speechSynthesis" in window) {
         window.speechSynthesis.cancel();
@@ -136,6 +153,9 @@ export default function Home() {
   }, []);
 
   useEffect(() => {
+    const isFirstVisit = localStorage.getItem('hasVisited') === null;
+    if (!isFirstVisit) return;
+
     // When both speech and assets are loaded, hide loading screen
     if (speechComplete && assetsLoaded) {
       const timer = setTimeout(() => {
@@ -145,6 +165,7 @@ export default function Home() {
     }
   }, [speechComplete, assetsLoaded]);
 
+  // Rest of your component remains the same...
   const heroFooter = [
     {
       icon: <Leaf className="w-6 h-6" />,
@@ -187,7 +208,6 @@ export default function Home() {
     },
   };
 
-  
   return (
     <div className={`${isLoading ? 'overflow-hidden h-screen' : ''}`}>
       {/* Enhanced Glassmorphism Loading Screen */}
@@ -195,7 +215,7 @@ export default function Home() {
         <div className="fixed inset-0 z-50 flex flex-col items-center justify-center p-4">
           {/* Glassmorphism background */}
           <div className="absolute inset-0 bg-white/20 backdrop-blur-lg backdrop-filter" />
-          
+
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
@@ -469,7 +489,6 @@ export default function Home() {
         {/* Categories */}
         <section className="py-16 md:py-24 px-4 bg-white/50">
           <div className="container mx-auto">
-            
             <Category />
           </div>
         </section>
@@ -508,7 +527,6 @@ export default function Home() {
         {/* Featured Products */}
         <section className="py-16 md:py-24 px-4 bg-gradient-to-b from-white to-[#fff9f5]">
           <div className="container mx-auto">
-          
             <HomeProducts />
           </div>
         </section>
