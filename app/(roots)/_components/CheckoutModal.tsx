@@ -914,26 +914,64 @@ const items = cartDetails
       
       {!showBankDetails ? (
         <>
-          <div className="space-y-3">
-            <button
-              onClick={() => handlePaymentMethodSelect('paystack')}
-              className="w-full py-2 px-4 bg-blue-600 text-white rounded-md hover:bg-blue-700"
-            >
-              Pay with Paystack (Card)
-            </button>
-            <button
-              onClick={() => handlePaymentMethodSelect('bank-transfer')}
-              className="w-full py-2 px-4 bg-green-600 text-white rounded-md hover:bg-green-700"
-            >
-              Direct Bank Transfer
-            </button>
-          </div>
-          <button
-            onClick={() => setShowPaymentMethodModal(false)}
-            className="mt-4 w-full py-2 px-4 bg-gray-300 rounded-md hover:bg-gray-400"
-          >
-            Cancel
-          </button>
+         <div className="space-y-4">
+  <div className="bg-white p-4 rounded-lg shadow-md border border-gray-200">
+    <h3 className="font-semibold text-lg mb-2 text-gray-800">Pay with Paystack</h3>
+    <p className="text-gray-600 mb-3">Secure online payment with credit/debit card or bank account</p>
+    <ul className="text-sm text-gray-500 space-y-1 mb-4">
+      <li className="flex items-start">
+        <span className="mr-2">•</span>
+        <span>Processing time: 3-4 business days for order delivery</span>
+      </li>
+      <li className="flex items-start">
+        <span className="mr-2">•</span>
+        <span>Instant payment confirmation</span>
+      </li>
+      <li className="flex items-start">
+        <span className="mr-2">•</span>
+        <span>Supports all major cards and mobile money</span>
+      </li>
+    </ul>
+    <button
+      onClick={() => handlePaymentMethodSelect('paystack')}
+      className="w-full py-3 px-4 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors duration-200 font-medium"
+    >
+      Proceed with Paystack
+    </button>
+  </div>
+
+  <div className="bg-white p-4 rounded-lg shadow-md border border-gray-200">
+    <h3 className="font-semibold text-lg mb-2 text-gray-800">Direct Bank Transfer</h3>
+    <p className="text-gray-600 mb-3">Transfer funds directly from your bank account</p>
+    <ul className="text-sm text-gray-500 space-y-1 mb-4">
+      <li className="flex items-start">
+        <span className="mr-2">•</span>
+        <span>Fastest option: Delivery within 1 business day after payment</span>
+      </li>
+      <li className="flex items-start">
+        <span className="mr-2">•</span>
+        <span>Bank details will be provided after selection</span>
+      </li>
+      <li className="flex items-start">
+        <span className="mr-2">•</span>
+        <span>Click on "I've sent the Payment" button after Payment is made</span>
+      </li>
+    </ul>
+    <button
+      onClick={() => handlePaymentMethodSelect('bank-transfer')}
+      className="w-full py-3 px-4 bg-green-600 text-white rounded-md hover:bg-green-700 transition-colors duration-200 font-medium"
+    >
+      Proceed with Bank Transfer
+    </button>
+  </div>
+
+  <button
+    onClick={() => setShowPaymentMethodModal(false)}
+    className="mt-2 w-full py-2 px-4 bg-gray-100 text-gray-700 rounded-md hover:bg-gray-200 transition-colors duration-200 border border-gray-300 font-medium"
+  >
+    Cancel and Return
+  </button>
+</div>
         </>
       ) : (
         <div>
