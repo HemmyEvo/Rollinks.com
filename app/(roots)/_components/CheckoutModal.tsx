@@ -340,7 +340,7 @@ const handleBankTransferConfirmation = async () => {
 };
 
 
-  const handlePayment = async () => {
+  const handlePaystackPayment = async () => {
       
   
     handleCartClick()
