@@ -38,6 +38,7 @@ interface SelectOption {
 const CheckoutModal = ({ isOpen, onClose }: CheckoutModalProps) => {
   const { totalPrice, clearCart,handleCartClick, cartDetails } = useShoppingCart();
   const [loading, setLoading] = useState(false);
+const [paymentDone, setPaymentDone] = useState(false);
   const [paymentSuccess, setPaymentSuccess] = useState(false);
   const [orderId, setOrderId] = useState('');
   const router = useRouter();
@@ -337,6 +338,7 @@ const handleBankTransferConfirmation = async () => {
 
   setLoading(false);
   handleCartClick(); // Close cart after submission
+clearCart();
 };
 
 
@@ -456,8 +458,44 @@ const handleBankTransferConfirmation = async () => {
           // Save to Sanity
           const createdOrder = await client.create(orderDoc);
           setOrderId(createdOrder.orderId);
-          return (
-      <div className="absolute left-0 right-0 bottom-0 top-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-[1000]">
+         
+          
+        } catch (error) {
+          console.error('Error saving order:', error);
+          alert(error)
+          alert('Order was successful but there was an issue saving your details. Please contact support with your payment reference.');
+        } finally {
+          clearCart();
+          setLoading(false);
+          // Show our modal again
+          if (modalRef.current) {
+            modalRef.current.style.display = 'block';
+          }
+        
+        }
+      },
+      onCancel: () => {
+        setLoading(false);
+        // Show our modal again if payment is cancelled
+        if (modalRef.current) {
+          modalRef.current.style.display = 'block';
+        }
+      },
+    });
+  };
+const items = cartDetails
+  ? Object.values(cartDetails).map(
+      (item) => `${item.name} (Qty: ${item.quantity}) - ₦${(item.price * item.quantity).toLocaleString()}`
+    )
+  : [];
+
+  if (!isOpen) return null;
+
+  
+  return (
+<>
+{paymentDone && (
+ <div className="absolute left-0 right-0 bottom-0 top-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-[1000]">
         <div className="bg-white rounded-lg max-w-md w-full max-h-[90vh] overflow-y-auto">
           <div className="p-6">
             <div className="flex justify-between items-center mb-4">
@@ -506,42 +544,8 @@ const handleBankTransferConfirmation = async () => {
           </div>
         </div>
       </div>
-    );
-          
-          
-        } catch (error) {
-          console.error('Error saving order:', error);
-          alert(error)
-          alert('Order was successful but there was an issue saving your details. Please contact support with your payment reference.');
-        } finally {
-          clearCart();
-          setLoading(false);
-          // Show our modal again
-          if (modalRef.current) {
-            modalRef.current.style.display = 'block';
-          }
-        
-        }
-      },
-      onCancel: () => {
-        setLoading(false);
-        // Show our modal again if payment is cancelled
-        if (modalRef.current) {
-          modalRef.current.style.display = 'block';
-        }
-      },
-    });
-  };
-const items = cartDetails
-  ? Object.values(cartDetails).map(
-      (item) => `${item.name} (Qty: ${item.quantity}) - ₦${(item.price * item.quantity).toLocaleString()}`
-    )
-  : [];
-
-  if (!isOpen) return null;
-
-  
-  return (
+    
+)}
     <div  className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-[1000]">
       <div ref={modalRef} className="bg-white rounded-lg w-full max-w-4xl max-h-[90vh] overflow-y-auto">
         <div className="p-6">
@@ -975,6 +979,7 @@ const items = cartDetails
         </div>
       </div>
     </div>
+</>
   );
 };
 
