@@ -856,7 +856,7 @@ const items = cartDetails
              
                 {loading ? (
                 <button
-                onClick={handlePayment}
+                onClick={handlePaymentInitiation}
                 disabled={loading}
                 className={`w-full py-3 px-4 rounded-md text-white font-medium focus:outline-none focus:ring-2 focus:ring-offset-2 ${
                   loading ? 'bg-blue-400 cursor-not-allowed' : 'bg-blue-600 hover:bg-blue-700'
