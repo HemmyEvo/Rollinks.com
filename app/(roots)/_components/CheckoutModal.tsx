@@ -216,7 +216,7 @@ useEffect(() => {
 
 
 
-const handlePaymentMethodSelect = (method) => {
+const handlePaymentMethodSelect = (method:any) => {
   setSelectedPaymentMethod(method);
   if (method === 'bank-transfer') {
     setShowBankDetails(true);
@@ -342,17 +342,7 @@ const handleBankTransferConfirmation = async () => {
 
   const handlePayment = async () => {
       
-  if (!validateForm()) {
-    // Scroll to first error
-    const firstError = Object.keys(errors)[0];
-    if (firstError) {
-      document.querySelector(`[name="${firstError}"]`)?.scrollIntoView({
-        behavior: 'smooth',
-        block: 'center'
-      });
-    }
-    return;
-  }
+  
     handleCartClick()
     setLoading(true);
     
