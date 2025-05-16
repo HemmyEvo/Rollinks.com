@@ -48,14 +48,14 @@ const { isAuthenticated } = useConvexAuth();
 const me = useQuery(api.user.getMe, isAuthenticated ? undefined : "skip");
   // Form state
   const [formData, setFormData] = useState({
-    firstName: me?.firstname,
-    lastName: me?.lastname,
-    email: me?.email,
-    phone: '',
-    address: '',
-    postalCode: '',
-    deliveryInstructions: ''
-  });
+  firstName: me?.firstname ?? '',
+  lastName: me?.lastname ?? '',
+  email: me?.email ?? '',
+  phone: '',
+  address: '',
+  postalCode: '',
+  deliveryInstructions: ''
+});
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [emailWarning, setEmailWarning] = useState(false);
 
