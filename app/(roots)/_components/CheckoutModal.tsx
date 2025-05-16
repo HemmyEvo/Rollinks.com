@@ -912,69 +912,6 @@ const items = cartDetails
                   Proceed to Payment
   </button>
 
-{showPaymentMethodModal && (
-  <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-    <div className="bg-white p-6 rounded-lg max-w-md w-full">
-      <h2 className="text-xl font-bold mb-4">Select Payment Method</h2>
-      
-      {!showBankDetails ? (
-        <>
-          <div className="space-y-3">
-            <button
-              onClick={() => handlePaymentMethodSelect('paystack')}
-              className="w-full py-2 px-4 bg-blue-600 text-white rounded-md hover:bg-blue-700"
-            >
-              Pay with Paystack (Card)
-            </button>
-            <button
-              onClick={() => handlePaymentMethodSelect('bank-transfer')}
-              className="w-full py-2 px-4 bg-green-600 text-white rounded-md hover:bg-green-700"
-            >
-              Direct Bank Transfer
-            </button>
-          </div>
-          <button
-            onClick={() => setShowPaymentMethodModal(false)}
-            className="mt-4 w-full py-2 px-4 bg-gray-300 rounded-md hover:bg-gray-400"
-          >
-            Cancel
-          </button>
-        </>
-      ) : (
-        <div>
-          <h3 className="font-bold mb-2">Bank Transfer Details</h3>
-          <div className="bg-gray-100 p-4 rounded-md mb-4">
-            <p><strong>Bank Name:</strong> OPay</p>
-            <p><strong>Account Number:</strong> 7053142223</p>
-            <p><strong>Account Name:</strong> Sukurat Opeyemi Muniru</p>
-            <p><strong>Amount:</strong> {totalAmount} NGN</p>
-          </div>
-          
-          <p className="mb-4">Please transfer the exact amount to the account above, then click "I've Sent" to notify us.</p>
-          
-          <div className="flex space-x-3">
-            <button
-              onClick={handleBankTransferConfirmation}
-              disabled={paymentSent}
-              className={`flex-1 py-2 px-4 rounded-md text-white font-medium ${
-                paymentSent ? 'bg-green-500' : 'bg-green-600 hover:bg-green-700'
-              }`}
-            >
-              {paymentSent ? 'Notification Sent' : "I've Sent the Payment"}
-            </button>
-            <button
-              onClick={() => {
-                setShowBankDetails(false);
-                setShowPaymentMethodModal(false);
-              }}
-              className="flex-1 py-2 px-4 bg-gray-300 rounded-md hover:bg-gray-400"
-            >
-              Cancel
-            </button>
-        </div>
-          </div>
- 
-                )}
 )}
             
             </div>
