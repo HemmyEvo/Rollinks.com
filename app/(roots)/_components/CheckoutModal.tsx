@@ -48,7 +48,6 @@ const [showModal, setShowModal] = useState(false);
 const { userId } = useAuth();
 const { isAuthenticated } = useConvexAuth();
 const me = useQuery(api.user.getMe, isAuthenticated ? undefined : "skip");
-if (!me) return <Loading/>
   // Form state
   const [formData, setFormData] = useState({
   firstName: me?.firstname ?? '',
