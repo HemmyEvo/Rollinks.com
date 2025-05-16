@@ -274,57 +274,58 @@ const handleBankTransferConfirmation = async () => {
   window.open(whatsappUrl, '_blank');
   
   // Create order document in Sanity (similar to Paystack version but with payment method as bank transfer)
-  const orderItemsSanity = cartDetails 
-    ? Object.values(cartDetails).map((item) => ({
-        _key: item.id,
-        product: {
-          _type: 'reference',
-          _ref: item.id,
-        },
-        name: item.name,
-        quantity: item.quantity,
-        price: item.price,
-        currency: item.currency,
-        image: item.image,
-      }))
-    : [];
+  const orderItems = cartDetails 
+  ? Object.values(cartDetails).map((item) => ({
+      _key: item.id,
+      product: {
+        _type: 'reference',
+        _ref: item.id,
+      },
+      name: item.name,
+      quantity: item.quantity,
+      price: item.price,
+      currency: item.currency,
+      image: item.image,
+    }))
+  : [];
 
   const orderDoc = {
-    _type: 'order',
-    orderId: `ORD-${Date.now()}`,
-    status: 'pending',
-    customer: {
-      name: `${formData.firstName} ${formData.lastName}`,
-      email: formData.email,
-      phone: formData.phone,
-      userId: userId || null
-    }, 
-    shippingAddress: {
-      street: formData.address,
-      city: selectedLocation?.value === 'custom' ? customCity : selectedLocation?.label || '',
-      state: selectedState?.label || '',
-      country: selectedCountry?.label || '',
-      postalCode: formData.postalCode,
-      specialInstructions: formData.deliveryInstructions
-    },
-    items: orderItemsSanity,
-    payment: {
-      method: 'bank-transfer',
-      status: 'pending',
-      amount: totalAmount,
-      currency: 'NGN'
-    },
-    shipping: {
-      method: 'standard',
-      cost: shippingFee,
-      carrier: 'Local Delivery'
-    },
-    subtotal: totalPrice || 0,
-    total: totalAmount,
-    discount: 0,
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString()
-  };
+            _type: 'order',
+            orderId: `ORD-${Date.now()}`,
+            status: 'processing',
+            customer: {
+              name: `${formData.firstName} ${formData.lastName}`,
+              email: formData.email,
+              phone: formData.phone,
+              userId: userId || null
+            }, 
+            shippingAddress: {
+              street: formData.address,
+              city: selectedLocation?.value === 'custom' ? customCity : selectedLocation?.label || '',
+              state: selectedState?.label || '',
+              country: selectedCountry?.label || '',
+              postalCode: formData.postalCode,
+              specialInstructions: formData.deliveryInstructions
+            },
+            items: orderItems,
+            payment: {
+              method: 'paystack',
+              status: 'completed',
+              transactionId: response.reference,
+              amount: totalAmount,
+              currency: 'NGN'
+            },
+            shipping: {
+              method: 'standard',
+              cost: shippingFee,
+              carrier: 'Local Delivery'
+            },
+            subtotal: totalPrice || 0,
+            total: totalAmount,
+            discount: 0,
+            createdAt: new Date().toISOString(),
+            updatedAt: new Date().toISOString()
+          };
 
   // Save to Sanity (implement your Sanity client code here)
   try {
