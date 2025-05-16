@@ -971,9 +971,11 @@ const items = cartDetails
             >
               Cancel
             </button>
-        
+        </div>
+          </div>
  
                 )}
+)}
             
             </div>
           </div>
