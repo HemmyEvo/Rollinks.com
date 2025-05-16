@@ -328,7 +328,7 @@ const handleBankTransferConfirmation = async () => {
 
   // Save to Sanity (implement your Sanity client code here)
   try {
-    await sanityClient.create(orderDoc);
+    await client.create(orderDoc);
     // Handle success
   } catch (error) {
     console.error('Error creating order:', error);
