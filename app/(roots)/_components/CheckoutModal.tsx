@@ -975,7 +975,7 @@ const items = cartDetails
         </div>
           </div>
  
-                )}
+                )})}
             
             </div>
           </div>
