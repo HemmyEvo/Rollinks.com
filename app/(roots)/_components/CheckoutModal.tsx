@@ -309,9 +309,8 @@ const handleBankTransferConfirmation = async () => {
             },
             items: orderItem,
             payment: {
-              method: 'paystack',
-              status: 'completed',
-              transactionId: response.reference,
+              method: 'Bank Transfer',
+              status: 'pending',
               amount: totalAmount,
               currency: 'NGN'
             },
