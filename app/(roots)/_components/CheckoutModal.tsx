@@ -274,7 +274,7 @@ const handleBankTransferConfirmation = async () => {
   window.open(whatsappUrl, '_blank');
   
   // Create order document in Sanity (similar to Paystack version but with payment method as bank transfer)
-  const orderItems = cartDetails 
+  const orderItem = cartDetails 
   ? Object.values(cartDetails).map((item) => ({
       _key: item.id,
       product: {
@@ -307,7 +307,7 @@ const handleBankTransferConfirmation = async () => {
               postalCode: formData.postalCode,
               specialInstructions: formData.deliveryInstructions
             },
-            items: orderItems,
+            items: orderItem,
             payment: {
               method: 'paystack',
               status: 'completed',
