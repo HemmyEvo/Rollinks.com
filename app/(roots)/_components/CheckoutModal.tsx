@@ -46,11 +46,12 @@ const [showModal, setShowModal] = useState(false);
 const { userId } = useAuth();
 const { isAuthenticated } = useConvexAuth();
 const me = useQuery(api.user.getMe, isAuthenticated ? undefined : "skip");
+const userDetails = me && me
   // Form state
   const [formData, setFormData] = useState({
-    firstName: me ? me.firstname : '',
-    lastName: me ? me.lastname : '',
-    email: me ? me.email : '',
+    firstName: userDetails.firstname,
+    lastName: userDetails.lastname,
+    email: userDetails.email,
     phone: '',
     address: '',
     postalCode: '',
@@ -67,8 +68,10 @@ const me = useQuery(api.user.getMe, isAuthenticated ? undefined : "skip");
   const [customCity, setCustomCity] = useState('');
   const [shippingFee, setShippingFee] = useState(0);
   const [deliveryOptions, setDeliveryOptions] = useState<DeliveryOption[]>([])
-
-  
+  const [showPaymentMethodModal, setShowPaymentMethodModal] = useState(false);
+const [selectedPaymentMethod, setSelectedPaymentMethod] = useState('');
+const [showBankDetails, setShowBankDetails] = useState(false);
+const [paymentSent, setPaymentSent] = useState(false);
   
 useEffect(() => {
     async function fetchDeliveryOptions() {
@@ -159,7 +162,7 @@ useEffect(() => {
   // Convert delivery options to select options
   const locationOptions: SelectOption[] = deliveryOptions.map((option: DeliveryOption) => ({
   value: option.value,
-  label: `${option.name} - ₦${option.price}`,
+  label: `${option.name}`,
   description: option.description
 }));
 
@@ -211,6 +214,132 @@ useEffect(() => {
     setErrors(prev => ({ ...prev, [name]: '' }));
     if (name === 'email') setEmailWarning(false);
   };
+
+
+
+const handlePaymentMethodSelect = (method) => {
+  setSelectedPaymentMethod(method);
+  if (method === 'bank-transfer') {
+    setShowBankDetails(true);
+  } else {
+    setShowPaymentMethodModal(false);
+    handlePaystackPayment();
+  }
+};
+
+const handlePaymentInitiation = () => {
+  if (!validateForm()) {
+    const firstError = Object.keys(errors)[0];
+    if (firstError) {
+      document.querySelector(`[name="${firstError}"]`)?.scrollIntoView({
+        behavior: 'smooth',
+        block: 'center'
+      });
+    }
+    return;
+  }
+  setShowPaymentMethodModal(true);
+};
+
+const handleBankTransferConfirmation = async () => {
+  setPaymentSent(true);
+  setLoading(true);
+  
+  // Prepare order items for WhatsApp message
+  const orderItems = cartDetails 
+    ? Object.values(cartDetails).map(item => (
+        `${item.name} (${item.quantity} x ${item.price}${item.currency})`
+      )).join('\n')
+    : '';
+
+  const customerInfo = `
+    *New Bank Transfer Order*
+    Customer: ${formData.firstName} ${formData.lastName}
+    Email: ${formData.email}
+    Phone: ${formData.phone}
+    Address: ${formData.address}, ${selectedLocation?.label || ''}, ${selectedState?.label || ''}, ${selectedCountry?.label || ''}
+    Postal Code: ${formData.postalCode}
+    
+    *Order Items:*
+    ${orderItems}
+    
+    *Total Amount:* ${totalAmount} NGN
+    Delivery Instructions: ${formData.deliveryInstructions || 'None'}
+  `;
+
+  // Encode message for WhatsApp URL
+  const whatsappMessage = encodeURIComponent(customerInfo);
+  const whatsappUrl = `https://wa.me/2347053142223?text=${whatsappMessage}`;
+  
+  // Open WhatsApp
+  window.open(whatsappUrl, '_blank');
+  
+  // Create order document in Sanity (similar to Paystack version but with payment method as bank transfer)
+  const orderItemsSanity = cartDetails 
+    ? Object.values(cartDetails).map((item) => ({
+        _key: item.id,
+        product: {
+          _type: 'reference',
+          _ref: item.id,
+        },
+        name: item.name,
+        quantity: item.quantity,
+        price: item.price,
+        currency: item.currency,
+        image: item.image,
+      }))
+    : [];
+
+  const orderDoc = {
+    _type: 'order',
+    orderId: `ORD-${Date.now()}`,
+    status: 'pending',
+    customer: {
+      name: `${formData.firstName} ${formData.lastName}`,
+      email: formData.email,
+      phone: formData.phone,
+      userId: userId || null
+    }, 
+    shippingAddress: {
+      street: formData.address,
+      city: selectedLocation?.value === 'custom' ? customCity : selectedLocation?.label || '',
+      state: selectedState?.label || '',
+      country: selectedCountry?.label || '',
+      postalCode: formData.postalCode,
+      specialInstructions: formData.deliveryInstructions
+    },
+    items: orderItemsSanity,
+    payment: {
+      method: 'bank-transfer',
+      status: 'pending',
+      amount: totalAmount,
+      currency: 'NGN'
+    },
+    shipping: {
+      method: 'standard',
+      cost: shippingFee,
+      carrier: 'Local Delivery'
+    },
+    subtotal: totalPrice || 0,
+    total: totalAmount,
+    discount: 0,
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString()
+  };
+
+  // Save to Sanity (implement your Sanity client code here)
+  try {
+    await sanityClient.create(orderDoc);
+    // Handle success
+  } catch (error) {
+    console.error('Error creating order:', error);
+    // Handle error
+  }
+
+  setLoading(false);
+  handleCartClick(); // Close cart after submission
+};
+
 
   const handlePayment = async () => {
       
@@ -774,7 +903,7 @@ const items = cartDetails
 </a>
 ) :(
  <button
-                onClick={handlePayment}
+                onClick={handlePaymentInitiation}
                 disabled={loading}
                 className={`w-full py-3 px-4 rounded-md text-white font-medium focus:outline-none focus:ring-2 focus:ring-offset-2 ${
                   loading ? 'bg-blue-400 cursor-not-allowed' : 'bg-blue-600 hover:bg-blue-700'
@@ -782,6 +911,72 @@ const items = cartDetails
               >
                   Proceed to Payment
   </button>
+
+{showPaymentMethodModal && (
+  <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+    <div className="bg-white p-6 rounded-lg max-w-md w-full">
+      <h2 className="text-xl font-bold mb-4">Select Payment Method</h2>
+      
+      {!showBankDetails ? (
+        <>
+          <div className="space-y-3">
+            <button
+              onClick={() => handlePaymentMethodSelect('paystack')}
+              className="w-full py-2 px-4 bg-blue-600 text-white rounded-md hover:bg-blue-700"
+            >
+              Pay with Paystack (Card)
+            </button>
+            <button
+              onClick={() => handlePaymentMethodSelect('bank-transfer')}
+              className="w-full py-2 px-4 bg-green-600 text-white rounded-md hover:bg-green-700"
+            >
+              Direct Bank Transfer
+            </button>
+          </div>
+          <button
+            onClick={() => setShowPaymentMethodModal(false)}
+            className="mt-4 w-full py-2 px-4 bg-gray-300 rounded-md hover:bg-gray-400"
+          >
+            Cancel
+          </button>
+        </>
+      ) : (
+        <div>
+          <h3 className="font-bold mb-2">Bank Transfer Details</h3>
+          <div className="bg-gray-100 p-4 rounded-md mb-4">
+            <p><strong>Bank Name:</strong> OPay</p>
+            <p><strong>Account Number:</strong> 7053142223</p>
+            <p><strong>Account Name:</strong> Sukurat Opeyemi Muniru</p>
+            <p><strong>Amount:</strong> {totalAmount} NGN</p>
+          </div>
+          
+          <p className="mb-4">Please transfer the exact amount to the account above, then click "I've Sent" to notify us.</p>
+          
+          <div className="flex space-x-3">
+            <button
+              onClick={handleBankTransferConfirmation}
+              disabled={paymentSent}
+              className={`flex-1 py-2 px-4 rounded-md text-white font-medium ${
+                paymentSent ? 'bg-green-500' : 'bg-green-600 hover:bg-green-700'
+              }`}
+            >
+              {paymentSent ? 'Notification Sent' : "I've Sent the Payment"}
+            </button>
+            <button
+              onClick={() => {
+                setShowBankDetails(false);
+                setShowPaymentMethodModal(false);
+              }}
+              className="flex-1 py-2 px-4 bg-gray-300 rounded-md hover:bg-gray-400"
+            >
+              Cancel
+            </button>
+          </div>
+        </div>
+      )}
+    </div>
+  </div>
+)}
                 )}
             
             </div>
