@@ -3,28 +3,29 @@ import { FacebookIcon, Github, InstagramIcon, Linkedin, Twitter, Mail, Phone } f
 import Link from 'next/link'
 import React from 'react'
 import { motion } from 'framer-motion'
+import { FaTiktok } from 'react-icons/fa';
 
 const Footer = () => {
   const socialIcons = [
     {
-      path: 'https://www.facebook.com/profile.php?id=100084631813516',
+      path: 'https://www.facebook.com/rollinks.skincare',
       icon: <FacebookIcon className="w-5 h-5" />,
       name: 'Facebook'
     },
     {
-      path: 'https://x.com/Hemmyevo?t=mMX6xoH_0SJs6pL8bLYblQ&s=09',
+      path: 'https://x.com/Rollinks_?s=09',
       icon: <Twitter className="w-5 h-5" />,
       name: 'Twitter'
     },
     {
-      path: 'https://www.instagram.com/hemmy_evo?igsh=M2Q1eTNra2x4c3o4',
+      path: 'https://www.instagram.com/rollinks__skincare?igsh=MWlweHdxeDMzbWl0ag==',
       icon: <InstagramIcon className="w-5 h-5" />,
       name: 'Instagram'
     },
     {
-      path: 'https://www.linkedin.com/in/atilola-emmanuel-99964b324',
-      icon: <Linkedin className="w-5 h-5" />,
-      name: 'LinkedIn'
+      path: 'https://vm.tiktok.com/ZMSLLPnyn/',
+      icon: <FaTiktok className="w-5 h-5" />,
+      name: 'Tiktok'
     },
   ]
 
@@ -35,27 +36,18 @@ const Footer = () => {
         { name: "All Products", href: "/product" },
         { name: "Featured", href: "#" },
         { name: "New Arrivals", href: "#" },
-        { name: "Sale Items", href: "" },
+        { name: "Sale Items", href: "#" },
       ]
     },
     {
-      title: "Company",
+      title: "Useful Links",
       links: [
         { name: "About Us", href: "/about-us" },
-        { name: "Our Story", href: "#" },
-        { name: "Careers", href: "#" },
-        { name: "Press", href: "#" },
+        { name: "Contact Us", href: "/contact" },
+       { name: "Our history", href: "/history" },
       ]
     },
-    {
-      title: "Support",
-      links: [
-        { name: "Contact Us", href: "/contact" },
-        { name: "FAQs", href: "#" },
-        { name: "Shipping", href: "#" },
-        { name: "Returns", href: "#" },
-      ]
-    }
+    
   ]
 
   return (
