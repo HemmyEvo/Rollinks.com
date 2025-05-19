@@ -329,16 +329,16 @@ const handleBankTransferConfirmation = async () => {
   // Save to Sanity (implement your Sanity client code here)
   try {
     await client.create(orderDoc);
+    setPaymentDone(true)
+    clearCart();
     // Handle success
   } catch (error) {
     console.error('Error creating order:', error);
     // Handle error
   }
 
-  setLoading(false);
-setPaymentDone(true)
-  
-clearCart();
+  setLoading(false)
+
 };
 
 
