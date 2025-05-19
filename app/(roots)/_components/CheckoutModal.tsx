@@ -496,7 +496,7 @@ const items = cartDetails
   
   return (
 <>
-{true && (
+{paymentDone && (
  <div className="absolute left-0 right-0 bottom-0 top-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-[1000]">
         <div className="bg-white rounded-lg max-w-md w-full max-h-[90vh] overflow-y-auto">
           <div className="p-6">
