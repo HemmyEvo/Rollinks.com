@@ -272,8 +272,6 @@ const handleBankTransferConfirmation = async () => {
   const whatsappMessage = encodeURIComponent(customerInfo);
   const whatsappUrl = `https://wa.me/2347053142223?text=${whatsappMessage}`;
   
-  // Open WhatsApp
-  window.open(whatsappUrl, '_blank');
   
   // Create order document in Sanity (similar to Paystack version but with payment method as bank transfer)
   const orderItem = cartDetails 
@@ -338,6 +336,7 @@ const handleBankTransferConfirmation = async () => {
   }
 
   setLoading(false);
+setPaymentDone(true)
   handleCartClick(); // Close cart after submission
 clearCart();
 };
