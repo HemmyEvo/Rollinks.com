@@ -935,10 +935,9 @@ const items = cartDetails
     </ul>
     <button
       onClick={() => handlePaymentMethodSelect('paystack')}
-      disabled={true}
       className="w-full py-3 px-4 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors duration-200 font-medium"
     >
-      Proceed with Paystack(This is currently not available)
+      Proceed with Paystack
     </button>
   </div>
 
