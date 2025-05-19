@@ -330,7 +330,7 @@ const handleBankTransferConfirmation = async () => {
   try {
     await client.create(orderDoc);
     setPaymentDone(true)
-    clearCart();
+    
     // Handle success
   } catch (error) {
     console.error('Error creating order:', error);
@@ -338,7 +338,8 @@ const handleBankTransferConfirmation = async () => {
   }
 
   setLoading(false)
-
+handleCartClick(); // Close cart after submission
+clearCart();
 };
 
 
@@ -476,6 +477,7 @@ const handleBankTransferConfirmation = async () => {
       },
       onCancel: () => {
         setLoading(false);
+        setPaymentDone(true)
         // Show our modal again if payment is cancelled
         if (modalRef.current) {
           modalRef.current.style.display = 'block';
@@ -494,7 +496,7 @@ const items = cartDetails
   
   return (
 <>
-{paymentDone && (
+{true && (
  <div className="absolute left-0 right-0 bottom-0 top-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-[1000]">
         <div className="bg-white rounded-lg max-w-md w-full max-h-[90vh] overflow-y-auto">
           <div className="p-6">
