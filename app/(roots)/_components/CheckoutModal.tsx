@@ -337,7 +337,7 @@ const handleBankTransferConfirmation = async () => {
 
   setLoading(false);
 setPaymentDone(true)
-  handleCartClick(); // Close cart after submission
+  
 clearCart();
 };
 
