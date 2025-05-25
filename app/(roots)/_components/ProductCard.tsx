@@ -59,7 +59,7 @@ const ProductCard = ({ id, title, price, description, image, discount, slug, rat
     e.preventDefault()
     setQuantity(prev => (prev > 0 ? prev - 1 : 1))
   decrementItem(id)
-    quatity === 0 && setIsAdded(false)
+    quantity === 0 && setIsAdded(false)
      
   }
 
