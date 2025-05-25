@@ -52,7 +52,7 @@ const ProductCard = ({ id, title, price, description, image, discount, slug, rat
       sku: id,
       name: title,
       price: safePrice,
-      description: description[0],
+      description: description,
       currency: "NGN",
       image,
       quantity,
@@ -167,7 +167,7 @@ const ProductCard = ({ id, title, price, description, image, discount, slug, rat
               min="1"
               value={quantity}
               onChange={handleQuantityChange}
-              className="w-10 text-center text-sm border-x border-orange-500"
+              className="w-10 flex-1 text-center text-sm border-x border-orange-500"
             />
             <button
               onClick={incrementQuantity}
