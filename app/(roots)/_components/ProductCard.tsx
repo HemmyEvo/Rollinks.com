@@ -211,7 +211,7 @@ const ProductCard = ({ id, title, price, description, slug, image, discount, rat
                     animate={{ opacity: 1 }}
                     exit={{ opacity: 0 }}
                   >
-                    {stock > 0 ? 'In Stock' : 'Out of Stock'}
+                    In Stock
                   </motion.div>
                 )}
               </AnimatePresence>
