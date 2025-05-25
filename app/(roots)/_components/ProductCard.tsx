@@ -18,7 +18,7 @@ type Props = {
   
 }
 
-const ProductCard = ({ id, title, price, description, slug, image, discount, rating, isNew, stock }: Props) => {
+const ProductCard = ({ id, title, price, description, slug, image, discount, rating, isNew }: Props) => {
   const [isHovered, setIsHovered] = useState(false)
   const [quantity, setQuantity] = useState(1)
   const [isAdded, setIsAdded] = useState(false)
