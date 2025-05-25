@@ -59,7 +59,7 @@ const ProductCard = ({ id, title, price, description, slug, image, discount, rat
 
   const incrementQuantity = (e: React.MouseEvent) => {
     e.preventDefault()
-    setQuantity(prev => Math.min(prev + 1, stock))
+    setQuantity(prev =>(prev + 1))
   }
 
   const decrementQuantity = (e: React.MouseEvent) => {
