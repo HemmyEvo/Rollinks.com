@@ -15,7 +15,7 @@ type Props = {
   slug: string,
   rating: number,
   isNew: boolean,
-  stock: number,
+  
 }
 
 const ProductCard = ({ id, title, price, description, slug, image, discount, rating, isNew, stock }: Props) => {
@@ -124,12 +124,7 @@ const ProductCard = ({ id, title, price, description, slug, image, discount, rat
               )}
             </div>
 
-            {/* Stock Indicator */}
-            {stock < 10 && stock > 0 && (
-              <div className="absolute bottom-2 left-2 right-2 bg-yellow-50 border border-yellow-200 text-yellow-800 text-xs px-2 py-1 rounded-sm">
-                Only {stock} left!
-              </div>
-            )}
+            
           </div>
 
           {/* Product Info */}
