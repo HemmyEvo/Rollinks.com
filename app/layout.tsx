@@ -4,6 +4,7 @@ import "./globals.css";
 import Header from "./(roots)/_components/Header";
 import Footer from "./(roots)/_components/Footer";
 import CartProvider from "./(roots)/_components/Provider";
+import ScrollButton from "./(roots)/_components/ScrollButton";
 import ShoppingCartModal from "./(roots)/_components/ShoppingCartModal";
 import { Toaster } from "react-hot-toast";
 import { ConvexClientProvider } from "@/provider/ConvexProvider";
@@ -63,6 +64,7 @@ export default function RootLayout({
               <ShoppingCartModal />
               <main className="pt-16">{children}</main>
               <Footer />
+<ScrollButton />
             </CartProvider>
             <Toaster />
           </ClerkLoaded>
