@@ -10,18 +10,22 @@ import { motion, AnimatePresence } from 'framer-motion';
 import Link from 'next/link';
 
 async function getData() {
-  const query = `*[_type == "product" && !(_id in path("drafts.**"))]{
-    _id,
-    name,
-    "slug": slug,
-    "images": images[].asset->url,
-    price,
-    discountPrice,
-    "categoryName": category->name,
-    rating,
-    isBestSeller,
-    isNew
-  }`;
+  const query = `*[
+  _type == "product" &&
+  !(_id in path("drafts.**")) &&
+  inStock == true
+]{
+  _id,
+  name,
+  "slug": slug,
+  "images": images[].asset->url,
+  price,
+  discountPrice,
+  "categoryName": category->name,
+  rating,
+  isBestSeller,
+  isNew
+}`;
   const data = await client.fetch(query);
   return data;
 }
