@@ -43,7 +43,7 @@ const ProductCard = ({ id, title, price, description, image, discount, slug, rat
       setQuantity(item.quantity)
       setIsAdded(true)
     }
-  }, [cartDetails, id])
+  }, [cartDetails, id,useShoppingCart])
 
   const handleAddToCart = (e: React.MouseEvent) => {
     e.preventDefault()
@@ -162,7 +162,7 @@ toast.success('Cart successfully Updated');
               onClick={decrementQuantity}
               className="px-2 py-2 text-xl bg-orange-500 text-white hover:bg-orange-600 transition-colors"
             >
-              -
+              <Minus className="h-5 w-5"/>
             </button>
             <input
               type="number"
@@ -175,7 +175,7 @@ toast.success('Cart successfully Updated');
               onClick={incrementQuantity}
               className="px-2 py-2 bg-orange-500 text-white hover:bg-orange-600 transition-colors"
             >
-              +
+              <Plus className="h-5 w-5"/>
             </button>
           </div>
         )}
