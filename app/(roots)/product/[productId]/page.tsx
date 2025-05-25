@@ -6,29 +6,33 @@ import { fullProduct } from '@/app/interface'
 
 async function getData(slug: string): Promise<fullProduct | null> {
   try {
-    const query = `*[_type == "product" && slug.current == "${slug}"][0]{
-      _id,
-      name,
-      "slug": slug.current,
-      images,
-      description,
-      price,
-      discountPrice,
-      "categoryName": category->name,
-      rating,
-      reviewCount,
-      isNew,
-      ingredients,
-      benefits,
-      skinType,
-      volume,
-      howToUse,
-      seo {
-        metaTitle,
-        metaDescription,
-        keywords
-      }
-    }`
+    const query = `*[
+  _type == "product" &&
+  slug.current == "${slug}" &&
+  inStock == true
+][0]{
+  _id,
+  name,
+  "slug": slug.current,
+  images,
+  description,
+  price,
+  discountPrice,
+  "categoryName": category->name,
+  rating,
+  reviewCount,
+  isNew,
+  ingredients,
+  benefits,
+  skinType,
+  volume,
+  howToUse,
+  seo {
+    metaTitle,
+    metaDescription,
+    keywords
+  }
+}`
     const data = await client.fetch(query)
     return data || null
   } catch (error) {
