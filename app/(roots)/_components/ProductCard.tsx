@@ -56,6 +56,7 @@ handleCartClick
       currency: "NGN",
       image,
       quantity,
+      description
     }
     addItem(product)
     setIsAdded(true)
