@@ -34,7 +34,7 @@ const ProductCard = ({ id, title, price, description, image, discount, slug, rat
       sku: id,
       name: title,
       price: safePrice,
-      description: description[0]
+      description: description[0],
       currency: "NGN",
       image: image,
       quantity: quantity
