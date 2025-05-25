@@ -20,8 +20,7 @@ const ProductCard = ({ id, title, price, description, image, discount, slug, rat
   const [isWishlisted, setIsWishlisted] = useState(false)
   const [quantity, setQuantity] = useState(1)
   const [isAdded, setIsAdded] = useState(false)
-  const { addItem } = useShoppingCart()
-
+  const { addItem,setItemQuantity, decrement, increment} = useShoppingCart()
   const safePrice = price || 0
   const safeDiscount = discount || 0
   const discountPercentage = discount && price 
@@ -35,6 +34,7 @@ const ProductCard = ({ id, title, price, description, image, discount, slug, rat
       sku: id,
       name: title,
       price: safePrice,
+      description: description[0]
       currency: "NGN",
       image: image,
       quantity: quantity
@@ -51,18 +51,20 @@ const ProductCard = ({ id, title, price, description, image, discount, slug, rat
   const incrementQuantity = (e: React.MouseEvent) => {
     e.preventDefault()
     setQuantity(prev => prev + 1)
+    increment(id)
   }
 
   const decrementQuantity = (e: React.MouseEvent) => {
     e.preventDefault()
     setQuantity(prev => (prev > 1 ? prev - 1 : 1))
+     decrement(id)
   }
 
   const handleQuantityChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = parseInt(e.target.value) || 1
     setQuantity(Math.max(1, value))
-  }
-
+    setItemQuantity(value),
+}
   return (
     <div className="w-full bg-white border border-gray-200 rounded-sm shadow-sm hover:shadow-md transition-shadow">
       <Link href={`/product/${slug}`} passHref>
@@ -144,10 +146,10 @@ const ProductCard = ({ id, title, price, description, image, discount, slug, rat
                 ADD TO CART
               </button>
             ) : (
-              <div className="flex items-center border border-orange-500 rounded-sm overflow-hidden">
+              <div className="flex w-full  items-center border border-orange-500 rounded-sm overflow-hidden">
                 <button 
                   onClick={decrementQuantity}
-                  className="px-2 py-1 bg-orange-500 text-white hover:bg-orange-600 transition-colors"
+                  className="px-2 py-2 bg-orange-500 text-white hover:bg-orange-600 transition-colors"
                 >
                   <Minus className="w-3 h-3" />
                 </button>
@@ -156,11 +158,11 @@ const ProductCard = ({ id, title, price, description, image, discount, slug, rat
                   min="1"
                   value={quantity}
                   onChange={handleQuantityChange}
-                  className="w-10 text-center text-sm px-1 border-x border-orange-500"
+                  className="w-10 flex-1 text-center text-sm  border-x border-orange-500"
                 />
                 <button 
                   onClick={incrementQuantity}
-                  className="px-2 py-1 bg-orange-500 text-white hover:bg-orange-600 transition-colors"
+                  className="px-2 py-2 bg-orange-500 text-white hover:bg-orange-600 transition-colors"
                 >
                   <Plus className="w-3 h-3" />
                 </button>
