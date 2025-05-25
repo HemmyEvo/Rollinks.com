@@ -20,7 +20,8 @@ const ProductCard = ({ id, title, price, description, image, discount, slug, rat
   const [isWishlisted, setIsWishlisted] = useState(false)
   const [quantity, setQuantity] = useState(1)
   const [isAdded, setIsAdded] = useState(false)
-  const { addItem,setItemQuantity, decrement, increment} = useShoppingCart()
+  const { addItem,setItemQuantity, incrementItem,
+  decrementItem} = useShoppingCart()
   const safePrice = price || 0
   const safeDiscount = discount || 0
   const discountPercentage = discount && price 
@@ -51,13 +52,14 @@ const ProductCard = ({ id, title, price, description, image, discount, slug, rat
   const incrementQuantity = (e: React.MouseEvent) => {
     e.preventDefault()
     setQuantity(prev => prev + 1)
-    increment(id)
+    incrementItem(id)
   }
 
   const decrementQuantity = (e: React.MouseEvent) => {
     e.preventDefault()
     setQuantity(prev => (prev > 0 ? prev - 1 : 1))
-     decrement(id)
+   
+  decrementItem(id)
     setIsAdded(false)
      
   }
