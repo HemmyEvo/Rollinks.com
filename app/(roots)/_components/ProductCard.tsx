@@ -1,7 +1,6 @@
-import { ShoppingCart, Star, ChevronRight, Heart, Check } from 'lucide-react'
+import { ShoppingCart, Star, Heart, Plus, Minus } from 'lucide-react'
 import Image from 'next/image'
 import React, { useState } from 'react'
-import { motion, AnimatePresence } from 'framer-motion'
 import Link from 'next/link'
 import { useShoppingCart } from 'use-shopping-cart'
 
@@ -15,20 +14,18 @@ type Props = {
   slug: string,
   rating: number,
   isNew: boolean,
-  
 }
 
-const ProductCard = ({ id, title, price, description, slug, image, discount, rating, isNew }: Props) => {
-  const [isHovered, setIsHovered] = useState(false)
+const ProductCard = ({ id, title, price, description, image, discount, slug, rating, isNew }: Props) => {
+  const [isWishlisted, setIsWishlisted] = useState(false)
   const [quantity, setQuantity] = useState(1)
   const [isAdded, setIsAdded] = useState(false)
-  const [isWishlisted, setIsWishlisted] = useState(false)
   const { addItem } = useShoppingCart()
 
-  const safePrice = price || 0;
-  const safeDiscount = discount || 0;
+  const safePrice = price || 0
+  const safeDiscount = discount || 0
   const discountPercentage = discount && price 
-    ? Math.round(((safeDiscount - safePrice) / safeDiscount) * 100) 
+    ? Math.round(((safeDiscount - safePrice) / safeDiscount) * 100)
     : 0
 
   const handleAddToCart = (e: React.MouseEvent) => {
@@ -44,12 +41,6 @@ const ProductCard = ({ id, title, price, description, slug, image, discount, rat
     }
     addItem(product)
     setIsAdded(true)
-    
-    // Reset added state after 2 seconds
-    setTimeout(() => {
-      setIsAdded(false)
-      setQuantity(1)
-    }, 2000)
   }
 
   const toggleWishlist = (e: React.MouseEvent) => {
@@ -59,7 +50,7 @@ const ProductCard = ({ id, title, price, description, slug, image, discount, rat
 
   const incrementQuantity = (e: React.MouseEvent) => {
     e.preventDefault()
-    setQuantity(prev =>(prev + 1))
+    setQuantity(prev => prev + 1)
   }
 
   const decrementQuantity = (e: React.MouseEvent) => {
@@ -67,69 +58,54 @@ const ProductCard = ({ id, title, price, description, slug, image, discount, rat
     setQuantity(prev => (prev > 1 ? prev - 1 : 1))
   }
 
+  const handleQuantityChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = parseInt(e.target.value) || 1
+    setQuantity(Math.max(1, value))
+  }
+
   return (
-    <motion.div 
-      className="w-full h-full"
-      initial={{ opacity: 0, y: 20 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, margin: "0px 0px -100px 0px" }}
-      transition={{ duration: 0.4 }}
-    >
+    <div className="w-full bg-white border border-gray-200 rounded-sm shadow-sm hover:shadow-md transition-shadow">
       <Link href={`/product/${slug}`} passHref>
-        <motion.div 
-          className="relative bg-white rounded-md overflow-hidden shadow-sm hover:shadow-md transition-all duration-300 h-full flex flex-col border border-gray-200 group"
-          onMouseEnter={() => setIsHovered(true)}
-          onMouseLeave={() => setIsHovered(false)}
-          whileHover={{ y: -3 }}
-        >
+        <div className="relative group">
           {/* Image Container */}
           <div className="relative aspect-square w-full overflow-hidden bg-gray-100">
-            <motion.div
-              initial={{ scale: 1 }}
-              animate={{ scale: isHovered ? 1.05 : 1 }}
-              transition={{ duration: 0.3 }}
-              className="h-full w-full"
-            >
-              <Image
-                src={image}
-                alt={title}
-                fill
-                className="object-contain object-center p-4"
-                sizes="(max-width: 640px) 100vw, (max-width: 768px) 50vw, (max-width: 1024px) 33vw, 25vw"
-                priority
-              />
-            </motion.div>
-
+            <Image
+              src={image}
+              alt={title}
+              fill
+              className="object-contain object-center p-2"
+              sizes="(max-width: 640px) 100vw, (max-width: 768px) 50vw, (max-width: 1024px) 33vw, 25vw"
+            />
+            
+            {/* Discount Badge */}
+            {discountPercentage > 0 && (
+              <div className="absolute top-2 left-2 bg-red-600 text-white text-xs font-bold px-2 py-1 rounded-sm">
+                -{discountPercentage}%
+              </div>
+            )}
+            
+            {/* New Badge */}
+            {isNew && (
+              <div className="absolute top-2 right-2 bg-blue-600 text-white text-xs font-bold px-2 py-1 rounded-sm">
+                New
+              </div>
+            )}
+            
             {/* Wishlist Button */}
             <button 
               onClick={toggleWishlist}
-              className="absolute top-2 right-2 z-10 p-2 rounded-full bg-white/80 backdrop-blur-sm shadow-md hover:bg-red-50 transition-colors"
+              className="absolute top-10 right-2 z-10 p-1.5 rounded-full bg-white shadow-sm hover:bg-gray-100 transition-colors"
             >
               <Heart 
-                className={`w-4 h-4 ${isWishlisted ? 'fill-red-500 text-red-500' : 'text-gray-600'}`} 
+                className={`w-3.5 h-3.5 ${isWishlisted ? 'fill-red-500 text-red-500' : 'text-gray-600'}`} 
               />
             </button>
-
-            {/* Badges */}
-            <div className="absolute top-2 left-2 flex flex-col space-y-2 z-10">
-              {isNew && (
-                <span className="bg-blue-600 text-white text-xs font-bold px-2 py-1 rounded-sm">
-                  New
-                </span>
-              )}
-              {discountPercentage > 0 && (
-                <span className="bg-red-600 text-white text-xs font-bold px-2 py-1 rounded-sm">
-                  -{discountPercentage}%
-                </span>
-              )}
-            </div>
-
-            
           </div>
 
           {/* Product Info */}
-          <div className="p-3 flex-grow flex flex-col">
-            <h3 className="text-sm font-normal text-gray-800 line-clamp-2 mb-1 group-hover:text-blue-600 transition-colors">
+          <div className="p-3">
+            {/* Title */}
+            <h3 className="text-sm font-normal text-gray-800 line-clamp-2 mb-1 group-hover:text-orange-600 transition-colors">
               {title}
             </h3>
 
@@ -143,83 +119,57 @@ const ProductCard = ({ id, title, price, description, slug, image, discount, rat
                   />
                 ))}
               </div>
-              <span className="text-xs text-gray-500 ml-1">({Math.floor(rating * 10)})</span>
+              <span className="text-[10px] text-gray-500 ml-1">({Math.floor(rating * 10)})</span>
             </div>
 
             {/* Price Section */}
-            <div className="mt-auto">
-              <div className="mb-2">
-                <span className="text-base font-bold text-gray-900">
-                  ₦{safePrice.toLocaleString('en-US')}
+            <div className="mb-2">
+              <span className="text-base font-bold text-gray-900">
+                ₦{safePrice.toLocaleString('en-US')}
+              </span>
+              {safeDiscount > 0 && (
+                <span className="text-xs text-gray-500 line-through ml-1">
+                  ₦{safeDiscount.toLocaleString('en-US')}
                 </span>
-                {safeDiscount > 0 && (
-                  <span className="text-xs text-gray-500 line-through ml-1">
-                    ₦{safeDiscount.toLocaleString('en-US')}
-                  </span>
-                )}
-              </div>
-
-              {/* Add to Cart Section */}
-              <AnimatePresence>
-                {isHovered ? (
-                  <motion.div
-                    className="w-full"
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: 10 }}
-                    transition={{ duration: 0.2 }}
-                  >
-                    {isAdded ? (
-                      <motion.button
-                        className="w-full bg-green-100 text-green-700 text-sm font-medium py-2 rounded flex items-center justify-center"
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                      >
-                        <Check className="w-4 h-4 mr-1" /> Added to Cart
-                      </motion.button>
-                    ) : (
-                      <div className="flex items-center border border-gray-300 rounded overflow-hidden">
-                        <button 
-                          onClick={decrementQuantity}
-                          className="px-2 py-1 bg-gray-100 text-gray-700 hover:bg-gray-200 transition-colors"
-                        >
-                          -
-                        </button>
-                        <span className="flex-1 text-center text-sm px-2">
-                          {quantity}
-                        </span>
-                        <button 
-                          onClick={incrementQuantity}
-                          className="px-2 py-1 bg-gray-100 text-gray-700 hover:bg-gray-200 transition-colors"
-                        >
-                          +
-                        </button>
-                        <button
-                          onClick={handleAddToCart}
-                          className="bg-orange-500 text-white text-sm font-medium px-3 py-1 hover:bg-orange-600 transition-colors flex items-center"
-                        >
-                          <ShoppingCart className="w-4 h-4 mr-1" />
-                          Add
-                        </button>
-                      </div>
-                    )}
-                  </motion.div>
-                ) : (
-                  <motion.div
-                    className="text-orange-600 text-xs font-medium"
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    exit={{ opacity: 0 }}
-                  >
-                    In Stock
-                  </motion.div>
-                )}
-              </AnimatePresence>
+              )}
             </div>
+
+            {/* Add to Cart Button - Changes to quantity selector when clicked */}
+            {!isAdded ? (
+              <button
+                onClick={handleAddToCart}
+                className="w-full bg-orange-500 text-white text-sm font-medium py-2 rounded-sm hover:bg-orange-600 transition-colors flex items-center justify-center"
+              >
+                <ShoppingCart className="w-4 h-4 mr-1" />
+                ADD TO CART
+              </button>
+            ) : (
+              <div className="flex items-center border border-orange-500 rounded-sm overflow-hidden">
+                <button 
+                  onClick={decrementQuantity}
+                  className="px-2 py-1 bg-orange-500 text-white hover:bg-orange-600 transition-colors"
+                >
+                  <Minus className="w-3 h-3" />
+                </button>
+                <input
+                  type="number"
+                  min="1"
+                  value={quantity}
+                  onChange={handleQuantityChange}
+                  className="w-10 text-center text-sm px-1 border-x border-orange-500"
+                />
+                <button 
+                  onClick={incrementQuantity}
+                  className="px-2 py-1 bg-orange-500 text-white hover:bg-orange-600 transition-colors"
+                >
+                  <Plus className="w-3 h-3" />
+                </button>
+              </div>
+            )}
           </div>
-        </motion.div>
+        </div>
       </Link>
-    </motion.div>
+    </div>
   )
 }
 
