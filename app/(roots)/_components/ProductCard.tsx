@@ -65,7 +65,7 @@ const ProductCard = ({ id, title, price, description, image, discount, slug, rat
   const handleQuantityChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = parseInt(e.target.value) || 1
     setQuantity(Math.max(1, value))
-    setItemQuantity(value),
+    setItemQuantity(value)
 }
   return (
     <div className="w-full bg-white border border-gray-200 rounded-sm shadow-sm hover:shadow-md transition-shadow">
