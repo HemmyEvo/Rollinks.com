@@ -105,6 +105,7 @@ const ProductPage = () => {
     setMinRating(null);
     setSortOption('featured');
     setSearchQuery('');
+setShowFilters(false)
   };
 
   const activeFiltersCount = [
