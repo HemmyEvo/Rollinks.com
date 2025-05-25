@@ -1,6 +1,6 @@
 import { ShoppingCart, Star, Heart, Plus, Minus } from 'lucide-react'
 import Image from 'next/image'
-import React, { useState } from 'react'
+import React, { useState,useEffect } from 'react'
 import Link from 'next/link'
 import { useShoppingCart } from 'use-shopping-cart'
 
@@ -21,12 +21,17 @@ const ProductCard = ({ id, title, price, description, image, discount, slug, rat
   const [quantity, setQuantity] = useState(1)
   const [isAdded, setIsAdded] = useState(false)
   const { addItem,setItemQuantity, incrementItem,
-  decrementItem} = useShoppingCart()
+  decrementItem,cartDetails } = useShoppingCart()
   const safePrice = price || 0
   const safeDiscount = discount || 0
   const discountPercentage = discount && price 
     ? Math.round(((safeDiscount - safePrice) / safeDiscount) * 100)
     : 0
+useEffect(()=> {
+ const initialQuantity = cartDetails?.[id]?.quantity
+ initialQuantity > 0 && setQuantity(initialQuantity)
+ initialQuantity > 0 && setIsAdded(true)
+},[])
 
   const handleAddToCart = (e: React.MouseEvent) => {
     e.preventDefault()
@@ -70,8 +75,9 @@ const ProductCard = ({ id, title, price, description, image, discount, slug, rat
 }
   return (
     <div className="w-full bg-white border border-gray-200 rounded-sm shadow-sm hover:shadow-md transition-shadow">
-      <Link href={`/product/${slug}`} passHref>
+      
         <div className="relative group">
+<Link href={`/product/${slug}`} passHref>
           {/* Image Container */}
           <div className="relative aspect-square w-full overflow-hidden bg-gray-100">
             <Image
@@ -96,17 +102,8 @@ const ProductCard = ({ id, title, price, description, image, discount, slug, rat
               </div>
             )}
             
-            {/* Wishlist Button */}
-            <button 
-              onClick={toggleWishlist}
-              className="absolute top-10 right-2 z-10 p-1.5 rounded-full bg-white shadow-sm hover:bg-gray-100 transition-colors"
-            >
-              <Heart 
-                className={`w-3.5 h-3.5 ${isWishlisted ? 'fill-red-500 text-red-500' : 'text-gray-600'}`} 
-              />
-            </button>
-          </div>
-
+            
+</Link>
           {/* Product Info */}
           <div className="p-3">
             {/* Title */}
@@ -173,7 +170,7 @@ const ProductCard = ({ id, title, price, description, image, discount, slug, rat
             )}
           </div>
         </div>
-      </Link>
+      
     </div>
   )
 }
