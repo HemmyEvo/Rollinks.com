@@ -56,7 +56,7 @@ handleCartClick
       currency: "NGN",
       image,
       quantity,
-      description: description?.[0]?.children?.[0]?.text || item.name,
+      description: description?.[0]?.children?.[0]?.text || "",
     }
     addItem(product)
     setIsAdded(true)
