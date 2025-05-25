@@ -239,7 +239,7 @@ const ProductPage = () => {
                       {categories.map(category => (
                         <button
                           key={category._id}
-                          onClick={() => setSelectedCategory(category.name)}
+                          onClick={() => {setShowFilters(false); setSelectedCategory(category.name)}}
                           className={`px-3 py-1.5 rounded-full text-sm whitespace-nowrap overflow-hidden text-ellipsis ${selectedCategory === category.name ? 'bg-blue-100 text-blue-600' : 'bg-gray-100 hover:bg-gray-200'}`}
                         >
                           {category.name}
