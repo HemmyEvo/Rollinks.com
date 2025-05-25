@@ -44,6 +44,9 @@ handleCartClick
       setQuantity(item.quantity)
       setIsAdded(true)
     }
+  else{
+setIsAdded(false)
+} 
   }, [cartDetails, id,handleCartClick,setItemQuantity,removeItem])
 
   const handleAddToCart = (e: React.MouseEvent) => {
