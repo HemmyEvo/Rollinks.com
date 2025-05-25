@@ -161,7 +161,7 @@ toast.success('Cart successfully Updated');
           <div className="flex w-full items-center border border-orange-500 rounded-sm overflow-hidden">
             <button
               onClick={decrementQuantity}
-              className=" bg-orange-500 py-2 text-white hover:bg-orange-600 transition-colors"
+              className=" bg-orange-500 py-2 px-2 text-white hover:bg-orange-600 transition-colors"
             >
               <Minus className="h-5 w-5"/>
             </button>
@@ -170,11 +170,11 @@ toast.success('Cart successfully Updated');
               min="1"
               value={quantity}
               onChange={handleQuantityChange}
-              className="w-10 flex-1 outline-none text-center text-sm border-x border-orange-500"
+              className="w-10 flex-1 outline-none text-center text-sm "
             />
             <button
               onClick={incrementQuantity}
-              className="bg-orange-500 py-2 text-white hover:bg-orange-600 transition-colors"
+              className="bg-orange-500 py-2 px-2 text-white hover:bg-orange-600 transition-colors"
             >
               <Plus className="h-5 w-5"/>
             </button>
