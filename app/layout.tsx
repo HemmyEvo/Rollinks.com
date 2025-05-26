@@ -61,12 +61,13 @@ export default function RootLayout({
 
           <ClerkLoaded>
             <CartProvider>
-              <Header />
-              <ShoppingCartModal />
-              <main className="pt-16">{children}</main>
-              <Footer />
-<ScrollButton />
-</ScrollToTopWrapper>
+              <ScrollToTopWrapper>
+                <Header />
+                <ShoppingCartModal />
+                <main className="pt-16">{children}</main>
+                <Footer />
+                <ScrollButton />
+              </ScrollToTopWrapper>
             </CartProvider>
             <Toaster />
           </ClerkLoaded>
