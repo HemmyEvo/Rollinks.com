@@ -5,7 +5,7 @@ import ProductCard from './ProductCard';
 import { motion } from "framer-motion";
 // Fetch data from Sanity
 async function getData() {
-    const query = `*[_type == "product" && isBestSeller == true  && !(_id in path("drafts.**"))] {
+    const query = `*[_type == "product" && inStock == true && isBestSeller == true  && !(_id in path("drafts.**"))] {
   _id,
   name,
   description,
