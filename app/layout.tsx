@@ -66,7 +66,7 @@ export default function RootLayout({
               <main className="pt-16">{children}</main>
               <Footer />
 <ScrollButton />
-<ScrollToTopWrapper />
+</ScrollToTopWrapper>
             </CartProvider>
             <Toaster />
           </ClerkLoaded>
