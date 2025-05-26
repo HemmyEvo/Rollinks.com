@@ -59,7 +59,7 @@ setIsAdded(false)
       currency: "NGN",
       image,
       quantity,
-      description: description?.[0]?.children?.[0]?.text || "",
+      description: description?.[0]?.children?.[0]?.text || title,
     }
     addItem(product)
     setIsAdded(true)
