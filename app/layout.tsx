@@ -4,6 +4,7 @@ import "./globals.css";
 import Header from "./(roots)/_components/Header";
 import Footer from "./(roots)/_components/Footer";
 import CartProvider from "./(roots)/_components/Provider";
+import ScrollToTopWrapper from "./(roots)/_components/ScrollToTopWrapper";
 import ScrollButton from "./(roots)/_components/ScrollButton";
 import ShoppingCartModal from "./(roots)/_components/ShoppingCartModal";
 import { Toaster } from "react-hot-toast";
@@ -65,6 +66,7 @@ export default function RootLayout({
               <main className="pt-16">{children}</main>
               <Footer />
 <ScrollButton />
+<ScrollToTopWrappe />
             </CartProvider>
             <Toaster />
           </ClerkLoaded>
