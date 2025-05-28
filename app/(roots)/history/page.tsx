@@ -458,9 +458,9 @@ if(me?.isAdmin) return <AdminPanel />
                           <p className="text-sm text-gray-500">
                             Qty: {item.quantity ?? 0} × ₦{item.price?.toLocaleString() ?? '0'}
                           </p>
-                          {item.product.slug && console.log(item.product.slug) && (
+                          {item.product.slug && (
                             <Link 
-                              href={`/product/${item.product.slug}`}
+                              href={`/product/${item.product.slug.current}`}
                               className="text-sm text-blue-600 hover:text-blue-800 mt-1 inline-block"
                               onClick={closeModal}
                             >
