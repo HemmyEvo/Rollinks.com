@@ -97,11 +97,12 @@ useEffect(() => {
     fetchDeliveryOptions()
   }, [])
 useEffect(() => {
+ if(!me) return 
   setFormData(prev => ({
       ...prev,
-      firstName: me?.firstname,
-  lastName: me?.lastname,
-  email: me?.email
+      firstName: me.firstname,
+  lastName: me.lastname,
+  email: me.email
     }));
 }, [me])
   // Build the country list
