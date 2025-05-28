@@ -50,9 +50,9 @@ const { isAuthenticated } = useConvexAuth();
 const me = useQuery(api.user.getMe, isAuthenticated ? undefined : "skip");
   // Form state
   const [formData, setFormData] = useState({
-  firstName: me?.firstname ?? '',
-  lastName: me?.lastname ?? '',
-  email: me?.email ?? '',
+  firstName: '',
+  lastName: '',
+  email: '',
   phone: '',
   address: '',
   postalCode: '',
@@ -96,8 +96,14 @@ useEffect(() => {
 
     fetchDeliveryOptions()
   }, [])
-
-
+useEffect(() => {
+  setFormData(prev => ({
+      ...prev,
+      firstName: me?.firstname,
+  lastName: me?.lastname,
+  email: me?.email
+    }));
+}, [me])
   // Build the country list
   const countries = useMemo(() => {
     return data.map((country: any) => ({
@@ -309,8 +315,9 @@ const handleBankTransferConfirmation = async () => {
             },
             items: orderItem,
             payment: {
-              method: 'Bank Transfer',
+              method: 'bank_transfer',
               status: 'pending',
+              transactionId: `T-${Date.now()}`,
               amount: totalAmount,
               currency: 'NGN'
             },
