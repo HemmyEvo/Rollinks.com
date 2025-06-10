@@ -730,7 +730,7 @@ const items = cartDetails
     <option value="">Select a location</option>
     {deliveryOptions.map(option => (
       <option key={option.value} value={option.value}>
-        {option.name} - {option.price === 0 ?'free': '₦'+ option.price}
+        {option.name} - {option.price === 0 ?'Free': '₦'+ option.price}
       </option>
     ))}
     <option value="custom">Other Location</option>
